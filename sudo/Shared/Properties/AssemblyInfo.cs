@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle( "Sudo.Shared" )]
-[assembly: AssemblyDescription( "" )]
+[assembly: AssemblyDescription( "Assembly that is shared by the Sudo.Service assembly and any sudo client application or library." )]
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "Lost Creations" )]
 [assembly: AssemblyProduct( "Sudo" )]

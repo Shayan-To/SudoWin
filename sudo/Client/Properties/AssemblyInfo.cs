@@ -33,8 +33,8 @@ using System.Runtime.CompilerServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle( "Sudo.Client" )]
-[assembly: AssemblyDescription( "" )]
+[assembly: AssemblyTitle( "Sudo.ConsoleClient" )]
+[assembly: AssemblyDescription( "Console application that uses the Sudo.Shared.Client class to create a command-line interface for sudo." )]
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "Lost Creations" )]
 [assembly: AssemblyProduct( "Sudo" )]
