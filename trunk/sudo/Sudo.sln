@@ -10,7 +10,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{57689E0E-FA82-4263-BE48-F824AEF0C940}"
 	ProjectSection(SolutionItems) = postProject
 		License.txt = License.txt
+		sudoers.xml = sudoers.xml
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{7937C406-0E88-4E48-AA1F-964E8FB8C1AD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,6 +33,10 @@ Global
 		{5CA0F5B5-797A-4CA5-A644-31A7CEE42614}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5CA0F5B5-797A-4CA5-A644-31A7CEE42614}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5CA0F5B5-797A-4CA5-A644-31A7CEE42614}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7937C406-0E88-4E48-AA1F-964E8FB8C1AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7937C406-0E88-4E48-AA1F-964E8FB8C1AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7937C406-0E88-4E48-AA1F-964E8FB8C1AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7937C406-0E88-4E48-AA1F-964E8FB8C1AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -47,12 +47,7 @@ namespace Sudo.Shared
 	/// The following values will be used if they are
 	/// defined in the hosting processes config file.
 	/// 
-	/// - alloweBadPasswordAttempts - the number of
-	///		times a user is allowed to retry a password
-	/// 
-	///		default - 3
-	/// 
-	/// - interactionMethod - how sudo interacts with the
+	/// - uiMode - how sudo interacts with the
 	///		user
 	/// 
 	///		default - forms
@@ -77,14 +72,14 @@ namespace Sudo.Shared
 		/// <param name="commandArguments">
 		///		Arguemnts of command that will be executed with sudo.
 		/// </param>
-		/// <param name="interactionMethod">
+		/// <param name="uiMode">
 		///		Method used to send messages and request 
 		///		input to and from the user.
 		/// </param>
 		/// <remarks>
 		///		commandArguments is a space delimited string.
 		/// 
-		///		interactionMethod is currently limited to 
+		///		uiMode is currently limited to 
 		///		the command line and windows forms.
 		/// </remarks>
 		static public void Sudo(
@@ -92,33 +87,16 @@ namespace Sudo.Shared
 			string commandName,
 			string commandArguments )
 		{
-			// number of times a user is allowed to
-			// retry after a bad password attempt
-			//
-			// try to get this from the host process's
-			// config file.  if that fails set the
-			// number of allowed attempts to 3.
-			int allowed_bad_password_attempts;
-
-			GetConfigValue( "allowedBadPasswordAttempts",
-				out allowed_bad_password_attempts );
-			
-			if ( allowed_bad_password_attempts == -1 )
-				allowed_bad_password_attempts = 3;
-			
-
 			// how sudo interacts with the user
 			//
 			// try to get this from the host process's
 			// config file.  if that fails set the
-			// number of allowed attempts to 'Forms'
-			InteractionMethodTypes interaction_method;
-
-			GetConfigValue( "interactionMethod",
-				out interaction_method );
-
-			if ( interaction_method == 0 )
-				interaction_method = InteractionMethodTypes.Forms;
+			// number of allowed attempts to 'Gui'
+			UIModeTypes ui_mode;
+			CommonMethods.GetConfigValue( "uiMode",
+				out ui_mode );
+			if ( ui_mode == 0 )
+				ui_mode = UIModeTypes.Gui;
 
 			#region early checks
 			//
@@ -164,7 +142,7 @@ namespace Sudo.Shared
 					error_message = e.Message;
 
 				WriteOutput( 
-					error_message, OutputMessageTypes.Error, interaction_method );
+					error_message, OutputMessageTypes.Error, ui_mode );
 				return;
 			}
 
@@ -172,7 +150,7 @@ namespace Sudo.Shared
 			if ( commandName.Length == 0 )
 			{
 				WriteOutput( "no command specified",
-					OutputMessageTypes.Error, interaction_method );
+					OutputMessageTypes.Error, ui_mode );
 				return;
 			}
 			else
@@ -181,7 +159,7 @@ namespace Sudo.Shared
 				if ( IsBuiltinCommand( commandName ) )
 				{
 					WriteOutput( "builtin commands not supported yet",
-						OutputMessageTypes.Error, interaction_method );
+						OutputMessageTypes.Error, ui_mode );
 					return;
 				}
 				
@@ -190,9 +168,18 @@ namespace Sudo.Shared
 				if ( !IsValidCommand( ref commandName ) )
 				{
 					WriteOutput( "command not found",
-						OutputMessageTypes.Error, interaction_method );
+						OutputMessageTypes.Error, ui_mode );
 					return;
 				}
+			}
+
+			// make sure the user is authorized in the sudoers data store
+			// to execute this particular command
+			if ( !sudoServer.IsCommandAllowed( commandName, null ) )
+			{
+				WriteOutput( "unauthorized use of sudo",
+					OutputMessageTypes.Error, ui_mode );
+				return;
 			}
 
 			#endregion
@@ -214,7 +201,7 @@ namespace Sudo.Shared
 			string password = sudoServer.Password;
 			bool pwd_is_cached = password.Length > 0;
 			if ( pwd_is_cached )
-				psi.Password = GetSecureString( password );
+				psi.Password = CommonMethods.GetSecureString( password );
 
 			// command name and arguments
 			psi.FileName = commandName;
@@ -230,6 +217,7 @@ namespace Sudo.Shared
 			// combo has received an 'access denied' when
 			// used to try to start the process
 			int bad_password_attempts = 0;
+			int allowed_password_tries = sudoServer.PasswordTries - 1;
 
 			// keep trying to start the process until the
 			// error code is no longer -1
@@ -241,7 +229,7 @@ namespace Sudo.Shared
 					// it will set the password to the password used
 					// to start the process
 					StartProcess(
-						psi, sudoServer, interaction_method, ref password );
+						psi, sudoServer, ui_mode, ref password );
 
 					// cache the password if it was not cached
 					if ( !pwd_is_cached )
@@ -263,7 +251,7 @@ namespace Sudo.Shared
 							// attempts has exceeded the number
 							// of allowed attempts then set the
 							// error code to 5
-							if ( bad_password_attempts == 2 )
+							if ( bad_password_attempts == allowed_password_tries )
 								error_code = 1326;
 							// user gets another chance
 							else
@@ -278,7 +266,7 @@ namespace Sudo.Shared
 								WriteOutput(
 									"invalid user name / password combination",
 									OutputMessageTypes.Error,
-									interaction_method );
+									ui_mode );
 							}
 							break;
 						}
@@ -317,7 +305,7 @@ namespace Sudo.Shared
 
 				WriteOutput( message,
 					OutputMessageTypes.Error,
-					interaction_method );
+					ui_mode );
 			}
 		}
 
@@ -471,7 +459,7 @@ namespace Sudo.Shared
 		static private void StartProcess(
 			ProcessStartInfo startInfo,
 			ISudoServer sudoServer,
-			InteractionMethodTypes interactionMethod,
+			UIModeTypes uiMode,
 			ref string password )
 		{
 			// if the password was not cached
@@ -482,26 +470,22 @@ namespace Sudo.Shared
 				// a password with a form or
 				// read the password in from
 				// the command line
-				switch ( interactionMethod )
+				switch ( uiMode )
 				{
-					case InteractionMethodTypes.Forms:
+					case UIModeTypes.Gui:
 					{
 						// display the inputbox that
 						// asks a user for their password
+						// then copy the password to this method's
+						// ref parameter, password
 						InputBox ib = new InputBox();
 						DialogResult dr = ib.ShowDialog();
 						if ( dr == DialogResult.OK )
 							password = ib.Password;
 						ib.Dispose();
-
-						// get the password from the inputbox,
-						// make a secure string out of it, and
-						// stick it in the startInfo's password
-						// property
-						startInfo.Password = GetSecureString( password );
 						break;
 					}
-					case InteractionMethodTypes.Console:
+					case UIModeTypes.CommandLine:
 					{
 						if ( startInfo.Password == null )
 							startInfo.Password = new SecureString();
@@ -509,19 +493,27 @@ namespace Sudo.Shared
 						// read the password in from the command
 						// line char by char, not displaying the
 						// password of course.  append all the
-						// chars, save the newline, to the startInfo's
-						// Password, which is a secure string
+						// chars, save the newline, to a stringbuffer
+						// and then copy the buffer to this method's
+						// ref parameter, password
+						System.Text.StringBuilder pwd =
+							new System.Text.StringBuilder( 100 );
 						Console.WriteLine();
 						Console.Write( "password: " );
 						ConsoleKeyInfo cki = Console.ReadKey( true );
 						do
 						{
-							startInfo.Password.AppendChar( cki.KeyChar );
+							pwd.Append( cki.KeyChar );
 							cki = Console.ReadKey( true );
 						} while ( cki.Key != ConsoleKey.Enter );
+						password = pwd.ToString();
 						break;
 					}
 				}
+
+				// get a secure string from the password
+				startInfo.Password =
+					CommonMethods.GetSecureString( password );
 			}
 
 			// elevate the user to administrator privileges
@@ -539,24 +531,16 @@ namespace Sudo.Shared
 			}
 		}
 
-		static private SecureString GetSecureString( string plain )
-		{
-			SecureString ss = new SecureString();
-			for ( int x = 0; x < plain.Length; ++x )
-				ss.AppendChar( plain[ x ] );
-			return( ss );
-		}
-
 		static private void WriteOutput(
 			string output,
 			OutputMessageTypes outputMessageType,
-			InteractionMethodTypes interactionMethod )
+			UIModeTypes interactionMethod )
 		{
 			// decide whether to output messages to
 			// to console or with message boxes
 			switch ( interactionMethod )
 			{
-				case InteractionMethodTypes.Console:
+				case UIModeTypes.CommandLine:
 				{
 					string format = string.Empty;
 
@@ -578,7 +562,7 @@ namespace Sudo.Shared
 					Console.WriteLine( format, output );
 					break;
 				}
-				case InteractionMethodTypes.Forms:
+				case UIModeTypes.Gui:
 				{
 					// get the type of message box
 					// icon to display
@@ -614,91 +598,6 @@ namespace Sudo.Shared
 				{
 					//do nothing
 					break;
-				}
-			}
-		}
-
-		/// <summary>
-		///		Get an string value from the host process's
-		///		config file.
-		/// </summary>
-		/// <param name="keyName">
-		///		Name of key to get.
-		/// </param>
-		/// <param name="keyValue">
-		///		Will be be the key value.  Empty string
-		///		if not found.
-		///	</param>
-		static void GetConfigValue( 
-			string keyName,
-			out string keyValue )
-		{
-			// if the key is defined in the config file 
-			// then get it else return an empty string
-			if ( Array.IndexOf( ConfigurationManager.AppSettings.AllKeys,
-				keyName ) > -1 )
-				keyValue = ConfigurationManager.AppSettings[ keyName ];
-			// empty string
-			else
-				keyValue = string.Empty;
-		}
-
-		/// <summary>
-		///		Get an integer value from the host process's
-		///		config file.
-		/// </summary>
-		/// <param name="keyName">
-		///		Name of key to get.
-		/// </param>
-		/// <param name="keyValue">
-		///		Will be the parsed integer.
-		///		-1 if not found or cannot parse.
-		///	</param>
-		static void GetConfigValue( 
-			string keyName, 
-			out int keyValue )
-		{
-			string temp;
-			GetConfigValue( keyName, out temp );
-			if ( temp.Length == 0 )
-				keyValue = 0;
-			else
-			{
-				if ( !int.TryParse( temp, out keyValue ) )
-					keyValue = -1;
-			}
-		}
-
-		/// <summary>
-		///		Get an InteractionMethodType value from 
-		///		the host process's config file.
-		/// </summary>
-		/// <param name="keyName">
-		///		Name of key to get.
-		/// </param>
-		/// <param name="keyValue">
-		///		Will be the parsed InteractionMethodType.
-		///		0 if not found or cannot parse.
-		///	</param>
-		static void GetConfigValue(
-			string keyName,
-			out InteractionMethodTypes interactionMethod )
-		{
-			string temp;
-			GetConfigValue( keyName, out temp );
-			if ( temp.Length == 0 )
-				interactionMethod = 0;
-			else
-			{
-				try
-				{
-					interactionMethod = ( InteractionMethodTypes )
-						Enum.Parse( typeof( InteractionMethodTypes ),
-						temp, true );
-				}
-				catch
-				{
-					interactionMethod = 0;
 				}
 			}
 		}

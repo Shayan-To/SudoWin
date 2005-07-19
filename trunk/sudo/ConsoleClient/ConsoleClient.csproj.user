@@ -15,6 +15,6 @@
     <VerifyUploadedFiles>true</VerifyUploadedFiles>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <StartArguments>"c:\program files\dvd decrypter\dvd decrypter"</StartArguments>
+    <StartArguments>cmd</StartArguments>
   </PropertyGroup>
 </Project>

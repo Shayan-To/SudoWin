@@ -27,8 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Security.Permissions;
 
 namespace Sudo.Shared
 {
@@ -46,18 +45,37 @@ namespace Sudo.Shared
 		/// </remarks>
 		string Password
 		{
+			[EnvironmentPermission( SecurityAction.LinkDemand )]
 			get;
 			set;
 		}
 
 		/// <summary>
+		///		Number of allowed bad password attempts a user has.
+		/// </summary>
+		int PasswordTries
+		{
+			get;
+		}
+
+		/// <summary>
+		///		Number of seconds sudo will cache a user's password.
+		/// </summary>
+		int PasswordTimeout
+		{
+			get;
+		}
+
+		/// <summary>
 		///		Elevate caller to administrator privileges.
 		/// </summary>
+		[EnvironmentPermission( SecurityAction.LinkDemand )]
 		void BeginElevatePrivileges();
 
 		/// <summary>
 		///		Revert caller to normal privileges.
 		/// </summary>
+		[EnvironmentPermission( SecurityAction.LinkDemand )]
 		void EndElevatePrivileges();
 
 		/// <summary>
@@ -67,5 +85,22 @@ namespace Sudo.Shared
 		///		to use this server.
 		/// </summary>
 		void AuthenticateClient();
+
+		/// <summary>
+		///		Checks to see if the user has the right
+		///		to execute the given command with sudo.
+		/// </summary>
+		/// <param name="commandPath">
+		///		Fully qualified path of the command being executed.
+		/// </param>
+		/// <param name="commandSwitches">
+		///		Switches the command being executed is using.
+		/// </param>
+		/// <returns>
+		///		True if the command is allowed, false if it is not.
+		/// </returns>
+		bool IsCommandAllowed( 
+			string commandPath,
+			string[] commandSwitches );
 	}
 }
