@@ -23,7 +23,7 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationVersion>1.0.0.*</ApplicationVersion>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <AssemblyOriginatorKeyFile>sudo.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>test.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -63,6 +63,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="sudo.snk" />
+    <None Include="test.snk" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">

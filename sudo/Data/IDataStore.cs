@@ -28,22 +28,72 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 
-namespace Sudo.Shared
+namespace Sudo.Data
 {
 	/// <summary>
-	///		Specifies which method of interaction
-	///		to use to interact with users.
+	///		
 	/// </summary>
-	public enum InteractionMethodTypes : short
+	public interface IDataStore : IDisposable
 	{
 		/// <summary>
-		///		Interact via the command line.
+		///		Number of allowed bad password attempts a user has.
 		/// </summary>
-		Console = 1,
+		int PasswordTries
+		{
+			get;
+		}
 
 		/// <summary>
-		///		Interact via windows forms.
+		///		Number of seconds sudo will cache a user's password.
 		/// </summary>
-		Forms = 2,
+		int PasswordTimeout
+		{
+			get;
+		}
+
+		/// <summary>
+		///		Opens a connection to the sudoers data store.
+		/// </summary>
+		/// <param name="connectionString">
+		///		Connection string used to open a connection
+		///		to the sudoers data store.
+		/// </param>
+		void Open( string connectionString );
+
+		/// <summary>
+		///		Opens a connection to the sudoers data store
+		///		and validate the data with the given
+		///		schema file.
+		/// </summary>
+		/// <param name="connectionString">
+		///		Connection string used to open a connection
+		///		to the sudoers data store.
+		/// </param>
+		/// <param name="schemaFileUri">
+		///		Uri of schema file to use to validate the data.
+		/// </param>
+		void Open( string connectionString, Uri schemaFileUri );
+
+		/// <summary>
+		///		Closes the connection to the sudoers data store.
+		/// </summary>
+		void Close();
+
+		/// <summary>
+		///		Checks to see if the user has the right
+		///		to execute the given command with sudo.
+		/// </summary>
+		/// <param name="commandPath">
+		///		Fully qualified path of the command being executed.
+		/// </param>
+		/// <param name="commandSwitches">
+		///		Switches the command being executed is using.
+		/// </param>
+		/// <returns>
+		///		True if the command is allowed, false if it is not.
+		/// </returns>
+		bool IsCommandAllowed( 
+			string commandPath, 
+			string[] commandSwitches );
 	}
 }

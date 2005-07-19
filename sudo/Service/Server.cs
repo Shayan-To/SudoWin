@@ -28,35 +28,62 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 using System.IO;
+using Sudo.Data;
 using System.Text;
+using Sudo.Shared;
 using System.Security;
 using System.Threading;
+using System.Reflection;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Forms;
 using System.DirectoryServices;
 using System.Security.Principal;
 using System.Collections.Generic;
+using System.Security.Permissions;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Contexts;
 using System.Runtime.Remoting.Messaging;
 
 namespace Sudo.Service
 {
-	public class Server : MarshalByRefObject, Sudo.Shared.ISudoServer
+	public class Server : MarshalByRefObject, Sudo.Shared.ISudoServer, IDisposable
 	{
+		#region fields and properties
+
 		/// <summary>
-		///		Collection used to store credential sets
-		///		for a limited time.
+		///		Used to store cached credentials
+		///		for a finite amount of time.
 		/// </summary>
-		private Dictionary<string, SecureString> m_cached_credentials =
+		private Dictionary<string, SecureString> m_cachd_creds =
 			new Dictionary<string, SecureString>();
 
 		/// <summary>
-		///		Reader/writer lock for the credentials collection.
+		///		Used for synchronizing access to
+		///		m_cachd_creds.
 		/// </summary>
-		private ReaderWriterLock m_cached_credentials_rwl =
+		private ReaderWriterLock m_cachd_creds_rwl =
 			new ReaderWriterLock();
+
+		/// <summary>
+		///		Used to store class scope-level timers
+		///		that remove cached credentials after a 
+		///		finite amount of time.
+		/// </summary>
+		private Dictionary<string, Timer> m_cachd_creds_tmrs =
+			new Dictionary<string, Timer>();
+
+		/// <summary>
+		///		Used for synchronizing access to
+		///		m_cachd_creds_tmrs.
+		/// </summary>
+		private ReaderWriterLock m_cachd_creds_tmrs_rwl =
+			new ReaderWriterLock();
+
+		/// <summary>
+		///		Interface used to access sudoers data.
+		/// </summary>
+		private Sudo.Data.IDataStore m_sudoers_ds;
 
 		/// <summary>
 		///		Gets/sets user passwords from/in the credential cache.
@@ -67,6 +94,8 @@ namespace Sudo.Service
 		/// </remarks>
 		public string Password
 		{
+			[EnvironmentPermission( SecurityAction.LinkDemand )]
+			[System.Diagnostics.DebuggerStepThrough]
 			get
 			{
 				// get identity of caller
@@ -76,7 +105,7 @@ namespace Sudo.Service
 				// used to hold the cached password
 				SecureString ss;
 				
-				m_cached_credentials_rwl.AcquireReaderLock(
+				m_cachd_creds_rwl.AcquireReaderLock(
 					Timeout.Infinite );
 
 				// see if the cache contains a password for 
@@ -84,11 +113,11 @@ namespace Sudo.Service
 				bool is_cached;
 				try
 				{
-					is_cached = m_cached_credentials.TryGetValue( wi.Name, out ss );
+					is_cached = m_cachd_creds.TryGetValue( wi.Name, out ss );
 				}
 				finally
 				{
-					m_cached_credentials_rwl.ReleaseReaderLock();
+					m_cachd_creds_rwl.ReleaseReaderLock();
 				}
 
 				// get the non-secure version
@@ -109,6 +138,7 @@ namespace Sudo.Service
 
 				return ( password );
 			}
+			[System.Diagnostics.DebuggerStepThrough]
 			set
 			{
 				// get identity of caller
@@ -120,32 +150,115 @@ namespace Sudo.Service
 				for ( int x = 0; x < value.Length; ++x )
 					ss.AppendChar( value[ x ] );
 
-				m_cached_credentials_rwl.AcquireWriterLock(
+				m_cachd_creds_rwl.AcquireWriterLock(
 					Timeout.Infinite );
 
 				try
 				{
 					// add the password to the cache
-					m_cached_credentials.Add( wi.Name, ss );
+					m_cachd_creds.Add( wi.Name, ss );
 				}
 				finally
 				{
-					m_cached_credentials_rwl.ReleaseWriterLock();
+					m_cachd_creds_rwl.ReleaseWriterLock();
+				}
+
+				// since there was no exception thrown
+				// we must create a timer to expire the
+				// cached credentials after a finite
+				// amount of time
+				Timer t = new Timer(
+					new TimerCallback( RemoveCachedCredentials ),
+					wi.Name,
+					// seconds * 1000 = milliseconds
+					m_sudoers_ds.PasswordTimeout * 1000, 
+					Timeout.Infinite );
+
+				m_cachd_creds_tmrs_rwl.AcquireWriterLock( Timeout.Infinite );
+
+				// add the timer to the m_cachd_creds_tmrs collection
+				try
+				{
+					m_cachd_creds_tmrs.Add( wi.Name, t );
+				}
+				// one might want to add a catch block here to dispose
+				// of the timer in case there is an error adding
+				// it to the collection.  the reason for this would
+				// be so that the timer does not unexpectedly fire
+				// later on and have nothing to remove.  adding
+				// such a trap is unnecessary because if an exception
+				// is thrown the Timer t will no longer have any 
+				// references and be automatically disposed for us.
+				finally
+				{
+					m_cachd_creds_tmrs_rwl.ReleaseWriterLock();
 				}
 			}
 		}
+
+		/// <summary>
+		///		Number of allowed bad password attempts a user has.
+		/// </summary>
+		public int PasswordTries
+		{
+			[System.Diagnostics.DebuggerStepThrough]
+			get
+			{
+				return ( m_sudoers_ds.PasswordTries );
+			}
+		}
+
+		/// <summary>
+		///		Number of seconds sudo will cache a user's password.
+		/// </summary>
+		public int PasswordTimeout
+		{
+			[System.Diagnostics.DebuggerStepThrough]
+			get
+			{
+				return ( m_sudoers_ds.PasswordTimeout );
+			}
+		}
+
+		#endregion
 
 		/// <summary>
 		///		Default constructor.
 		/// </summary>
 		public Server()
 		{
-			
+			// get the sudoers data source connection string
+			string sudoers_ds_cnxn_string;
+			CommonMethods.GetConfigValue( 
+				"sudoersDataStoreConnectionString",
+				out sudoers_ds_cnxn_string );
+
+			// if the sudodersDataStoreConnectionString key is
+			// not specified in the config file then throw
+			// an exception
+			if ( sudoers_ds_cnxn_string.Length == 0 )
+				throw new System.Configuration.ConfigurationErrorsException(
+					"sudodersDataStoreConnectionString must be a " +
+					"specified key in the appSettings section of the " +
+					"config file" );
+
+			// if a schema file uri was specified in the
+			// config file get the file uri
+			string schema_uri;
+			CommonMethods.GetConfigValue( "schemaFileUri", out schema_uri );
+
+			// use a sudoers file as the sudoers data store
+			m_sudoers_ds = new Sudo.Data.FileClient.FileDataStore()
+				as Sudo.Data.IDataStore;
+
+			// open a connection to the sudoers data store
+			m_sudoers_ds.Open( sudoers_ds_cnxn_string, new Uri( schema_uri ) );
 		}
 
 		/// <summary>
 		///		Elevate caller to administrator privileges.
 		/// </summary>
+		[EnvironmentPermission( SecurityAction.LinkDemand )]
 		public void BeginElevatePrivileges()
 		{
 			AddRemoveUser( 1 );
@@ -154,6 +267,7 @@ namespace Sudo.Service
 		/// <summary>
 		///		Revert caller to normal privileges.
 		/// </summary>
+		[EnvironmentPermission( SecurityAction.LinkDemand )]
 		public void EndElevatePrivileges()
 		{
 			AddRemoveUser( 0 );
@@ -164,7 +278,8 @@ namespace Sudo.Service
 		///		group on the local computer.
 		/// </summary>
 		/// <param name="function">1 "Add" or 0 "Remove"</param>
-		private void AddRemoveUser( int which )
+		[EnvironmentPermission( SecurityAction.LinkDemand )]
+		static private void AddRemoveUser( int which )
 		{
 			// get identity of caller
 			WindowsIdentity wi = Thread.CurrentPrincipal.Identity as
@@ -218,7 +333,121 @@ namespace Sudo.Service
 		/// </summary>
 		public void AuthenticateClient()
 		{
-			// dummy method
+			//VerifySameSignature();
 		}
-	}
+
+		private void VerifySameSignature()
+		{
+			// whether or not both the client and server
+			// assemblies have the same strong name signature
+			bool same_sig = false;
+			
+			// get references to the client and server assemblies
+			Assembly client = Assembly.GetEntryAssembly();
+			Assembly server = Assembly.GetExecutingAssembly();
+
+			// client/server was verified
+			bool client_wf = false;
+			bool server_wf = false;
+
+			// if both the client and the server assemblies
+			// both have valid strong name keys then compare
+			// their public key tokens
+			if ( CommonMethods.StrongNameSignatureVerificationEx(
+					client.Location, true, ref client_wf ) &&
+				CommonMethods.StrongNameSignatureVerificationEx(
+					server.Location, true, ref server_wf ) )
+			{
+				
+				// get the client and server public key tokens
+				byte[] client_pubkey = client.GetName().GetPublicKeyToken();
+				byte[] server_pubkey = server.GetName().GetPublicKeyToken();
+
+				// if the public key tokens are the same size
+				// then go deeper and verify them bit by bit
+				if ( client_pubkey.Length == server_pubkey.Length )
+				{
+					// assume both assemblies have the same
+					// signature until the bit by bit comparison
+					// proves us wrong
+
+					same_sig = true;
+					for ( int x = 0; x < client_pubkey.Length && same_sig; ++x )
+						if ( client_pubkey[ x ] != server_pubkey[ x ] )
+							same_sig = false;
+				}
+			}
+
+			// if the server and client do not have the same
+			// signature then throw an exception
+			if ( !same_sig )
+				throw ( new Exception( 
+					"client and server assemblies are not " +
+					"signed by the same private key" ) );
+		}
+
+		/// <summary>
+		///		Checks to see if the user has the right
+		///		to execute the given command with sudo.
+		/// </summary>
+		/// <param name="commandPath">
+		///		Fully qualified path of the command being executed.
+		/// </param>
+		/// <param name="commandSwitches">
+		///		Switches the command being executed is using.
+		/// </param>
+		/// <returns>
+		///		True if the command is allowed, false if it is not.
+		/// </returns>
+		public bool IsCommandAllowed( 
+			string commandPath,
+			string[] commandSwitches )
+		{
+			return ( m_sudoers_ds.IsCommandAllowed(
+				commandPath, commandSwitches ) );
+		}
+
+		/// <summary>
+		///		Callback method used by the cached credentials timers.
+		/// </summary>
+		/// <param name="state">
+		///		A key for the m_cachd_creds_tmrs dictionary.  Can cast
+		///		into a string.
+		/// </param>
+		private void RemoveCachedCredentials( object state )
+		{
+			// get the key
+			string key = state as string;
+
+			m_cachd_creds_rwl.AcquireWriterLock( Timeout.Infinite );
+			m_cachd_creds_tmrs_rwl.AcquireWriterLock( Timeout.Infinite );
+
+			try
+			{
+				// expire the cached credentials
+				m_cachd_creds.Remove( key );
+
+				// stop the timer and remove it
+				m_cachd_creds_tmrs[ key ].Dispose();
+				m_cachd_creds_tmrs.Remove( key );
+			}
+			finally
+			{
+				m_cachd_creds_rwl.ReleaseWriterLock();
+				m_cachd_creds_tmrs_rwl.ReleaseWriterLock();
+			}
+		}
+
+		#region IDisposable Members
+
+		/// <summary>
+		///		Close resources.
+		/// </summary>
+		public void Dispose()
+		{
+			m_sudoers_ds.Dispose();
+		}
+
+		#endregion
+}
 }

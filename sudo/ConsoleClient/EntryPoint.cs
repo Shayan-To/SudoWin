@@ -52,16 +52,16 @@ namespace Sudo.ConsoleClient
 			// caching credentials
 
 			// get an array of the registered well known client urls
-			WellKnownClientTypeEntry[] wkctes =
+			WellKnownClientTypeEntry[] wkts =
 				RemotingConfiguration.GetRegisteredWellKnownClientTypes();
 
 			// loop through the list of well known clients until
 			// the SudoServer object is found
 			ISudoServer iss = null;
-			for ( int x = 0; x < wkctes.Length && iss == null; ++x )
+			for ( int x = 0; x < wkts.Length && iss == null; ++x )
 			{
 				iss = Activator.GetObject( typeof( ISudoServer ),
-					wkctes[ x ].ObjectUrl ) as ISudoServer;
+					wkts[ x ].ObjectUrl ) as ISudoServer;
 			}
 
 			// set the command name to sudo

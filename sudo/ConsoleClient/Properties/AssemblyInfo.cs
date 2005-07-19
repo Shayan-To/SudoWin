@@ -34,7 +34,7 @@ using System.Runtime.CompilerServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle( "Sudo.ConsoleClient" )]
-[assembly: AssemblyDescription( "Console application that uses the Sudo.Shared.Client class to create a command-line interface for sudo." )]
+[assembly: AssemblyDescription( "CommandLine application that uses the Sudo.Shared.Client class to create a command-line interface for sudo." )]
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "Lost Creations" )]
 [assembly: AssemblyProduct( "Sudo" )]
@@ -46,6 +46,8 @@ using System.Runtime.CompilerServices;
 // to COM componenets.  If you need to access a type in this assembly from 
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible( false )]
+
+[assembly: System.CLSCompliant( true )]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid( "0750e3f7-dd1d-4b37-90d2-0e55f93d1992" )]
