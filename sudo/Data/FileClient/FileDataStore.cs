@@ -73,70 +73,45 @@ namespace Sudo.Data.FileClient
 		private XmlNamespaceManager m_namespace_mgr;
 
 		/// <summary>
-		///		Number of allowed bad password attempts a user has.
-		/// </summary>
-		public int PasswordTries
-		{
-			[System.Diagnostics.DebuggerStepThrough]
-			get
-			{
-				XmlNode un = this.UserNode;
-				int temp_value;
-				GetUserAttributeValue( un, true, "passwordTries", out temp_value );
-				return ( temp_value );
-			}
-		}
-
-		/// <summary>
-		///		Number of seconds sudo will cache a user's password.
-		/// </summary>
-		public int PasswordTimeout
-		{
-			[System.Diagnostics.DebuggerStepThrough]
-			get
-			{
-				XmlNode un = this.UserNode;
-				int temp_value;
-				GetUserAttributeValue( un, true, "passwordTimeout", out temp_value );
-				return ( temp_value );
-			}
-		}
-
-		/// <summary>
 		///		Default constructor.
 		/// </summary>
 		public FileDataStore()
 		{
 		}
 
-		private XmlNode UserNode
+		/// <summary>
+		///		Gets the xml node for the given user name.
+		/// </summary>
+		/// <param name="userName">
+		///		The xpath query in this method uses this value
+		///		to search for a xml node of type user with a name
+		///		attribute value equal to the value of this parameter.
+		/// </param>
+		/// <returns>
+		///		Xml node with the name attribute equal to
+		///		the value of the userName parameter of this
+		///		method.
+		/// </returns>
+		private XmlNode GetUserNode( string userName )
 		{
-			[System.Diagnostics.DebuggerStepThrough]
-			get
-			{
-				// first, get the name of the user who is 
-				// executing the command
-				string user_name =
-					System.Threading.Thread.CurrentPrincipal.Identity.Name;
+			// second, find the user in the sudoers file.  to do this
+			// we first build a xpath query which will look for
+			// the user with the given user name
+			string user_xpq = string.Format(
+				CultureInfo.CurrentCulture,
+				@"//d:user[{0} = {1}]",
+				string.Format( CultureInfo.CurrentCulture,
+					XpathTranslateFormat, "@name" ),
+				string.Format( CultureInfo.CurrentCulture,
+					XpathTranslateFormat, "'" + userName + "'" ) );
 
-				// second, find the user in the sudoers file.  to do this
-				// we first build a xpath query which will look for
-				// the user with the given user name
-				string user_xpq = string.Format(
-					CultureInfo.CurrentCulture,
-					@"//d:user[{0} = {1}]",
-					string.Format( CultureInfo.CurrentCulture,
-						XpathTranslateFormat, "@name" ),
-					string.Format( CultureInfo.CurrentCulture,
-						XpathTranslateFormat, "'" + user_name + "'" ) );
+			// find the user's node in the sudoers file.  if the 
+			// user is not found then the query will return null 
+			XmlNode user_node = m_xml_doc.SelectSingleNode(
+				user_xpq, m_namespace_mgr );
 
-				// find the user's node in the sudoers file.  if the 
-				// user is not found then the query will return null 
-				XmlNode user_node = m_xml_doc.SelectSingleNode(
-					user_xpq, m_namespace_mgr );
-
-				return ( user_node );
-			}
+			return ( user_node );
+			
 		}
 
 		#region IDataStore Members
@@ -229,23 +204,27 @@ namespace Sudo.Data.FileClient
 		///		Checks to see if the user has the right
 		///		to execute the given command with sudo.
 		/// </summary>
+		/// <param name="userName">
+		///		User name of user who invoked sudo.
+		/// </param>
 		/// <param name="commandPath">
 		///		Fully qualified path of the command being executed.
 		/// </param>
-		/// <param name="commandSwitches">
-		///		Switches the command being executed is using.
+		/// <param name="commandArguments">
+		///		Arguments of the command being executed.
 		/// </param>
 		/// <returns>
 		///		True if the command is allowed, false if it is not.
 		/// </returns>
 		public bool IsCommandAllowed(
+			string userName,
 			string commandPath,
-			string[] commandSwitches )
+			string commandArguments )
 		{
 			#region user checks
 
 			// get the user node
-			XmlNode user_node = this.UserNode;
+			XmlNode user_node = GetUserNode( userName );
 
 			//**********************************************************
 			// !!! RETURN RETURN RETURN !!!
@@ -312,7 +291,7 @@ namespace Sudo.Data.FileClient
 			// !!! RETURN RETURN RETURN !!!
 			//
 			if ( cmd_node != null )
-				return ( IsCommandAllowed( user_node, cmd_node, commandSwitches ) );
+				return ( IsCommandAllowed( user_node, cmd_node, commandArguments ) );
 			
 			#endregion
 
@@ -325,7 +304,7 @@ namespace Sudo.Data.FileClient
 			{
 				bool cmd_found;
 				bool cmd_allowed = IsCommandRefAllowed( user_node,
-					local_cmd_refs, commandPath, commandSwitches, out cmd_found );
+					local_cmd_refs, commandPath, commandArguments, out cmd_found );
 
 				//**********************************************************
 				// !!! RETURN RETURN RETURN !!!
@@ -349,7 +328,7 @@ namespace Sudo.Data.FileClient
 			// !!! RETURN RETURN RETURN !!!
 			//
 			if ( cmd_node != null )
-				return ( IsCommandAllowed( user_node, cmd_node, commandSwitches ) );
+				return ( IsCommandAllowed( user_node, cmd_node, commandArguments ) );
 
 			#endregion
 
@@ -362,7 +341,7 @@ namespace Sudo.Data.FileClient
 			{
 				bool cmd_found;
 				bool cmd_allowed = IsCommandRefAllowed( user_node,
-					parent_cmd_refs, commandPath, commandSwitches, out cmd_found );
+					parent_cmd_refs, commandPath, commandArguments, out cmd_found );
 
 				//**********************************************************
 				// !!! RETURN RETURN RETURN !!!
@@ -379,6 +358,58 @@ namespace Sudo.Data.FileClient
 		}
 
 		/// <summary>
+		///		Gets the number of invalid
+		///		logon attempts the user is allowed.
+		/// </summary>
+		/// <param name="userName">
+		///		User name to get data for.
+		/// </param>
+		/// <returns>
+		///		Number of invalid logon attempts the
+		///		user is allowed.
+		/// </returns>
+		public int GetPasswordTries( string userName )
+		{
+			int pt;
+			XmlNode unode = GetUserNode( userName );
+			GetUserAttributeValue( unode, true, "passwordTries", out pt );
+			return ( pt );
+		}
+
+		/// <summary>
+		///		Gets the number of seconds that a
+		///		user's valid logon is cached.
+		/// </summary>
+		/// <param name="userName">
+		///		User name to get data for.
+		/// </param>
+		/// <returns>
+		///		Number of seconds that a user's
+		///		valid logon is cached.
+		/// </returns>
+		public int GetPasswordTimeout( string userName )
+		{
+			int pt;
+			XmlNode unode = GetUserNode( userName );
+			GetUserAttributeValue( unode, true, "passwordTimeout", out pt );
+			return ( pt );
+		}
+
+		#endregion
+
+		#region IDisposable Members
+
+		/// <summary>
+		///		Present for compliance with IDataStore.
+		/// </summary>
+		public void Dispose()
+		{
+			// do nothing
+		}
+
+		#endregion
+
+		/// <summary>
 		///		Examines the attributes of a command
 		///		node and determines whether or not
 		///		the user is allowed to execute the
@@ -388,9 +419,8 @@ namespace Sudo.Data.FileClient
 		///		Command node that represents the command
 		///		the user is attempting to execute with sudo.
 		///	</param>
-		/// <param name="commandSwitches">
-		///		Command switches used to examine if this
-		///		command is allowed.
+		/// <param name="commandArguments">
+		///		Arguments of the command being executed.
 		/// </param>
 		/// <returns>
 		///		True if the command is allowed, false if it is not.
@@ -398,7 +428,7 @@ namespace Sudo.Data.FileClient
 		private bool IsCommandAllowed(
 			XmlNode userNode,
 			XmlNode commandNode,
-			string[] commandSwitches )
+			string commandArguments )
 		{
 			//**********************************************************
 			// !!! RETURN RETURN RETURN !!!
@@ -450,9 +480,8 @@ namespace Sudo.Data.FileClient
 		/// <param name="commandPath">
 		///		Fully qualified path of the command being executed.
 		/// </param>
-		/// <param name="commandSwitches">
-		///		Command switches used to examine if this
-		///		command is allowed.
+		/// <param name="commandArguments">
+		///		Arguments of the command being executed.
 		/// </param>
 		/// <param name="wasCommandFound">
 		///		Whether or not the command groups that the
@@ -471,7 +500,7 @@ namespace Sudo.Data.FileClient
 			XmlNode userNode,
 			XmlNode commandGroupRefsParent,
 			string commandPath,
-			string[] commandSwitches,
+			string commandArguments,
 			out bool wasCommandFound )
 		{
 			// for each command group reference build a xpath
@@ -498,13 +527,13 @@ namespace Sudo.Data.FileClient
 				// the command group for the command
 				if ( cmdgrp != null && cmdgrp.HasChildNodes )
 					cmd_node = FindCommandNode( cmdgrp, commandPath );
-				
+
 				// if the command is found determine if it is
 				// allowed to be executed
 				if ( cmd_node != null )
 				{
 					wasCommandFound = true;
-					return ( IsCommandAllowed( userNode, cmd_node, commandSwitches ) );
+					return ( IsCommandAllowed( userNode, cmd_node, commandArguments ) );
 				}
 			}
 
@@ -525,7 +554,7 @@ namespace Sudo.Data.FileClient
 		///		Fully qualified path of the command being executed.
 		/// </param>
 		/// <returns></returns>
-		private XmlNode FindCommandNode( 
+		private XmlNode FindCommandNode(
 			XmlNode commandNodeParent,
 			string commandPath )
 		{
@@ -546,20 +575,6 @@ namespace Sudo.Data.FileClient
 			return ( cmd_node );
 		}
 
-		#endregion
-
-		#region IDisposable Members
-
-		/// <summary>
-		///		Present for compliance with IDataStore.
-		/// </summary>
-		public void Dispose()
-		{
-			// do nothing
-		}
-
-		#endregion
-
 		#region GetUserAttributeValue +4
 
 		/// <summary>
@@ -579,13 +594,6 @@ namespace Sudo.Data.FileClient
 		/// <param name="attributeValue">
 		///		Value of the of the attribute.
 		/// </param>
-		/// <remarks>
-		///		Only use this method to get attribute values that
-		///		are also set at the default level since this method
-		///		will travel up to the default level to look for
-		///		the attribute value if it cannot find it at a lower
-		///		level.
-		/// </remarks>
 		[System.Diagnostics.DebuggerStepThrough]
 		private void GetUserAttributeValue(
 			XmlNode userNode,

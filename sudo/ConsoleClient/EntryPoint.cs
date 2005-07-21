@@ -32,7 +32,12 @@ using Sudo.Shared;
 
 using System.Reflection;
 
+using System.Diagnostics;
+
 using System.Runtime.Remoting;
+
+using System.Runtime.InteropServices;
+using System.Security;
 
 namespace Sudo.ConsoleClient
 {
@@ -64,20 +69,21 @@ namespace Sudo.ConsoleClient
 					wkts[ x ].ObjectUrl ) as ISudoServer;
 			}
 
-			// set the command name to sudo
-			string command_name =
+			// get the command path to sudo
+			string cmd_path =
 				args.Length < 1 ?
 				string.Empty : args[ 0 ];
 
-			// set the command arguments to sudo
-			string command_args =
+			// get the command arguments to sudo
+			string cmd_args =
 				args.Length < 2 ?
 				string.Empty :
 				string.Join( " ", args, 1, args.Length - 1 );
 
+			string pwd = "b^df0rbvsiness";
+			
 			// invoke sudo!
-			Sudo.Shared.Client.Sudo(
-				iss, command_name, command_args );
+			iss.Sudo( pwd, cmd_path, cmd_args );
 		}
 	}
 }

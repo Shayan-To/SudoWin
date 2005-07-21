@@ -42,7 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Client.cs" />
     <Compile Include="CommonMethods.cs" />
     <Compile Include="InputBox.cs">
       <SubType>Form</SubType>
@@ -51,6 +50,7 @@
       <DependentUpon>InputBox.cs</DependentUpon>
     </Compile>
     <Compile Include="ISudoServer.cs" />
+    <Compile Include="SudoResultTypes.cs" />
     <Compile Include="UIModeTypes.cs" />
     <Compile Include="MessageTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

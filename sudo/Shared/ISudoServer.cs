@@ -27,6 +27,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
+
+using System.Security;
+
 using System.Security.Permissions;
 
 namespace Sudo.Shared
@@ -37,70 +40,26 @@ namespace Sudo.Shared
 	public interface ISudoServer
 	{
 		/// <summary>
-		///		Gets/sets user passwords from/in the credential cache.
+		///		Invokes sudo on the given command path.
 		/// </summary>
-		/// <remarks>
-		///		This property accessor makes a call to the backing
-		///		store each time its get and set methods are invoked.
-		/// </remarks>
-		string Password
-		{
-			[EnvironmentPermission( SecurityAction.LinkDemand )]
-			get;
-			set;
-		}
-
-		/// <summary>
-		///		Number of allowed bad password attempts a user has.
-		/// </summary>
-		int PasswordTries
-		{
-			get;
-		}
-
-		/// <summary>
-		///		Number of seconds sudo will cache a user's password.
-		/// </summary>
-		int PasswordTimeout
-		{
-			get;
-		}
-
-		/// <summary>
-		///		Elevate caller to administrator privileges.
-		/// </summary>
-		[EnvironmentPermission( SecurityAction.LinkDemand )]
-		void BeginElevatePrivileges();
-
-		/// <summary>
-		///		Revert caller to normal privileges.
-		/// </summary>
-		[EnvironmentPermission( SecurityAction.LinkDemand )]
-		void EndElevatePrivileges();
-
-		/// <summary>
-		///		A dummy method that will force the client
-		///		to throw an exception if the caller is not
-		///		a member of any of the groups authorized
-		///		to use this server.
-		/// </summary>
-		void AuthenticateClient();
-
-		/// <summary>
-		///		Checks to see if the user has the right
-		///		to execute the given command with sudo.
-		/// </summary>
-		/// <param name="commandPath">
-		///		Fully qualified path of the command being executed.
+		/// <param name="password">
+		///		Password of user invoking sudo.
 		/// </param>
-		/// <param name="commandSwitches">
-		///		Switches the command being executed is using.
+		/// <param name="commandPath">
+		///		Fully qualified path of the command that
+		///		sudo is being invoked on.
+		/// </param>
+		/// <param name="commandArguments">
+		///		Command arguments of the command that
+		///		sudo is being invoked on.
 		/// </param>
 		/// <returns>
-		///		True if the command is allowed, false if it is not.
+		///		An integer that can be cast as a 
+		///		SudoResultsTypes value.
 		/// </returns>
-		bool IsCommandAllowed( 
+		int Sudo(
+			string password,
 			string commandPath,
-			string[] commandSwitches );
+			string commandArguments );
 	}
 }

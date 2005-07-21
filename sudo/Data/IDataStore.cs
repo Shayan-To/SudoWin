@@ -36,22 +36,6 @@ namespace Sudo.Data
 	public interface IDataStore : IDisposable
 	{
 		/// <summary>
-		///		Number of allowed bad password attempts a user has.
-		/// </summary>
-		int PasswordTries
-		{
-			get;
-		}
-
-		/// <summary>
-		///		Number of seconds sudo will cache a user's password.
-		/// </summary>
-		int PasswordTimeout
-		{
-			get;
-		}
-
-		/// <summary>
 		///		Opens a connection to the sudoers data store.
 		/// </summary>
 		/// <param name="connectionString">
@@ -83,17 +67,49 @@ namespace Sudo.Data
 		///		Checks to see if the user has the right
 		///		to execute the given command with sudo.
 		/// </summary>
+		/// <param name="userName">
+		///		Name of the user that is being verified as able
+		///		to execute the given command with sudo.
+		/// </param>
 		/// <param name="commandPath">
 		///		Fully qualified path of the command being executed.
 		/// </param>
-		/// <param name="commandSwitches">
-		///		Switches the command being executed is using.
+		/// <param name="commandArguments">
+		///		Arguments of the command being executed.
 		/// </param>
 		/// <returns>
 		///		True if the command is allowed, false if it is not.
 		/// </returns>
-		bool IsCommandAllowed( 
+		bool IsCommandAllowed(
+			string userName,
 			string commandPath, 
-			string[] commandSwitches );
+			string commandArguments );
+
+		/// <summary>
+		///		Gets the number of invalid
+		///		logon attempts the user is allowed.
+		/// </summary>
+		/// <param name="userName">
+		///		User name to get data for.
+		/// </param>
+		/// <returns>
+		///		Number of invalid logon attempts the
+		///		user is allowed.
+		/// </returns>
+		int GetPasswordTries( string userName );
+		
+		/// <summary>
+		///		Gets the number of seconds that a
+		///		user's valid logon is cached.
+		/// </summary>
+		/// <param name="userName">
+		///		User name to get data for.
+		/// </param>
+		/// <returns>
+		///		Number of seconds that a user's
+		///		valid logon is cached.
+		/// </returns>
+		int GetPasswordTimeout( string userName );
+		
 	}
 }
