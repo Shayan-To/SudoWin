@@ -27,13 +27,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
+using Sudo.Shared;
 using System.ComponentModel;
 using System.ServiceProcess;
 using System.Runtime.Remoting;
 using System.Security.Permissions;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
-
 
 namespace Sudo.Service
 {
@@ -44,45 +44,19 @@ namespace Sudo.Service
 			InitializeComponent();
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage( 
-			"Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands" )]
 		protected override void OnStart( string[] args )
 		{
 			// get path to the actual exe
 			Uri uri = new Uri( 
 				System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase );
-
+			
 			// configure remoting channels and objects
 			RemotingConfiguration.Configure( uri.LocalPath + ".config" );
 
-			//
-			// the server object is now registered.  we now want
-			// to insure that this service is the one who first
-			// activates the object, initializing its properties.
-			// to do this the server will act as a client only
-			// long enough to authenticate itself.  then the service
-			// will unregister the client channel.
-			//
-
-			// get an array of the registered well known client urls
-			WellKnownClientTypeEntry[] wkts =
-				RemotingConfiguration.GetRegisteredWellKnownClientTypes();
-
-			// loop through the list of well known clients until
-			// the SudoServer object is found
-			Sudo.Shared.ISudoServer iss = null;
-			for ( int x = 0; x < wkts.Length && iss == null; ++x )
-			{
-				iss = Activator.GetObject( typeof( Sudo.Shared.ISudoServer ),
-					wkts[ x ].ObjectUrl ) as Sudo.Shared.ISudoServer;
-			}
-
-			// active the server object by making the first
-			// call to it
-			iss.AuthenticateClient();
-
-			// unregister the client channel
-			ChannelServices.UnregisterChannel( ChannelServices.RegisteredChannels[ 1 ] );
+			// create the server object
+			DataServer ds = Activator.GetObject( typeof( DataServer ),
+				System.Configuration.ConfigurationManager.AppSettings[ "dataServerUri" ] )
+				as DataServer;
 		}
 	}
 }

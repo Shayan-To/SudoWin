@@ -10,38 +10,22 @@ namespace Sudo.Shared
 	public class CommonMethods
 	{
 		/// <summary>
-		///		Verifies a strong name signature.
-		/// </summary>
-		/// <param name="assemblyPath">
-		///		Fully qualified path of the assembly
-		///		to be verified.
-		/// </param>
-		/// <param name="forceVerification">
-		///		True to bypass the skip verification list.
-		///		False will cause wasVerified to be set.
-		/// </param>
-		/// <param name="wasVerified">
-		///		True if forceVerification is false and
-		///		the assembly was verified.  False if
-		///		forceVerification is true and the assembly
-		///		was on the skip verification list.
-		/// </param>
-		/// <returns>
-		///		True if verified, false if otherwise.
-		/// </returns>
-		[DllImport( "mscoree.dll", CharSet = CharSet.Unicode )]
-		public static extern bool StrongNameSignatureVerificationEx(
-			string assemblyPath, 
-			bool forceVerification, 
-			ref bool wasVerified );
-
-		/// <summary>
 		///		Static class.  Do not instantiate.
 		/// </summary>
 		private CommonMethods()
 		{
 		}
 
+		/// <summary>
+		///		Creates a new secure string and copies the
+		///		plain-text string into it.
+		/// </summary>
+		/// <param name="plain">
+		///		Plain-text string to be copied into secure string.
+		/// </param>
+		/// <returns>
+		///		Secure string from given plain-text string.
+		/// </returns>
 		static public SecureString GetSecureString( string plain )
 		{
 			SecureString ss = new SecureString();

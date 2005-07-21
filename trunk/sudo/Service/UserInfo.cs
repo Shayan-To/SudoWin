@@ -1,6 +1,3 @@
-<?xml version="1.0" encoding="utf-8" ?>
-
-<!--
 /*
 Copyright (c) 2005, Schley Andrew Kutz <sakutz@gmail.com>
 All rights reserved.
@@ -28,48 +25,45 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
--->
 
-<configuration>
-	<appSettings>
+using System;
 
-		<!-- 
-			ui mode for sudo
-		
-			commandLine - interact via the command line.
-			
-			gui - interact via windows forms
-		-->
-		<add	key ="uiMode"
-				value ="gui"
-		/>
-		
-	</appSettings>
- 	<system.runtime.remoting>
-		<application>
-			<client>
-				<wellknown
-					type="Sudo.Service.SudoServer, Sudo.Service"
-					url="ipc://Sudo/SudoServer.rem"
-				/>
-			</client>
-			<channels>
-				<channel
-					type="System.Runtime.Remoting.Channels.Ipc.IpcClientChannel, System.Runtime.Remoting, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
-					portName="Sudo"
-					secure="True"
-					tokenImpersonationLevel="Impersonation"
-					useDefaultCredentials="True">
+namespace Sudo.Service
+{
+	/// <summary>
+	///		Used to persist information about sudoers
+	///		between calls.
+	/// </summary>
+	[Serializable]
+	public struct UserInfo
+	{
+		/// <summary>
+		///		Default constructor.
+		/// </summary>
+		/// <param name="invalidLogons">
+		///		Number of invalid logon attempts the
+		///		user has made.
+		/// </param>
+		/// <param name="areCredentialsCached">
+		///		Whether or not the user's credentials
+		///		are cached.
+		/// </param>
+		public UserInfo( int invalidLogons, bool areCredentialsCached )
+		{
+			InvalidLogons = invalidLogons;
+			AreCredentialsCached = areCredentialsCached;
+		}
 
-					<serverProviders>
-						<formatter ref="binary" />
-						<provider
-							type="System.Runtime.Remoting.Channels.BinaryServerFormatterSinkProvider, System.Runtime.Remoting, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
-						/>
-					</serverProviders>
-				</channel>
-			</channels>
-		</application>
-	</system.runtime.remoting>
-	
-</configuration>
+		/// <summary>
+		///		Number of invalid logon attempts the
+		///		user has made.
+		/// </summary>
+		public int InvalidLogons;
+
+		/// <summary>
+		///		Whether or not the user's credentials
+		///		are cached.
+		/// </summary>
+		public bool AreCredentialsCached;
+	}
+}
