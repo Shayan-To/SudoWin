@@ -96,7 +96,50 @@ namespace Sudo.Data
 		///		Number of invalid logon attempts the
 		///		user is allowed.
 		/// </returns>
-		int GetPasswordTries( string userName );
+		int GetInvalidLogons( string userName );
+
+		/// <summary>
+		///		Gets the number of times the user
+		///		has exceeded their invalid logon
+		///		attempt limit.
+		/// </summary>
+		/// <param name="userName">
+		///		User name to get data for.
+		/// </param>
+		/// <returns>
+		///		Number of times the user has exceeded
+		///		their invalid logon attempt limit.
+		/// </returns>
+		int GetTimesExceededInvalidLogons( string userName );
+
+		/// <summary>
+		///		Gets the number of seconds that the sudo
+		///		server keeps track of a user's invalid
+		///		logon attempts.
+		/// </summary>
+		/// <param name="userName">
+		///		User name to get data for.
+		/// </param>
+		/// <returns>
+		///		Number of seconds that the sudo server keeps
+		///		track of a user's invalid logon attempts.
+		/// </returns>
+		int GetInvalidLogonTimeout( string userName );
+
+		/// <summary>
+		///		Get's the number of seconds that a user
+		///		is locked out after exceeding their
+		///		invalid logon attempt limit.
+		/// </summary>
+		/// <param name="userName">
+		///		User name to get data for.
+		/// </param>
+		/// <returns>
+		///		Number of seconds that a user is locked out
+		///		after exceeding their invalid logon attempt
+		///		limit.
+		/// </returns>
+		int GetLockoutTimeout( string userName );
 		
 		/// <summary>
 		///		Gets the number of seconds that a
@@ -109,7 +152,21 @@ namespace Sudo.Data
 		///		Number of seconds that a user's
 		///		valid logon is cached.
 		/// </returns>
-		int GetPasswordTimeout( string userName );
-		
+		int GetLogonTimeout( string userName );
+
+		/// <summary>
+		///		Gets the name of the group that possesses
+		///		the same privileges that the user will
+		///		when they use sudo.
+		/// </summary>
+		/// <param name="userName">
+		///		User name to get data for.
+		/// </param>
+		/// <returns>
+		///		Name of the group that possesses the
+		///		same privileges that the user will when
+		///		they use sudo.
+		/// </returns>
+		string GetPrivilegesGroup( string userName );
 	}
 }
