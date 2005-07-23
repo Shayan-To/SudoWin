@@ -35,11 +35,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 <xs:element name="users" type="userGroupsType" minOccurs="0" maxOccurs="1" />
                 <xs:element name="commands" type="commandGroupsType" minOccurs="0" maxOccurs="1" />
             </xs:sequence>
-            <xs:attribute name="endTime" type="xs:time" msdata:ReadOnly="false" msprop:nullValue="_throw" use="required" msdata:AutoIncrement="false" />
-            <xs:attribute name="startTime" type="xs:time" use="required" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" />
-            <xs:attribute name="passwordTries" type="xs:int" use="required" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" />
-            <xs:attribute name="passwordTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="required" />
+            <xs:attribute name="privilegesGroup" type="xs:string" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" use="required" />
             <xs:attribute name="uiMode" type="uiModeType" />
+            <xs:attribute name="startTime" type="xs:time" use="required" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" />
+            <xs:attribute name="endTime" type="xs:time" msdata:ReadOnly="false" msprop:nullValue="_throw" use="required" msdata:AutoIncrement="false" />
+            <xs:attribute name="invalidLogons" type="xs:int" use="required" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" />
+            <xs:attribute name="timesExceededInvalidLogons" type="xs:int" msdata:ReadOnly="false" use="required" msdata:AutoIncrement="false" msprop:nullValue="_throw" />
+            <xs:attribute name="logonTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="required" />
+            <xs:attribute name="invalidLogonTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="required" />
+            <xs:attribute name="lockoutTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="required" />
+            <xs:attribute name="loggingLevel" type="xs:int" use="required" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" />
         </xs:complexType>
     </xs:element>
     <xs:complexType name="userType">
@@ -52,12 +57,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             </xs:sequence>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" use="required" />
+        <xs:attribute name="privilegesGroup" type="xs:string" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" use="optional" />
         <xs:attribute name="enabled" type="xs:boolean" msdata:ReadOnly="false" msdata:AutoIncrement="true" msprop:nullValue="_throw" use="optional" />
-        <xs:attribute name="passwordTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" use="optional" msprop:nullValue="_throw" />
-        <xs:attribute name="passwordTries" type="xs:int" use="optional" msdata:ReadOnly="false" msdata:AutoIncrement="false" msprop:nullValue="_throw" />
-        <xs:attribute name="startTime" type="xs:time" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
-        <xs:attribute name="endTime" type="xs:time" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
         <xs:attribute name="allowAllCommands" type="xs:boolean" />
+        <xs:attribute name="startTime" type="xs:time" use="optional" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" />
+        <xs:attribute name="endTime" type="xs:time" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" msdata:AutoIncrement="false" />
+        <xs:attribute name="invalidLogons" type="xs:int" use="optional" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" />
+        <xs:attribute name="timesExceededInvalidLogons" type="xs:int" msdata:ReadOnly="false" use="optional" msdata:AutoIncrement="false" msprop:nullValue="_throw" />
+        <xs:attribute name="logonTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
+        <xs:attribute name="invalidLogonTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
+        <xs:attribute name="lockoutTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
+        <xs:attribute name="loggingLevel" type="xs:int" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" use="optional" />
     </xs:complexType>
     <xs:complexType name="commandType">
         <xs:sequence>
@@ -136,12 +146,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             </xs:sequence>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" />
+        <xs:attribute name="privilegesGroup" type="xs:string" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" use="optional" />
         <xs:attribute name="enabled" type="xs:boolean" use="optional" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" />
-        <xs:attribute name="passwordTimeout" type="xs:int" use="optional" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" />
-        <xs:attribute name="passwordTries" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
+        <xs:attribute name="allowAllCommands" type="xs:boolean" />
         <xs:attribute name="startTime" type="xs:time" use="optional" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" />
-        <xs:attribute name="endTime" type="xs:time" msdata:AutoIncrement="false" msdata:ReadOnly="false" use="optional" />
-        <xs:attribute name="allowAllCommands" type="xs:boolean" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
+        <xs:attribute name="endTime" type="xs:time" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" msdata:AutoIncrement="false" />
+        <xs:attribute name="invalidLogons" type="xs:int" use="optional" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" />
+        <xs:attribute name="timesExceededInvalidLogons" type="xs:int" msdata:ReadOnly="false" use="optional" msdata:AutoIncrement="false" msprop:nullValue="_throw" />
+        <xs:attribute name="logonTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
+        <xs:attribute name="invalidLogonTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
+        <xs:attribute name="lockoutTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
+        <xs:attribute name="loggingLevel" type="xs:int" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" use="optional" />
     </xs:complexType>
     <xs:complexType name="userGroupUsersType">
         <xs:sequence>

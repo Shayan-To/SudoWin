@@ -94,7 +94,7 @@ namespace Sudo.Data.FileClient
 		/// </returns>
 		private XmlNode GetUserNode( string userName )
 		{
-			// second, find the user in the sudoers file.  to do this
+			// find the user in the sudoers file.  to do this
 			// we first build a xpath query which will look for
 			// the user with the given user name
 			string user_xpq = string.Format(
@@ -368,12 +368,74 @@ namespace Sudo.Data.FileClient
 		///		Number of invalid logon attempts the
 		///		user is allowed.
 		/// </returns>
-		public int GetPasswordTries( string userName )
+		public int GetInvalidLogons( string userName )
 		{
-			int pt;
+			int tv;
 			XmlNode unode = GetUserNode( userName );
-			GetUserAttributeValue( unode, true, "passwordTries", out pt );
-			return ( pt );
+			GetUserAttributeValue( unode, true, "invalidLogons", out tv );
+			return ( tv );
+		}
+
+		/// <summary>
+		///		Gets the number of times the user
+		///		has exceeded their invalid logon
+		///		attempt limit.
+		/// </summary>
+		/// <param name="userName">
+		///		User name to get data for.
+		/// </param>
+		/// <returns>
+		///		Number of times the user has exceeded
+		///		their invalid logon attempt limit.
+		/// </returns>
+		public int GetTimesExceededInvalidLogons( string userName )
+		{
+			int tv;
+			XmlNode unode = GetUserNode( userName );
+			GetUserAttributeValue( unode, true, "timesExceededInvalidLogons", out tv );
+			return ( tv );
+		}
+
+		/// <summary>
+		///		Gets the number of seconds that the sudo
+		///		server keeps track of a user's invalid
+		///		logon attempts.
+		/// </summary>
+		/// <param name="userName">
+		///		User name to get data for.
+		/// </param>
+		/// <returns>
+		///		Number of seconds that the sudo server
+		///		keeps track of a user's invalid logon
+		///		attempts.
+		/// </returns>
+		public int GetInvalidLogonTimeout( string userName )
+		{
+			int tv;
+			XmlNode unode = GetUserNode( userName );
+			GetUserAttributeValue( unode, true, "invalidLogonTimeout", out tv );
+			return ( tv );
+		}
+
+		/// <summary>
+		///		Get's the number of seconds that a user
+		///		is locked out after exceeding their
+		///		invalid logon attempt limit.
+		/// </summary>
+		/// <param name="userName">
+		///		User name to get data for.
+		/// </param>
+		/// <returns>
+		///		Number of seconds that a user is locked out
+		///		after exceeding their invalid logon attempt
+		///		limit.
+		/// </returns>
+		public int GetLockoutTimeout( string userName )
+		{
+			int tv;
+			XmlNode unode = GetUserNode( userName );
+			GetUserAttributeValue( unode, true, "lockoutTimeout", out tv );
+			return ( tv );
 		}
 
 		/// <summary>
@@ -387,12 +449,33 @@ namespace Sudo.Data.FileClient
 		///		Number of seconds that a user's
 		///		valid logon is cached.
 		/// </returns>
-		public int GetPasswordTimeout( string userName )
+		public int GetLogonTimeout( string userName )
 		{
-			int pt;
+			int tv;
 			XmlNode unode = GetUserNode( userName );
-			GetUserAttributeValue( unode, true, "passwordTimeout", out pt );
-			return ( pt );
+			GetUserAttributeValue( unode, true, "logonTimeout", out tv );
+			return ( tv );
+		}
+
+		/// <summary>
+		///		Gets the name of the group that possesses
+		///		the same privileges that the user will
+		///		when they use sudo.
+		/// </summary>
+		/// <param name="userName">
+		///		User name to get data for.
+		/// </param>
+		/// <returns>
+		///		Name of the group that possesses the
+		///		same privileges that the user will when
+		///		they use sudo.
+		/// </returns>
+		public string GetPrivilegesGroup( string userName )
+		{
+			string tv;
+			XmlNode unode = GetUserNode( userName );
+			GetUserAttributeValue( unode, true, "privilegesGroup", out tv );
+			return ( tv );
 		}
 
 		#endregion
