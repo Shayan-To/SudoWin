@@ -27,18 +27,129 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
+using System.Text;
 using System.Reflection;
 using Sudo.PublicLibrary;
 using System.Diagnostics;
+using System.Globalization;
 using System.Windows.Forms;
 using System.Runtime.Remoting;
+using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
+
 
 namespace Sudo.ConsoleApplication
 {
 	class Program
 	{
 		static void Main( string[] args )
+		{
+			switch ( args.Length )
+			{
+				// print the help menu
+				case 0:
+				{
+					PrintHelpMenu();
+					break;
+				}
+				// -h
+				// -v
+				// %cmd%
+				case 1:
+				{
+					if ( Regex.IsMatch( args[ 0 ], @"^--?(h|\?|(help))$" ) )
+						PrintHelpMenu();
+					else if ( Regex.IsMatch( args[ 0 ], @"^--?(v|(version))$" ) )
+						PrintVersion();
+					else
+						InvokeSudo( string.Empty, args[ 0 ], string.Empty );
+					break;
+				}
+				// %cmd% %arg1%
+				case 2:
+				{
+					InvokeSudo( string.Empty, args[ 0 ], args[ 1 ] );
+					break;
+				}
+				// -p %pwd% %cmd%
+				// %cmd% %arg1% %arg2%
+				case 3:
+				{
+					if ( Regex.IsMatch( args[ 0 ], @"^--?(p|(password))$" ) )
+					{
+						InvokeSudo( args[ 1 ], args[ 2 ], string.Empty );
+					}
+					else
+					{
+						InvokeSudo( string.Empty, args[ 0 ], 
+							args[ 1 ] + " " + args[ 2 ] );
+					}
+					break;
+				}
+				// -c -p %pwd% %cmd%
+				// -p %pwd% %cmd% %arg1%
+				// %cmd% %arg1% %arg2% %arg3%
+				case 4:
+				{
+					if ( Regex.IsMatch( args[ 0 ], @"^--?(c|(current-context))$" ) &&
+						Regex.IsMatch( args[ 1 ], @"^--?(p|(password))$" ) )
+					{
+						StartProcess( args[ 2 ], args[ 3 ], string.Empty );
+					}
+					else if ( Regex.IsMatch( args[ 0 ], @"^--?(p|(password))$" ) )
+					{
+						InvokeSudo( args[ 1 ], args[ 2 ], args[ 3 ] );
+					}
+					else
+					{
+						InvokeSudo( string.Empty, args[ 0 ], 
+							args[ 1 ] + " " + args[ 2 ] + " " + args[ 3 ]);
+					}
+					break;
+				}
+				// args.Length > 4
+				default:
+				{
+					if ( Regex.IsMatch( args[ 0 ], @"^--?(c|(current-context))$" ) &&
+						Regex.IsMatch( args[ 1 ], @"^--?(p|(password))$" ) )
+					{
+						StartProcess( args[ 2 ], args[ 3 ], 
+							string.Join( " ", args, 4, args.Length - 4 ) );
+					}
+					else if ( Regex.IsMatch( args[ 0 ], @"^--?(p|(password))$" ) )
+					{
+						InvokeSudo( args[ 1 ], args[ 2 ], 
+							string.Join( " ", args, 3, args.Length - 3 ) );
+					}
+					else
+					{
+						InvokeSudo( string.Empty, args[ 0 ],
+							string.Join( " ", args, 1, args.Length - 1 ) );
+					}
+					break;
+				}
+			}
+		}
+
+		private static void StartProcess(
+			string password,
+			string commandPath,
+			string commandArguments )
+		{
+			ProcessStartInfo psi = new ProcessStartInfo();
+			psi.FileName = commandPath;
+			psi.Arguments = commandArguments;
+			psi.UseShellExecute = false;
+			psi.LoadUserProfile = true;
+			psi.UserName = 
+				System.Threading.Thread.CurrentPrincipal.Identity.Name;
+			Process.Start( psi );
+		}
+
+		private static void InvokeSudo( 
+			string password, 
+			string commandPath, 
+			string commandArguments )
 		{
 			#region configure remoting
 
@@ -68,17 +179,6 @@ namespace Sudo.ConsoleApplication
 
 			#endregion
 
-			// get the command path to sudo
-			string cmd_path =
-				args.Length < 1 ?
-				string.Empty : args[ 0 ];
-
-			// get the command arguments to sudo
-			string cmd_args =
-				args.Length < 2 ?
-				string.Empty :
-				string.Join( " ", args, 1, args.Length - 1 );
-
 			// how sudo interacts with the user
 			//
 			// try to get this from the host process's
@@ -107,43 +207,93 @@ namespace Sudo.ConsoleApplication
 					// get the user's password if the user 
 					// does not have cached credentials on
 					// the server
-					string password = iss.AreCredentialsCached ? 
+					password = password.Length > 0 || iss.AreCredentialsCached ?
 						string.Empty : GetPassword( ui_mode );
 
 					// invoke sudo
 					srt = ( SudoResultTypes )
-						iss.Sudo( password, cmd_path, cmd_args );
+						iss.Sudo( password, commandPath, commandArguments );
 
 					switch ( srt )
 					{
 						case SudoResultTypes.InvalidLogon:
-						{
-							WriteOutput( "invalid logon",
-								OutputMessageTypes.Error, ui_mode );
-							break;
-						}
+							{
+								WriteOutput( "invalid logon",
+									OutputMessageTypes.Error, ui_mode );
+								break;
+							}
 						case SudoResultTypes.TooManyInvalidLogons:
-						{
-							WriteOutput( "invalid logon limit exceeded",
-								OutputMessageTypes.Error, ui_mode );
-							break;
-						}
+							{
+								WriteOutput( "invalid logon limit exceeded",
+									OutputMessageTypes.Error, ui_mode );
+								break;
+							}
 						case SudoResultTypes.CommandNotAllowed:
-						{
-							WriteOutput( "command not allowed",
-								OutputMessageTypes.Error, ui_mode );
-							break;
-						}
+							{
+								WriteOutput( "command not allowed",
+									OutputMessageTypes.Error, ui_mode );
+								break;
+							}
 						case SudoResultTypes.SudoUserLockedOut:
-						{
-							WriteOutput( "multiple invalid logon limit exceeded " +
-								"- temporary lockout enforced",
-								OutputMessageTypes.Error, ui_mode );
-							break;
-						}
+							{
+								WriteOutput( "multiple invalid logon limit exceeded " +
+									"- temporary lockout enforced",
+									OutputMessageTypes.Error, ui_mode );
+								break;
+							}
 					}
 				}
 			} while ( srt == SudoResultTypes.InvalidLogon );
+		}
+
+		private static void PrintVersion()
+		{
+			Console.WriteLine();
+			Console.WriteLine( "sudo by sakutz@gmail.com" );
+			Console.WriteLine( "{0}",
+				Assembly.GetExecutingAssembly().GetName().Version.ToString( 4 ) );
+			Console.WriteLine();
+		}
+
+		private static void PrintHelpMenu()
+		{
+			string menu = @"
+usage: sudo [OPTION]... [COMMAND] [ARGUMENTS]
+executes the COMMAND and its ARGUMENTS in the security context of a user's
+assigned privileges group
+
+    -c, --current-context     executes command within the current
+                              security context
+
+                              this option must be used in conjunction
+                              with the -p option
+
+    -p, --password            password of the user executing sudo
+
+                              if this option is not specified and
+                              the user's credentials are not cached
+                              a password prompt will appear requesting
+                              that the user enter their password
+
+    -v, --version             displays sudo version number
+    -h, --help                displays this menu
+    -?, --help                displays this menu
+
+    examples:
+
+      sudo c:\program files\dvddecrypter\dvddecrypter.exe
+
+        will launch dvd decrypter with administrative privileges
+
+      sudo -p mypassword cmd
+
+        will suppress sudo's password prompt using 'mypassword' instead
+        and launch the windows command shell with administrative privileges
+
+
+";
+
+			Console.WriteLine( menu );
 		}
 
 		static private string GetPassword( UIModeTypes uiMode )
