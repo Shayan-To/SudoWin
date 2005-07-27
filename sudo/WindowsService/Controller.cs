@@ -69,6 +69,13 @@ namespace Sudo.WindowsService
 			DataServer ds = Activator.GetObject( typeof( DataServer ),
 				System.Configuration.ConfigurationManager.AppSettings[ "dataServerUri" ] )
 				as DataServer;
+
+			// activate the data server object first before any of the
+			// sudo clients can do so.  this will cause any exceptions that
+			// might get thrown while reading the sudoers data source to
+			// cause the service not to start, rather than crashing a sudo
+			// client application.
+			ds.Activate();
 		}
 	}
 }

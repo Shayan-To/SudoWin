@@ -47,6 +47,7 @@ using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Contexts;
 using System.Runtime.Remoting.Messaging;
+using System.Configuration;
 
 namespace Sudo.WindowsService
 {
@@ -326,6 +327,9 @@ namespace Sudo.WindowsService
 					// now cached
 					ui.AreCredentialsCached = true;
 
+					// store the cached password
+					ui.Password = password;
+
 					// persist the user information
 					m_data_server.SetUserInfo( un, ui );
 
@@ -370,33 +374,13 @@ namespace Sudo.WindowsService
 			// join while this process is executed
 			string pg = m_data_server.GetPrivilegesGroup( un );
 
-			/*
-			 * because there exists a race condition where someone
-			 * with malicious intentions could figure out when
-			 * the user's privileges are elevated and exploit that,
-			 * we are going to inject a Thread.Sleep call at this
-			 * point.
-			 * 
-			 * we will be sleeping the current thread for a few ticks
-			 * at most, but this will be determined by a random
-			 * number genertator.
-			 * 
-			 * this is simply to make it harder for someone to
-			 * maliciously exploit this unavoidable race condition.
-			 */
-			Random r = new Random( Convert.ToInt32( DateTime.Now.ToString(
-				"fffff", CultureInfo.CurrentCulture ), 
-				CultureInfo.CurrentCulture ) );
-			int n = r.Next( r.Next( 100 ) );
-			Thread.Sleep( TimeSpan.FromTicks( n ) );
-			
 			// add the user to the privileges group if they
 			// are not already a member of it and record whether
 			// or not they are already a member of it
 			bool already_member = AddRemoveUser( un, 1, pg );
 
 			// start the process
-			StartProcess( hUser, commandPath, commandArguments );
+			CreateProcessAsUser( hUser, un, ui.Password, commandPath, commandArguments );
 
 			// remove the user from the privileges group if 
 			// they were not already a member of it
@@ -407,32 +391,41 @@ namespace Sudo.WindowsService
 		}
 
 
-		private Process StartProcess( 
-			IntPtr userToken, 
+		private Process CreateProcessAsUser( 
+			IntPtr userToken,
+			string userName,
+			string password,
 			string commandPath, 
 			string commandArguments )
 		{
 			SecurityAttributes sa = new SecurityAttributes();
 			sa.InheritHandle = false;
-			sa.SecurityDescriptor = ( IntPtr ) 0;
+			sa.SecurityDescriptor = IntPtr.Zero;
 			sa.Length = Marshal.SizeOf( sa );
 
 			StartupInfo si = new StartupInfo();
 			si.Desktop = "WinSta0\\Default";
 			si.Size = Marshal.SizeOf( si );
 
+			string formatted_cpath = string.Format(
+				CultureInfo.CurrentCulture,
+				"\"{0}\" -c \"{1}\" \"{2}\" \"{3}\" {4}",
+				ConfigurationManager.AppSettings[ "consoleApplicationPath" ],
+				un, password,
+				commandPath, commandArguments );
+
 			ProcessInformation pi;
 			bool started = Native.CreateProcessAsUser(
 				userToken, 
 				null, 
-				commandPath + " " + commandArguments, 
+				formatted_cpath,
 				ref sa, ref sa,
 				false, 
-				( int ) ProcessCreationFlags.CreateNewConsole | ( int ) ProcessPriorityTypes.Normal,
+				( int ) ProcessCreationFlags.CreateNoWindow | ( int ) ProcessPriorityTypes.Normal,
 				IntPtr.Zero, null, ref si, out pi );
 
 			if ( !started )
-				return ( null );
+				throw new Win32Exception( Marshal.GetLastWin32Error() );
 			else
 			{
 				// get a managed reference to the process

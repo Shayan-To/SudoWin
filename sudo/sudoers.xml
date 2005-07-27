@@ -12,7 +12,7 @@
 	<users>
 		<userGroup name="standard">
 			<users>
-				<user name="alchemist\sakutz">
+				<user name="alchemist\sakutz" allowAllCommands ="true">
 					<commands>
 						<command path="c:\windows\system32\regsvr32.exe" />
 						<command path="c:\program files\dvd decrypter\dvddecrypter.exe"/>
