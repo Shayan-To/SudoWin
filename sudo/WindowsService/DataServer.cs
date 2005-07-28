@@ -27,6 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
+using System.Security;
 using System.Threading;
 using Sudo.PublicLibrary;
 using System.Diagnostics;
@@ -49,11 +50,18 @@ namespace Sudo.WindowsService
 
 		/// <summary>
 		///		Collection of UserInfo structures used
-		///		to store persistent information about
-		///		users who invoke sudo.
+		///		to persist information about users who
+		///		invoke sudo.
 		/// </summary>
 		private Dictionary<string, UserInfo> m_user_infos =
 			new Dictionary<string, UserInfo>();
+
+		/// <summary>
+		///		Collection of SecureStrings used to persist
+		///		the passwords of the users who invoke sudo.
+		/// </summary>
+		private Dictionary<string, SecureString> m_passwords =
+			new Dictionary<string, SecureString>();
 
 		/// <summary>
 		///		Collection of timers used to remove members
@@ -64,7 +72,7 @@ namespace Sudo.WindowsService
 
 		/// <summary>
 		///		This mutex is used to synchronize access
-		///		to the user_infos and m_tmrs collections.
+		///		to the m_user_infos, m_passwords, and m_tmrs collections.
 		/// </summary>
 		private Mutex m_coll_mtx = new Mutex( false );
 
@@ -220,10 +228,87 @@ namespace Sudo.WindowsService
 			// m_user_infos
 			m_user_infos.Remove( un );
 
+			// if the user has a persisted password clear
+			// it and then remove it from the collection
+			if ( m_passwords.ContainsKey( un ) )
+			{
+				m_passwords[ un ].Clear();
+				m_passwords.Remove( un );
+			}
+
 			// dispose of the timer that caused this
 			// callback and remove it from m_tmrs
 			m_tmrs[ un ].Dispose();
 			m_tmrs.Remove( un );
+
+			m_coll_mtx.ReleaseMutex();
+		}
+
+		/// <summary>
+		///		Gets a plain-text version of the user's password
+		///		from the m_passwords collection.
+		/// </summary>
+		/// <param name="userName">
+		///		User name to get the password for and to use
+		///		as the key for the m_passwords collection.
+		/// </param>
+		/// <returns>
+		///		If the password exists in the collection a plain-text 
+		///		version of the users password that is persisted as a 
+		///		SecureString.
+		/// 
+		///		If the password does not exist an empty string.
+		/// </returns>
+		public string GetPassword( string userName )
+		{
+			m_coll_mtx.WaitOne();
+
+			string p = string.Empty;
+
+			if ( m_passwords.ContainsKey( userName ) )
+			{
+				SecureString ss = m_passwords[ userName ];
+
+				IntPtr ps = Marshal.SecureStringToBSTR( ss );
+				p = Marshal.PtrToStringBSTR( ps );
+				Marshal.FreeBSTR( ps );
+			}
+
+			m_coll_mtx.ReleaseMutex();
+
+			return ( p );
+		}
+
+		/// <summary>
+		///		Creates a SecureString version of the given
+		///		plain-text password in the m_passwords collection
+		///		for the given userName.
+		/// </summary>
+		/// <param name="userName">
+		///		User name to create SecureString password for
+		///		and to use as the key for the m_passwords collection.
+		/// </param>
+		/// <param name="password">
+		///		Plain-text password to convert into a SecureString.
+		/// </param>
+		public void SetPassword( string userName, string password )
+		{
+			m_coll_mtx.WaitOne();
+
+			SecureString ss = new SecureString();
+
+			for ( int x = 0; x < password.Length; ++x )
+					ss.AppendChar( password[ x ] );
+
+			if ( m_passwords.ContainsKey( userName ) )
+			{
+				m_passwords[ userName ].Clear();
+				m_passwords[ userName ] = ss;
+			}
+			else
+			{
+				m_passwords.Add( userName, ss );
+			}
 
 			m_coll_mtx.ReleaseMutex();
 		}

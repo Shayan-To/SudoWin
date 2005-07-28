@@ -40,52 +40,19 @@ namespace Sudo.WindowsService
 	public struct UserInfo
 	{
 		/// <summary>
-		///		Cached secure string version of the user's password.
-		/// </summary>
-		private System.Security.SecureString m_password;
-
-		/// <summary>
-		///		Gets a plain-text version of the user's password.
+		///		Number of invalid logon attempts the 
+		///		user has made.
 		/// 
-		///		Sets the password as a secure string.
+		///		Each time a user executes sudo they 
+		///		get a number of chances during that
+		///		execution to enter their correct
+		///		password.
+		/// 
+		///		The invalid logon attempts that occur
+		///		during a single execution of sudo get
+		///		totalled in this member.
 		/// </summary>
-		public string Password
-		{
-			get
-			{
-				string p = string.Empty;
-				if ( m_password != null )
-				{
-					IntPtr ps = Marshal.SecureStringToBSTR( m_password );
-					p = Marshal.PtrToStringBSTR( ps );
-					Marshal.FreeBSTR( ps );
-				}
-				return ( p );
-			}
-			set
-			{
-				if ( m_password == null )
-					m_password = new System.Security.SecureString();
-
-				for ( int x = 0; x < value.Length; ++x )
-					m_password.AppendChar( value[ x ] );
-			}
-		}
-
-			/// <summary>
-			///		Number of invalid logon attempts the 
-			///		user has made.
-			/// 
-			///		Each time a user executes sudo they 
-			///		get a number of chances during that
-			///		execution to enter their correct
-			///		password.
-			/// 
-			///		The invalid logon attempts that occur
-			///		during a single execution of sudo get
-			///		totalled in this member.
-			/// </summary>
-			public int InvalidLogonsCount;
+		public int InvalidLogonsCount;
 
 		/// <summary>
 		///		Each time a user executes sudo they 
@@ -99,11 +66,11 @@ namespace Sudo.WindowsService
 		///		sudo.
 		/// </summary>
 		public int TimesExceededInvalidLogonsCount;
-
+		/*
 		/// <summary>
 		///		Whether or not the user's credentials 
 		///		are cached.
 		/// </summary>
-		public bool AreCredentialsCached;
+		public bool AreCredentialsCached;*/
 	}
 }
