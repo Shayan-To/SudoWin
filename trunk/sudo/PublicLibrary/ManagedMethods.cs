@@ -70,35 +70,35 @@ namespace Sudo.PublicLibrary
 		}
 
 		/// <summary>
-		///		Get an InteractionMethodType value from 
+		///		Gets an UIModeTypes value from 
 		///		the host process's config file.
 		/// </summary>
 		/// <param name="keyName">
 		///		Name of key to get.
 		/// </param>
 		/// <param name="keyValue">
-		///		Will be the parsed InteractionMethodType.
+		///		Will be the parsed UIModeTypes.
 		///		0 if not found or cannot parse.
 		///	</param>
 		static public void GetConfigValue(
 			string keyName,
-			out UIModeTypes interactionMethod )
+			out UIModeTypes uiModeTypesValue )
 		{
 			string temp;
 			GetConfigValue( keyName, out temp );
 			if ( temp.Length == 0 )
-				interactionMethod = 0;
+				uiModeTypesValue = 0;
 			else
 			{
 				try
 				{
-					interactionMethod = ( UIModeTypes )
+					uiModeTypesValue = ( UIModeTypes )
 						Enum.Parse( typeof( UIModeTypes ),
 						temp, true );
 				}
 				catch
 				{
-					interactionMethod = 0;
+					uiModeTypesValue = 0;
 				}
 			}
 		}

@@ -114,10 +114,11 @@ namespace Sudo.WindowsService
 				// get the user name of the user who invoked sudo
 				string un = Thread.CurrentPrincipal.Identity.Name;
 
+				return ( m_data_server.GetPassword( un ).Length > 0 );
 				// get the user info structure for this user
-				UserInfo ui = m_data_server.GetUserInfo( un );
+				//UserInfo ui = m_data_server.GetUserInfo( un );
 
-				return ( ui.AreCredentialsCached );
+				//return ( ui.AreCredentialsCached );
 			}
 		}
 
@@ -230,8 +231,15 @@ namespace Sudo.WindowsService
 			string commandPath,
 			string commandArguments )
 		{
-			// get the user name of the user who invoked sudo
-			string un = Thread.CurrentPrincipal.Identity.Name;
+			// get the domain and user name parts of the
+			// user who invoked sudo
+			Match identity_match = Regex.Match(
+				Thread.CurrentPrincipal.Identity.Name,
+				@"^([^\\]+)\\(.+)$" );
+			// domain name
+			string dn = identity_match.Groups[ 1 ].Value;
+			// user name
+			string un = identity_match.Groups[ 2 ].Value;
 
 			// get the user info structure for this user
 			UserInfo ui = m_data_server.GetUserInfo( un );
@@ -296,25 +304,32 @@ namespace Sudo.WindowsService
 
 				return ( int ) srt;
 			}
+
+			// try to get the cached password for the user
+			string cached_password = m_data_server.GetPassword( un );
 			
-			// check to see if the user's credentials are
-			// cached.  if they are not then invoke
-			// LogonUser to validate the credentials.  if
-			// LogonUser fails then increment the user's bad
-			// password attempt count and return an error.
-			if ( !ui.AreCredentialsCached )
+			/*
+			 * if the user's cached password's length is greater
+			 * than zero then it means that a password was cached
+			 * for this user and you should set the password that
+			 * you are going to use to launch the process to this
+			 * cached password.
+			 * 
+			 * if the user's password is not cached then invoke
+			 * LogonUser to validate the credentials.  if
+			 * LogonUser fails then increment the user's bad
+			 * password attempt count and return an error.
+			 */
+			if ( cached_password.Length > 0 )
+				password = cached_password;
+			else
 			{
 				// define a temporary pointer to reference
 				// the users logon handle
 				IntPtr hTemp = IntPtr.Zero;
 
-				Match m = Regex.Match( un, @"(.+)\\(.+)" );
-
-				string dn_part = m.Groups[ 1 ].Value;
-				string un_part = m.Groups[ 2 ].Value;
-				
 				// attempt to log the user on.
-				bool loggedon = Win32.Native.LogonUser( un_part, dn_part, password,
+				bool loggedon = Win32.Native.LogonUser( un, dn, password,
 					LogonType.Interactive, LogonProvider.WinNT50, out hTemp );
 
 				// did the user successfully log on?
@@ -325,10 +340,10 @@ namespace Sudo.WindowsService
 
 					// signal that the user's credentials are
 					// now cached
-					ui.AreCredentialsCached = true;
+					//ui.AreCredentialsCached = true;
 
 					// store the cached password
-					ui.Password = password;
+					m_data_server.SetPassword( un, password );
 
 					// persist the user information
 					m_data_server.SetUserInfo( un, ui );
@@ -357,9 +372,28 @@ namespace Sudo.WindowsService
 				}
 			}
 
-			// check to see if the command the user is
-			// trying to execute is allowed.  if the command is
-			// not allowed then return an error.
+			/*
+			 * do 3 checks
+			 * 
+			 * 1) check to see if the command the user is trying
+			 * to execute is a built-in shell command.  these are
+			 * not yet supported so return an error.
+			 * 
+			 * 2) check to see if the command the user is trying
+			 * to execute is a valid command path.  if not then
+			 * return an error.
+			 * 
+			 * 3) check to see if the user is allowed to execute
+			 * the given command in the sudoers file.  if the user
+			 * is not allowed to execute the given command then
+			 * return an error.
+			 */
+			if ( IsCommandBuiltin( commandPath ) )
+				return ( int ) SudoResultTypes.CommandNotAllowed;
+
+			if ( !IsCommandPathValid( ref commandPath ) )
+				return ( int ) SudoResultTypes.CommandNotAllowed;
+
 			if ( !m_data_server.IsCommandAllowed( un, commandPath, commandArguments ) )
 				return ( int ) SudoResultTypes.CommandNotAllowed;
 
@@ -380,7 +414,10 @@ namespace Sudo.WindowsService
 			bool already_member = AddRemoveUser( un, 1, pg );
 
 			// start the process
-			CreateProcessAsUser( hUser, un, ui.Password, commandPath, commandArguments );
+			Process p = CreateProcessAsUser( hUser, password, commandPath, commandArguments );
+
+			// wait for p to exit
+			p.WaitForExit();
 
 			// remove the user from the privileges group if 
 			// they were not already a member of it
@@ -393,7 +430,6 @@ namespace Sudo.WindowsService
 
 		private Process CreateProcessAsUser( 
 			IntPtr userToken,
-			string userName,
 			string password,
 			string commandPath, 
 			string commandArguments )
@@ -409,9 +445,9 @@ namespace Sudo.WindowsService
 
 			string formatted_cpath = string.Format(
 				CultureInfo.CurrentCulture,
-				"\"{0}\" -c \"{1}\" \"{2}\" \"{3}\" {4}",
+				"\"{0}\" -c -p \"{1}\" \"{2}\" {3}",
 				ConfigurationManager.AppSettings[ "consoleApplicationPath" ],
-				un, password,
+				 password,
 				commandPath, commandArguments );
 
 			ProcessInformation pi;

@@ -34,9 +34,9 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Forms;
 using System.Runtime.Remoting;
+using System.Security.Principal;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
-
 
 namespace Sudo.ConsoleApplication
 {
@@ -94,7 +94,7 @@ namespace Sudo.ConsoleApplication
 					if ( Regex.IsMatch( args[ 0 ], @"^--?(c|(current-context))$" ) &&
 						Regex.IsMatch( args[ 1 ], @"^--?(p|(password))$" ) )
 					{
-						StartProcess( args[ 2 ], args[ 3 ], string.Empty );
+						CreateProcessLoadProfile( args[ 2 ], args[ 3 ], string.Empty );
 					}
 					else if ( Regex.IsMatch( args[ 0 ], @"^--?(p|(password))$" ) )
 					{
@@ -113,7 +113,7 @@ namespace Sudo.ConsoleApplication
 					if ( Regex.IsMatch( args[ 0 ], @"^--?(c|(current-context))$" ) &&
 						Regex.IsMatch( args[ 1 ], @"^--?(p|(password))$" ) )
 					{
-						StartProcess( args[ 2 ], args[ 3 ], 
+						CreateProcessLoadProfile( args[ 2 ], args[ 3 ], 
 							string.Join( " ", args, 4, args.Length - 4 ) );
 					}
 					else if ( Regex.IsMatch( args[ 0 ], @"^--?(p|(password))$" ) )
@@ -131,7 +131,20 @@ namespace Sudo.ConsoleApplication
 			}
 		}
 
-		private static void StartProcess(
+		/// <summary>
+		///		Creates a new process with commandPath and commandArguments
+		///		and loads the executing user's profile when doing so.
+		/// </summary>
+		/// <param name="password">
+		///		Password of the executing user.
+		/// </param>
+		/// <param name="commandPath">
+		///		Command path to create new process with.
+		/// </param>
+		/// <param name="commandArguments">
+		///		Command arguments used with commandPath.
+		/// </param>
+		private static void CreateProcessLoadProfile(
 			string password,
 			string commandPath,
 			string commandArguments )
@@ -139,10 +152,43 @@ namespace Sudo.ConsoleApplication
 			ProcessStartInfo psi = new ProcessStartInfo();
 			psi.FileName = commandPath;
 			psi.Arguments = commandArguments;
+
+			// MUST be false when specifying credentials
 			psi.UseShellExecute = false;
+
+			// MUST be true so that the user's profile will
+			// be loaded and any new group memberships will
+			// be respected
 			psi.LoadUserProfile = true;
-			psi.UserName = 
-				System.Threading.Thread.CurrentPrincipal.Identity.Name;
+
+			// get the domain and user name parts of the current
+			// windows identity
+			Match identity_match = Regex.Match( 
+				WindowsIdentity.GetCurrent().Name,
+				@"^([^\\]+)\\(.+)$" );
+			// domain name
+			string dn = identity_match.Groups[ 1 ].Value;
+			// user name
+			string un = identity_match.Groups[ 2 ].Value;
+
+			// only set the domain if it is an actual domain and
+			// not the name of the local machine, i.e. a local account
+			// invoking sudo
+			if ( !Regex.IsMatch( dn,
+				Environment.MachineName, RegexOptions.IgnoreCase ) )
+			{
+				psi.Domain = dn;
+			}
+
+			psi.UserName = un;
+
+			// transform the plain-text password into a
+			// SecureString so that the ProcessStartInfo class
+			// can use it
+			psi.Password = new System.Security.SecureString();
+			for ( int x = 0; x < password.Length; ++x )
+				psi.Password.AppendChar( password[ x ] );
+
 			Process.Start( psi );
 		}
 
@@ -204,15 +250,23 @@ namespace Sudo.ConsoleApplication
 				}
 				else
 				{
-					// get the user's password if the user 
-					// does not have cached credentials on
-					// the server
+					// if the password was passed into this program as
+					// a command line argument or if the user's credentials
+					// are cached then do not bother asking the user for
+					// their password
 					password = password.Length > 0 || iss.AreCredentialsCached ?
 						string.Empty : GetPassword( ui_mode );
 
 					// invoke sudo
 					srt = ( SudoResultTypes )
 						iss.Sudo( password, commandPath, commandArguments );
+
+					// set the password to an empty string.  this is not for
+					// security as one might think but rather so if the result
+					// of Sudo was InvalidLogon the next iteration through this
+					// loop will prompt the user for their password instead
+					// of using this password known to be invalid
+					password = string.Empty;
 
 					switch ( srt )
 					{
