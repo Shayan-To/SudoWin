@@ -36,7 +36,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 <xs:element name="commands" type="commandGroupsType" minOccurs="0" maxOccurs="1" />
             </xs:sequence>
             <xs:attribute name="privilegesGroup" type="xs:string" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" use="required" />
-            <xs:attribute name="uiMode" type="uiModeType" />
             <xs:attribute name="startTime" type="xs:time" use="required" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" />
             <xs:attribute name="endTime" type="xs:time" msdata:ReadOnly="false" msprop:nullValue="_throw" use="required" msdata:AutoIncrement="false" />
             <xs:attribute name="invalidLogons" type="xs:int" use="required" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" />
@@ -44,7 +43,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <xs:attribute name="logonTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="required" />
             <xs:attribute name="invalidLogonTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="required" />
             <xs:attribute name="lockoutTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="required" />
-            <xs:attribute name="loggingLevel" type="xs:int" use="required" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" />
+            <xs:attribute name="loggingLevel" type="loggingLevelType" use="required" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" />
         </xs:complexType>
     </xs:element>
     <xs:complexType name="userType">
@@ -67,7 +66,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <xs:attribute name="logonTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
         <xs:attribute name="invalidLogonTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
         <xs:attribute name="lockoutTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
-        <xs:attribute name="loggingLevel" type="xs:int" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" use="optional" />
+        <xs:attribute name="loggingLevel" type="loggingLevelType" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" use="optional" />
     </xs:complexType>
     <xs:complexType name="commandType">
         <xs:sequence>
@@ -76,6 +75,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <xs:attribute name="enabled" type="xs:boolean" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" use="optional" />
         <xs:attribute name="startTime" type="xs:time" use="optional" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" />
         <xs:attribute name="endTime" type="xs:time" use="optional" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" />
+        <xs:attribute name="loggingLevel" type="loggingLevelType" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
     </xs:complexType>
     <xs:complexType name="usersType">
         <xs:sequence>
@@ -119,6 +119,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <xs:attribute name="enabled" type="xs:boolean" use="optional" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" />
         <xs:attribute name="startTime" type="xs:time" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
         <xs:attribute name="endTime" type="xs:time" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
+        <xs:attribute name="loggingLevel" type="loggingLevelType" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
     </xs:complexType>
     <xs:complexType name="argumentType">
         <xs:sequence>
@@ -156,7 +157,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <xs:attribute name="logonTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
         <xs:attribute name="invalidLogonTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
         <xs:attribute name="lockoutTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
-        <xs:attribute name="loggingLevel" type="xs:int" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" use="optional" />
+        <xs:attribute name="loggingLevel" type="loggingLevelType" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" use="optional" />
     </xs:complexType>
     <xs:complexType name="userGroupUsersType">
         <xs:sequence>
@@ -169,6 +170,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <xs:restriction base="xs:string">
             <xs:enumeration value="CommandLine" />
             <xs:enumeration value="Gui" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="loggingLevelType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Success" />
+            <xs:enumeration value="Failure" />
+            <xs:enumeration value="Both" />
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>
