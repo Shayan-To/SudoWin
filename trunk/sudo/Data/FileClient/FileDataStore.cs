@@ -224,6 +224,9 @@ namespace Sudo.Data.FileClient
 			// get the user node for this user
 			XmlNode unode = FindUserNode( userName );
 
+			if ( unode == null )
+				return ( ui );
+
 			GetUserAttributeValue( unode, true, "invalidLogons", out itv );
 			ui.InvalidLogons = itv;
 

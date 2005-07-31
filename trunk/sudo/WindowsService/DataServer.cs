@@ -317,131 +317,46 @@ namespace Sudo.WindowsService
 		}
 
 		/// <summary>
-		///		Gets the number of invalid
-		///		logon attempts the user is allowed.
+		///		Gets a Sudo.PublicLibrary.UserInfo structure
+		///		from the sudoers data store for the given user name.
 		/// </summary>
 		/// <param name="userName">
-		///		User name to get data for.
+		///		User name to get information for.
 		/// </param>
 		/// <returns>
-		///		Number of invalid logon attempts the
-		///		user is allowed.
+		///		Sudo.PublicLibrary.UserInfo structure for
+		///		the given user name.
 		/// </returns>
-		public int GetInvalidLogons( string userName )
+		public UserInfo GetUserInfo( string userName )
 		{
-			return m_sudoers_ds.GetInvalidLogons( userName );
+			return ( m_sudoers_ds.GetUserInfo( userName ) );
 		}
 
 		/// <summary>
-		///		Gets the number of times the user
-		///		has exceeded their invalid logon
-		///		attempt limit.
+		///		Gets a Sudo.PublicLibrary.CommandInfo structure
+		///		from the sudoers data store for the given user name,
+		///		command path, and command arguments.
 		/// </summary>
-		/// <param name="userName">
-		///		User name to get data for.
-		/// </param>
-		/// <returns>
-		///		Number of times the user has exceeded 
-		///		their invalid logon attempt limit.
-		/// </returns>
-		public int GetTimesExceededInvalidLogons( string userName )
-		{
-			return m_sudoers_ds.GetTimesExceededInvalidLogons( userName );
-		}
-
-		/// <summary>
-		///		Gets the number of seconds that the sudo
-		///		server keeps track of a user's invalid
-		///		logon attempts.
-		/// </summary>
-		/// <param name="userName">
-		///		User name to get data for.
-		/// </param>
-		/// <returns>
-		///		Number of seconds that the sudo server
-		///		keeps track of a user's invalid logon
-		///		attempts.
-		/// </returns>
-		public int GetInvalidLogonTimeout( string userName )
-		{
-			return m_sudoers_ds.GetInvalidLogonTimeout( userName );
-		}
-
-		/// <summary>
-		///		Get's the number of seconds that a user
-		///		is locked out after exceeding their
-		///		invalid logon attempt limit.
-		/// </summary>
-		/// <param name="userName">
-		///		User name to get data for.
-		/// </param>
-		/// <returns>
-		///		Number of seconds that a user is locked
-		///		out after exceed their invalid logon
-		///		attempt limit.
-		/// </returns>
-		public int GetLockoutTimeout( string userName )
-		{
-			return m_sudoers_ds.GetLockoutTimeout( userName );
-		}
-
-		/// <summary>
-		///		Gets the number of seconds that a
-		///		user's valid logon is cached.
-		/// </summary>
-		/// <param name="userName">
-		///		User name to get data for.
-		/// </param>
-		/// <returns>
-		///		Number of seconds that a user's
-		///		valid logon is cached.
-		/// </returns>
-		public int GetLogonTimeout( string userName )
-		{
-			return m_sudoers_ds.GetLogonTimeout( userName );
-		}
-
-		/// <summary>
-		///		Gets the name of the group that possesses
-		///		the same privileges that the user will
-		///		when they use sudo.
-		/// </summary>
-		/// <param name="userName">
-		///		User name to get data for.
-		/// </param>
-		/// <returns>
-		///		Name of the group that possesses the
-		///		same privileges that the user will when
-		///		they use sudo.
-		/// </returns>
-		public string GetPrivilegesGroup( string userName )
-		{
-			return m_sudoers_ds.GetPrivilegesGroup( userName );
-		}
-
-		/// <summary>
-		///		Checks to see if the user has the right
-		///		to execute the given command with sudo.
-		/// </summary>
-		/// <param name="userName">
-		///		Name of the user that is being verified as able
-		///		to execute the given command with sudo.
+		/// <param name="username">
+		///		User name to get information for.
 		/// </param>
 		/// <param name="commandPath">
-		///		Fully qualified path of the command being executed.
+		///		Command path to get information for.
 		/// </param>
 		/// <param name="commandArguments">
-		///		Arguments of the command being executed.
+		///		Command arguments to get information for.
 		/// </param>
 		/// <returns>
-		///		True if the command is allowed, false if it is not.
+		///		Sudo.PublicLibrary.CommandInfo structure for
+		///		the given user name, command path, and command 
+		///		arguments.
 		/// </returns>
-		public bool IsCommandAllowed(
-			string userName,
+		public CommandInfo GetCommandInfo(
+			string username,
 			string commandPath,
 			string commandArguments )
 		{
-			return ( m_sudoers_ds.IsCommandAllowed( userName, commandPath, commandArguments ) );
+			return ( m_sudoers_ds.GetCommandInfo( username, commandPath, commandArguments ) );
 		}
 
 		/// <summary>
