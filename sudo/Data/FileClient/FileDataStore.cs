@@ -208,47 +208,49 @@ namespace Sudo.Data.FileClient
 		/// <param name="userName">
 		///		User name to get information for.
 		/// </param>
-		/// <returns>
+		/// <param name="userInfo">
 		///		Sudo.PublicLibrary.UserInfo structure for
 		///		the given user name.
+		/// </param>
+		/// <returns>
+		///		True if the UserInfo struct is successfuly retrieved; 
+		///		false if otherwise.
 		/// </returns>
-		public UserInfo GetUserInfo( string userName )
+		public bool GetUserInfo( string userName, ref UserInfo userInfo )
 		{
-			UserInfo ui = new UserInfo();
+			// get the user node for this user
+			XmlNode unode = FindUserNode( userName );
+
+			if ( unode == null )
+				return ( false );
 
 			// temp values
 			int itv;
 			string stv;
 			LoggingLevelTypes llttv;
 
-			// get the user node for this user
-			XmlNode unode = FindUserNode( userName );
-
-			if ( unode == null )
-				return ( ui );
-
 			GetUserAttributeValue( unode, true, "invalidLogons", out itv );
-			ui.InvalidLogons = itv;
+			userInfo.InvalidLogons = itv;
 
 			GetUserAttributeValue( unode, true, "timesExceededInvalidLogons", out itv );
-			ui.TimesExceededInvalidLogons = itv;
+			userInfo.TimesExceededInvalidLogons = itv;
 
 			GetUserAttributeValue( unode, true, "invalidLogonTimeout", out itv );
-			ui.InvalidLogonTimeout = itv;
+			userInfo.InvalidLogonTimeout = itv;
 
 			GetUserAttributeValue( unode, true, "lockoutTimeout", out itv );
-			ui.LockoutTimeout = itv;
+			userInfo.LockoutTimeout = itv;
 
 			GetUserAttributeValue( unode, true, "logonTimeout", out itv );
-			ui.LogonTimeout = itv;
+			userInfo.LogonTimeout = itv;
 
 			GetUserAttributeValue( unode, true, "privilegesGroup", out stv );
-			ui.PrivilegesGroup = stv;
+			userInfo.PrivilegesGroup = stv;
 
 			GetUserAttributeValue( unode, true, "loggingLevel", out llttv );
-			ui.LoggingLevel = llttv;
+			userInfo.LoggingLevel = llttv;
 			
-			return ( ui );
+			return ( true );
 		}
 
 		/// <summary>
@@ -265,36 +267,40 @@ namespace Sudo.Data.FileClient
 		/// <param name="commandArguments">
 		///		Command arguments to get information for.
 		/// </param>
-		/// <returns>
+		/// <param name="commandInfo">
 		///		Sudo.PublicLibrary.CommandInfo structure for
 		///		the given user name, command path, and command 
 		///		arguments.
+		/// </param>
+		/// <returns>
+		///		True if the CommandInfo struct is successfuly retrieved; 
+		///		false if otherwise.
 		/// </returns>
-		public CommandInfo GetCommandInfo(
+		public bool GetCommandInfo(
 			string username,
 			string commandPath,
-			string commandArguments )
+			string commandArguments,
+			ref CommandInfo commandInfo )
 		{
-			CommandInfo ci = new CommandInfo();
-
 			// find the user node
 			XmlNode u_node = FindUserNode( username );
 
 			if ( u_node == null )
-				return ( ci );
+				return ( false );
 
 			// find the command node
 			XmlNode c_node = FindCommandNode( u_node, commandPath, commandArguments );
 
 			if ( c_node == null )
-				return ( ci );
+				return ( false );
 
-			ci.IsCommandAllowed = IsCommandAllowed( u_node, c_node, commandArguments );
+			commandInfo.IsCommandAllowed = IsCommandAllowed( u_node, c_node, commandArguments );
 
 			LoggingLevelTypes llttv;
 			GetCommandAttributeValue( u_node, true, c_node, "loggingLevel", out llttv );
+			commandInfo.LoggingLevel = llttv;
 
-			return ( ci );
+			return ( true );
 		}
 
 		/// <summary>

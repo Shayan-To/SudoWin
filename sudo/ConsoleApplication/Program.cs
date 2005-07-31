@@ -258,8 +258,7 @@ namespace Sudo.ConsoleApplication
 						string.Empty : GetPassword( ui_mode );
 
 					// invoke sudo
-					srt = ( SudoResultTypes )
-						iss.Sudo( password, commandPath, commandArguments );
+					srt = iss.Sudo( password, commandPath, commandArguments );
 
 					// set the password to an empty string.  this is not for
 					// security as one might think but rather so if the result

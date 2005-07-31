@@ -86,11 +86,14 @@ namespace Sudo.WindowsService
 				// get the user name of the user who invoked sudo
 				string un = Thread.CurrentPrincipal.Identity.Name;
 
-				// get the InvalidLogonInfo structure for this user
-				InvalidLogonInfo ui = m_data_server.GetInvalidLogonInfo( un );
+				// get the UserCache structure for this user
+				UserCache usai = m_data_server.GetUserCache( un );
 
-				return ( ui.TimesExceededInvalidLogonsCount > 
-					m_data_server.GetTimesExceededInvalidLogons( un ) - 1 );
+				UserInfo ui = new UserInfo();
+				if ( m_data_server.GetUserInfo( un, ref ui ) )
+					return ( usai.TimesExceededInvalidLogonCount > ui.TimesExceededInvalidLogons );
+				else
+					return ( false );
 			}
 		}
 
@@ -115,10 +118,6 @@ namespace Sudo.WindowsService
 				string un = Thread.CurrentPrincipal.Identity.Name;
 
 				return ( m_data_server.GetPassword( un ).Length > 0 );
-				// get the InvalidLogonInfo structure for this user
-				//InvalidLogonInfo lt = m_data_server.GetInvalidLogonInfo( un );
-
-				//return ( lt.AreCredentialsCached );
 			}
 		}
 
@@ -226,13 +225,19 @@ namespace Sudo.WindowsService
 		///		An integer that can be cast as a 
 		///		SudoResultsTypes value.
 		/// </returns>
-		public int Sudo(
+		public SudoResultTypes Sudo(
 			string password,
 			string commandPath,
 			string commandArguments )
 		{
 			// get the fully qualified user name
 			string fqun = Thread.CurrentPrincipal.Identity.Name;
+
+			// get information about this user from the
+			// sudoers data store
+			UserInfo ui = new UserInfo();
+			if ( !m_data_server.GetUserInfo( fqun, ref ui ) )
+				return ( SudoResultTypes.CommandNotAllowed );
 
 			// get the domain and user name parts of the fqun
 			Match identity_match = Regex.Match( fqun,
@@ -242,12 +247,12 @@ namespace Sudo.WindowsService
 			// user name
 			string un_part = identity_match.Groups[ 2 ].Value;
 
-			// get the tracked logon information for this user
-			InvalidLogonInfo lt = m_data_server.GetInvalidLogonInfo( fqun );
+			// get any previous information that may exist
+			// about the user accessing the sudo server
+			UserCache uc = m_data_server.GetUserCache( fqun );
 			
 			// has the user exceeded their invalid logon limit?
-			if ( lt.InvalidLogonsCount ==
-				m_data_server.GetInvalidLogons( fqun ) - 1 )
+			if ( uc.InvalidLogonCount >= ui.InvalidLogons )
 			{
 				// sudo result to return
 				SudoResultTypes srt;
@@ -257,8 +262,8 @@ namespace Sudo.WindowsService
 				// invalid logon limit by 1?  if so this means that
 				// the user is continuing to attempt to run sudo
 				// even though they are locket out.  bad user!
-				if ( lt.TimesExceededInvalidLogonsCount ==
-					m_data_server.GetTimesExceededInvalidLogons( fqun ) )
+				if ( uc.TimesExceededInvalidLogonCount >= 
+					ui.TimesExceededInvalidLogons )
 				{
 					// notify the client that this user is locked out
 					srt = SudoResultTypes.SudoUserLockedOut;
@@ -266,19 +271,18 @@ namespace Sudo.WindowsService
 				// has the user exceeded the limit on the
 				// number of times they are allowed to exceed 
 				// their invalid logon limit
-				else if ( lt.TimesExceededInvalidLogonsCount ==
-					m_data_server.GetTimesExceededInvalidLogons( fqun ) - 1 )
+				else if ( uc.TimesExceededInvalidLogonCount >=
+					ui.TimesExceededInvalidLogons - 1 )
 				{
 					// increment the number of times the user
 					// has reached their invalid logon limit
-					++lt.TimesExceededInvalidLogonsCount;
+					++uc.TimesExceededInvalidLogonCount;
 
-					// persist the SudoCallerInformation
-					m_data_server.SetInvalidLogonInfo( fqun, lt );
-
-					// schedule the user's lockout for removal
-					m_data_server.RemoveInvalidLogonInfo(
-						fqun, m_data_server.GetLockoutTimeout( fqun ) );
+					// save the user's cache and schedule it
+					// for removal according to the user's
+					// LockoutTimeout value
+					m_data_server.SetUserCache( fqun, uc );
+					m_data_server.RemoveUserCache( fqun, ui.LockoutTimeout );
 
 					// notify the client that this user is locked out
 					srt = SudoResultTypes.SudoUserLockedOut;
@@ -290,20 +294,23 @@ namespace Sudo.WindowsService
 				{
 					// increment the number of times the user
 					// has reached their invalid logon limit
-					++lt.TimesExceededInvalidLogonsCount;
+					++uc.TimesExceededInvalidLogonCount;
 
 					// reset the users invalid logon count
 					// to 0 so that they are allowed to try
 					// to execute sudo again
-					lt.InvalidLogonsCount = 0;
+					uc.InvalidLogonCount = 0;
 
-					// persist the SudoCallerInformation
-					m_data_server.SetInvalidLogonInfo( fqun, lt );
+					// save the user's cache so that subsequent
+					// attempts by the user to call sudo will
+					// know how many invalid logon attempts the
+					// user has made
+					m_data_server.SetUserCache( fqun, uc );
 
 					srt = SudoResultTypes.TooManyInvalidLogons;
 				}
 
-				return ( int ) srt;
+				return ( srt );
 			}
 
 			// try to get the cached password for the user
@@ -339,37 +346,26 @@ namespace Sudo.WindowsService
 					// close the user's logon handle
 					Win32.Native.CloseHandle( hTemp );
 
-					// signal that the user's credentials are
-					// now cached
-					//lt.AreCredentialsCached = true;
-
-					// store the cached password
-					m_data_server.SetPassword( fqun, password );
-
-					// persist the SudoCallerInformation
-					m_data_server.SetInvalidLogonInfo( fqun, lt );
-
-					// schedule the user's cached logon for
-					// removal
-					m_data_server.RemoveInvalidLogonInfo(
-						fqun, m_data_server.GetLogonTimeout( fqun ) );
+					// save the user's cache and schedule it
+					// for removal according to the user's
+					// LogonTimeout value
+					m_data_server.SetUserCache( fqun, password );
+					m_data_server.RemoveUserCache( fqun, ui.LogonTimeout );
 				}
 				else
 				{
 					// increment the number of invalid logons
 					// for this user
-					++lt.InvalidLogonsCount;
+					++uc.InvalidLogonCount;
 
-					// persist the SudoCallerInformation
-					m_data_server.SetInvalidLogonInfo( fqun, lt );
-
-					// schedule the user's invalid logon count
-					// for removal
-					m_data_server.RemoveInvalidLogonInfo( fqun,
-						m_data_server.GetInvalidLogonTimeout( fqun ) );
+					// save the user's cache and schedule it
+					// for removal according to the user's
+					// InvalidLogonTimeout value
+					m_data_server.SetUserCache( fqun, uc );
+					m_data_server.RemoveUserCache( fqun, ui.InvalidLogonTimeout );
 
 					// return an error
-					return ( int ) SudoResultTypes.InvalidLogon;
+					return ( SudoResultTypes.InvalidLogon );
 				}
 			}
 
@@ -394,16 +390,22 @@ namespace Sudo.WindowsService
 			 * windows service?  if not then return an error.
 			 */
 			if ( IsCommandBuiltin( commandPath ) )
-				return ( int ) SudoResultTypes.CommandNotAllowed;
+				return ( SudoResultTypes.CommandNotAllowed );
 
 			if ( !IsCommandPathValid( ref commandPath ) )
-				return ( int ) SudoResultTypes.CommandNotAllowed;
+				return ( SudoResultTypes.CommandNotAllowed );
 
-			if ( !m_data_server.IsCommandAllowed( fqun, commandPath, commandArguments ) )
-				return ( int ) SudoResultTypes.CommandNotAllowed;
+			CommandInfo ci = new CommandInfo();
+			if ( m_data_server.GetCommandInfo( fqun, commandPath, commandArguments, ref ci ) )
+			{
+				if ( !ci.IsCommandAllowed )
+					return ( SudoResultTypes.CommandNotAllowed );
+			}
+			else
+				return ( SudoResultTypes.CommandNotAllowed );
 
 			if ( !VerifySameSignature( ConfigurationManager.AppSettings[ "consoleApplicationPath" ] ) )
-				return ( int ) SudoResultTypes.CommandNotAllowed;
+				return ( SudoResultTypes.CommandNotAllowed );
 
 			// get the user token for the user who
 			// is executing the sudo client
@@ -414,7 +416,7 @@ namespace Sudo.WindowsService
 
 			// get the privileges group this user will
 			// join while this process is executed
-			string pg = m_data_server.GetPrivilegesGroup( fqun );
+			string pg = ui.PrivilegesGroup;
 
 			// add the user to the privileges group if they
 			// are not already a member of it and record whether
@@ -432,7 +434,7 @@ namespace Sudo.WindowsService
 			if ( !already_member )
 				AddRemoveUser( fqun, 0, pg );
 
-			return 0;
+			return ( 0 );
 		}
 
 

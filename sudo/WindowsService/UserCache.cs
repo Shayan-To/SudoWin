@@ -27,39 +27,44 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
-using System.Reflection;
-using System.Runtime.CompilerServices;
+
 using System.Runtime.InteropServices;
 
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-[assembly: AssemblyTitle( "Sudo.PublicLibrary" )]
-[assembly: AssemblyDescription( "Assembly that is used by Sudo.WindowsService and any sudo client." )]
-[assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "Lost Creations" )]
-[assembly: AssemblyProduct( "Sudo" )]
-[assembly: AssemblyCopyright( "Copyright © Lost Creations 2005" )]
-[assembly: AssemblyTrademark( "" )]
-[assembly: AssemblyCulture( "" )]
+namespace Sudo.WindowsService
+{
+	/// <summary>
+	///		Used to store persistent information about server
+	///		access attempts made by the users.
+	/// </summary>
+	[Serializable]
+	public struct UserCache
+	{
+		/// <summary>
+		///		Number of invalid logon attempts the 
+		///		user has made.
+		/// 
+		///		Each time a user executes sudo they 
+		///		get a number of chances during that
+		///		execution to enter their correct
+		///		password.
+		/// 
+		///		The invalid logon attempts that occur
+		///		during a single execution of sudo get
+		///		totalled in this member.
+		/// </summary>
+		public int InvalidLogonCount;
 
-[assembly: CLSCompliant( true )]
-
-// Setting ComVisible to false makes the types in this assembly not visible 
-// to COM componenets.  If you need to access a type in this assembly from 
-// COM, set the ComVisible attribute to true on that type.
-[assembly: ComVisible( false )]
-
-// The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid( "ddaeb38d-eeb7-4c90-80cf-aeb3b4f66208" )]
-
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-[assembly: AssemblyVersion( "0.0.*" )]
+		/// <summary>
+		///		Each time a user executes sudo they 
+		///		get a number of chances during that
+		///		execution to enter their correct
+		///		password.  
+		/// 
+		///		This member represents the number of
+		///		times a user has exceeded their invalid
+		///		logon limit while attempting to execute
+		///		sudo.
+		/// </summary>
+		public int TimesExceededInvalidLogonCount;
+	}
+}
