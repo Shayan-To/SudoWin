@@ -46,5 +46,11 @@
     </None>
     <None Include="sudo.snk" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PublicLibrary\PublicLibrary.csproj">
+      <Project>{81E98C70-C681-4DD4-B6B1-154E12567B9C}</Project>
+      <Name>PublicLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

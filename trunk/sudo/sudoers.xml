@@ -7,8 +7,8 @@
 			lockoutTimeout="180" 
 			logonTimeout="60" 
 			startTime="00:00:00.00000" 
-			endTime="23:59:59.99999"
-			loggingLevel="5">
+			endTime="23:59:59.99999" 
+			loggingLevel="Both">
 	<users>
 		<userGroup name="standard">
 			<users>

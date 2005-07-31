@@ -27,6 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
+using Sudo.PublicLibrary;
 
 namespace Sudo.Data
 {
@@ -64,109 +65,40 @@ namespace Sudo.Data
 		void Close();
 
 		/// <summary>
-		///		Checks to see if the user has the right
-		///		to execute the given command with sudo.
+		///		Gets a Sudo.PublicLibrary.UserInfo structure
+		///		from the sudoers data store for the given user name.
 		/// </summary>
 		/// <param name="userName">
-		///		Name of the user that is being verified as able
-		///		to execute the given command with sudo.
+		///		User name to get information for.
+		/// </param>
+		/// <returns>
+		///		Sudo.PublicLibrary.UserInfo structure for
+		///		the given user name.
+		/// </returns>
+		UserInfo GetUserInfo( string userName );
+
+		/// <summary>
+		///		Gets a Sudo.PublicLibrary.CommandInfo structure
+		///		from the sudoers data store for the given user name,
+		///		command path, and command arguments.
+		/// </summary>
+		/// <param name="username">
+		///		User name to get information for.
 		/// </param>
 		/// <param name="commandPath">
-		///		Fully qualified path of the command being executed.
+		///		Command path to get information for.
 		/// </param>
 		/// <param name="commandArguments">
-		///		Arguments of the command being executed.
+		///		Command arguments to get information for.
 		/// </param>
 		/// <returns>
-		///		True if the command is allowed, false if it is not.
+		///		Sudo.PublicLibrary.CommandInfo structure for
+		///		the given user name, command path, and command 
+		///		arguments.
 		/// </returns>
-		bool IsCommandAllowed(
-			string userName,
+		CommandInfo GetCommandInfo( 
+			string username, 
 			string commandPath, 
 			string commandArguments );
-
-		/// <summary>
-		///		Gets the number of invalid
-		///		logon attempts the user is allowed.
-		/// </summary>
-		/// <param name="userName">
-		///		User name to get data for.
-		/// </param>
-		/// <returns>
-		///		Number of invalid logon attempts the
-		///		user is allowed.
-		/// </returns>
-		int GetInvalidLogons( string userName );
-
-		/// <summary>
-		///		Gets the number of times the user
-		///		has exceeded their invalid logon
-		///		attempt limit.
-		/// </summary>
-		/// <param name="userName">
-		///		User name to get data for.
-		/// </param>
-		/// <returns>
-		///		Number of times the user has exceeded
-		///		their invalid logon attempt limit.
-		/// </returns>
-		int GetTimesExceededInvalidLogons( string userName );
-
-		/// <summary>
-		///		Gets the number of seconds that the sudo
-		///		server keeps track of a user's invalid
-		///		logon attempts.
-		/// </summary>
-		/// <param name="userName">
-		///		User name to get data for.
-		/// </param>
-		/// <returns>
-		///		Number of seconds that the sudo server keeps
-		///		track of a user's invalid logon attempts.
-		/// </returns>
-		int GetInvalidLogonTimeout( string userName );
-
-		/// <summary>
-		///		Get's the number of seconds that a user
-		///		is locked out after exceeding their
-		///		invalid logon attempt limit.
-		/// </summary>
-		/// <param name="userName">
-		///		User name to get data for.
-		/// </param>
-		/// <returns>
-		///		Number of seconds that a user is locked out
-		///		after exceeding their invalid logon attempt
-		///		limit.
-		/// </returns>
-		int GetLockoutTimeout( string userName );
-		
-		/// <summary>
-		///		Gets the number of seconds that a
-		///		user's valid logon is cached.
-		/// </summary>
-		/// <param name="userName">
-		///		User name to get data for.
-		/// </param>
-		/// <returns>
-		///		Number of seconds that a user's
-		///		valid logon is cached.
-		/// </returns>
-		int GetLogonTimeout( string userName );
-
-		/// <summary>
-		///		Gets the name of the group that possesses
-		///		the same privileges that the user will
-		///		when they use sudo.
-		/// </summary>
-		/// <param name="userName">
-		///		User name to get data for.
-		/// </param>
-		/// <returns>
-		///		Name of the group that possesses the
-		///		same privileges that the user will when
-		///		they use sudo.
-		/// </returns>
-		string GetPrivilegesGroup( string userName );
 	}
 }

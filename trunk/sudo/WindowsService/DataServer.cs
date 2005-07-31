@@ -49,12 +49,12 @@ namespace Sudo.WindowsService
 		private Sudo.Data.IDataStore m_sudoers_ds;
 
 		/// <summary>
-		///		Collection of UserInfo structures used
-		///		to persist information about users who
-		///		invoke sudo.
+		///		Collection of InvalidLogonInfo structures used
+		///		to track information about invalid logon attempts
+		///		made by users when they call sudo.
 		/// </summary>
-		private Dictionary<string, UserInfo> m_user_infos =
-			new Dictionary<string, UserInfo>();
+		private Dictionary<string, InvalidLogonInfo> m_ilis =
+			new Dictionary<string, InvalidLogonInfo>();
 
 		/// <summary>
 		///		Collection of SecureStrings used to persist
@@ -65,14 +65,14 @@ namespace Sudo.WindowsService
 
 		/// <summary>
 		///		Collection of timers used to remove members
-		///		of m_user_infos when their time is up.
+		///		of m_ilis when their time is up.
 		/// </summary>
 		private Dictionary<string, Timer> m_tmrs =
 			new Dictionary<string, Timer>();
 
 		/// <summary>
 		///		This mutex is used to synchronize access
-		///		to the m_user_infos, m_passwords, and m_tmrs collections.
+		///		to the m_ilis, m_passwords, and m_tmrs collections.
 		/// </summary>
 		private Mutex m_coll_mtx = new Mutex( false );
 
@@ -110,74 +110,77 @@ namespace Sudo.WindowsService
 		}
 
 		/// <summary>
-		///		Gets a userInfo structure for the given
-		///		user name.
+		///		Gets the invalid logon info for the
+		///		given user name.
 		/// </summary>
 		/// <param name="userName">
 		///		User name to look for.
 		/// </param>
 		/// <returns>
-		///		If the userInfo structure for the given
+		///		If the InvalidLogonInfo structure for the given
 		///		user name exists in the cache then this
-		///		method will return that user name.
+		///		method will return the information for that
+		///		user name.
 		/// 
-		///		If the userInfo structure for the given
-		///		user name does not yet exist in the cache
-		///		a new userInfo structure will be returned.
+		///		If the InvalidLogonInfo structure for the given 
+		///		user name does not exist in the cache then this 
+		///		method will return a new InvalidLogonInfo structure.
 		/// </returns>
 		[DebuggerHidden]
-		public UserInfo GetUserInfo( string userName )
+		public InvalidLogonInfo GetInvalidLogonInfo( string userName )
 		{
-			// userInfo structure this method will return
-			UserInfo ui;
+			// InvalidLogonInfo structure this method will return
+			InvalidLogonInfo ili;
 
-			// get the user info structure with the given
+			// get the InvalidLogonInfo structure with the given
 			// user name as the collection's key
 			m_coll_mtx.WaitOne();
-			bool is_cached = m_user_infos.TryGetValue( userName, out ui );
+			bool is_cached = m_ilis.TryGetValue( userName, out ili );
 			m_coll_mtx.ReleaseMutex();
 
 			if ( is_cached )
-				return ( ui );
+				return ( ili );
 			else
-				return ( new UserInfo() );
+				return ( new InvalidLogonInfo() );
 		}
 
 		/// <summary>
-		///		If the user info for the given user name
-		///		does not already exist in the user info
+		///		If the InvalidLogonInfo for the given user name
+		///		does not already exist in the InvalidLogonInfo
 		///		collection then the it is added.
 		/// 
-		///		If the user info for the given user name
-		///		does already exist in the the user info
+		///		If the InvalidLogonInfo for the given user name
+		///		does already exist in the the InvalidLogonInfo
 		///		collection then the existing data is updated.
 		/// </summary>
 		/// <param name="userName">
-		///		User name to set the user info for.
+		///		User name to set the InvalidLogonInfo for.
 		/// </param>
-		/// <param name="userInfo">
-		///		User info to set.
+		/// <param name="invalidLogonInfo">
+		///		InvalidLogonInfo to set.
 		/// </param>
 		[DebuggerHidden]
-		public void SetUserInfo( string userName, UserInfo userInfo )
+		public void SetInvalidLogonInfo( 
+			string userName, 
+			InvalidLogonInfo invalidLogonInfo )
 		{
 			m_coll_mtx.WaitOne();
 			
-			// whether or not the userInfo structure
+			// whether or not the invalidLogonInfo structure
 			// with the userName parameter for its key
-			// is already is the m_user_infos collection
-			bool is_cached = m_user_infos.ContainsKey( userName );
+			// is already is the m_ilis collection
+			bool is_cached = m_ilis.ContainsKey( userName );
 			
 			if ( is_cached )
-				m_user_infos[ userName ] = userInfo;
+				m_ilis[ userName ] = invalidLogonInfo;
 			else
-				m_user_infos.Add( userName, userInfo );
+				m_ilis.Add( userName, invalidLogonInfo );
 
 			m_coll_mtx.ReleaseMutex();
 		}
 
 		/// <summary>
-		///		Remove the userInfo structure from the collection.
+		///		Remove the InvalidLogonInfo structure from the collection.
 		/// </summary>
 		/// <param name="userName">
 		///		User name that is the key of the item in the collection
@@ -186,7 +189,7 @@ namespace Sudo.WindowsService
 		/// <param name="secondsUntil">
 		///		Number of seconds to wait until the item is removed.
 		/// </param>
-		public void RemoveUserInfo( string userName, int secondsUntil )
+		public void RemoveInvalidLogonInfo( string userName, int secondsUntil )
 		{
 			m_coll_mtx.WaitOne();
 
@@ -209,8 +212,8 @@ namespace Sudo.WindowsService
 		}
 
 		/// <summary>
-		///		Callback method that removes a userInfo structure
-		///		from m_user_infos
+		///		Callback method that removes a invalidLogonInfo structure
+		///		from m_ilis
 		/// </summary>
 		/// <param name="state">
 		///		User name string.
@@ -223,10 +226,10 @@ namespace Sudo.WindowsService
 			// a user name string
 			string un = state as string;
 
-			// remove the userInfo structure 
+			// remove the invalidLogonInfo structure 
 			// for the given user name from
-			// m_user_infos
-			m_user_infos.Remove( un );
+			// m_ilis
+			m_ilis.Remove( un );
 
 			// if the user has a persisted password clear
 			// it and then remove it from the collection

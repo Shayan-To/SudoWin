@@ -40,13 +40,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandInfo.cs" />
     <Compile Include="ISudoServer.cs" />
+    <Compile Include="LoggingLevelTypes.cs" />
     <Compile Include="ManagedMethods.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SudoResultTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UIModeTypes.cs" />
+    <Compile Include="UserInfo.cs" />
     <Compile Include="Win32.cs" />
   </ItemGroup>
   <ItemGroup>

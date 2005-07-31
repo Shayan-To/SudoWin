@@ -86,8 +86,8 @@ namespace Sudo.WindowsService
 				// get the user name of the user who invoked sudo
 				string un = Thread.CurrentPrincipal.Identity.Name;
 
-				// get the user info structure for this user
-				UserInfo ui = m_data_server.GetUserInfo( un );
+				// get the InvalidLogonInfo structure for this user
+				InvalidLogonInfo ui = m_data_server.GetInvalidLogonInfo( un );
 
 				return ( ui.TimesExceededInvalidLogonsCount > 
 					m_data_server.GetTimesExceededInvalidLogons( un ) - 1 );
@@ -115,10 +115,10 @@ namespace Sudo.WindowsService
 				string un = Thread.CurrentPrincipal.Identity.Name;
 
 				return ( m_data_server.GetPassword( un ).Length > 0 );
-				// get the user info structure for this user
-				//UserInfo ui = m_data_server.GetUserInfo( un );
+				// get the InvalidLogonInfo structure for this user
+				//InvalidLogonInfo lt = m_data_server.GetInvalidLogonInfo( un );
 
-				//return ( ui.AreCredentialsCached );
+				//return ( lt.AreCredentialsCached );
 			}
 		}
 
@@ -231,22 +231,23 @@ namespace Sudo.WindowsService
 			string commandPath,
 			string commandArguments )
 		{
-			// get the domain and user name parts of the
-			// user who invoked sudo
-			Match identity_match = Regex.Match(
-				Thread.CurrentPrincipal.Identity.Name,
+			// get the fully qualified user name
+			string fqun = Thread.CurrentPrincipal.Identity.Name;
+
+			// get the domain and user name parts of the fqun
+			Match identity_match = Regex.Match( fqun,
 				@"^([^\\]+)\\(.+)$" );
 			// domain name
-			string dn = identity_match.Groups[ 1 ].Value;
+			string dn_part = identity_match.Groups[ 1 ].Value;
 			// user name
-			string un = identity_match.Groups[ 2 ].Value;
+			string un_part = identity_match.Groups[ 2 ].Value;
 
-			// get the user info structure for this user
-			UserInfo ui = m_data_server.GetUserInfo( un );
+			// get the tracked logon information for this user
+			InvalidLogonInfo lt = m_data_server.GetInvalidLogonInfo( fqun );
 			
 			// has the user exceeded their invalid logon limit?
-			if ( ui.InvalidLogonsCount ==
-				m_data_server.GetInvalidLogons( un ) - 1 )
+			if ( lt.InvalidLogonsCount ==
+				m_data_server.GetInvalidLogons( fqun ) - 1 )
 			{
 				// sudo result to return
 				SudoResultTypes srt;
@@ -256,8 +257,8 @@ namespace Sudo.WindowsService
 				// invalid logon limit by 1?  if so this means that
 				// the user is continuing to attempt to run sudo
 				// even though they are locket out.  bad user!
-				if ( ui.TimesExceededInvalidLogonsCount ==
-					m_data_server.GetTimesExceededInvalidLogons( un ) )
+				if ( lt.TimesExceededInvalidLogonsCount ==
+					m_data_server.GetTimesExceededInvalidLogons( fqun ) )
 				{
 					// notify the client that this user is locked out
 					srt = SudoResultTypes.SudoUserLockedOut;
@@ -265,19 +266,19 @@ namespace Sudo.WindowsService
 				// has the user exceeded the limit on the
 				// number of times they are allowed to exceed 
 				// their invalid logon limit
-				else if ( ui.TimesExceededInvalidLogonsCount ==
-					m_data_server.GetTimesExceededInvalidLogons( un ) - 1 )
+				else if ( lt.TimesExceededInvalidLogonsCount ==
+					m_data_server.GetTimesExceededInvalidLogons( fqun ) - 1 )
 				{
 					// increment the number of times the user
 					// has reached their invalid logon limit
-					++ui.TimesExceededInvalidLogonsCount;
+					++lt.TimesExceededInvalidLogonsCount;
 
-					// persist the user information
-					m_data_server.SetUserInfo( un, ui );
+					// persist the SudoCallerInformation
+					m_data_server.SetInvalidLogonInfo( fqun, lt );
 
 					// schedule the user's lockout for removal
-					m_data_server.RemoveUserInfo(
-						un, m_data_server.GetLockoutTimeout( un ) );
+					m_data_server.RemoveInvalidLogonInfo(
+						fqun, m_data_server.GetLockoutTimeout( fqun ) );
 
 					// notify the client that this user is locked out
 					srt = SudoResultTypes.SudoUserLockedOut;
@@ -289,15 +290,15 @@ namespace Sudo.WindowsService
 				{
 					// increment the number of times the user
 					// has reached their invalid logon limit
-					++ui.TimesExceededInvalidLogonsCount;
+					++lt.TimesExceededInvalidLogonsCount;
 
 					// reset the users invalid logon count
 					// to 0 so that they are allowed to try
 					// to execute sudo again
-					ui.InvalidLogonsCount = 0;
+					lt.InvalidLogonsCount = 0;
 
-					// persist the user information
-					m_data_server.SetUserInfo( un, ui );
+					// persist the SudoCallerInformation
+					m_data_server.SetInvalidLogonInfo( fqun, lt );
 
 					srt = SudoResultTypes.TooManyInvalidLogons;
 				}
@@ -306,7 +307,7 @@ namespace Sudo.WindowsService
 			}
 
 			// try to get the cached password for the user
-			string cached_password = m_data_server.GetPassword( un );
+			string cached_password = m_data_server.GetPassword( fqun );
 			
 			/*
 			 * if the user's cached password's length is greater
@@ -329,7 +330,7 @@ namespace Sudo.WindowsService
 				IntPtr hTemp = IntPtr.Zero;
 
 				// attempt to log the user on.
-				bool loggedon = Win32.Native.LogonUser( un, dn, password,
+				bool loggedon = Win32.Native.LogonUser( un_part, dn_part, password,
 					LogonType.Interactive, LogonProvider.WinNT50, out hTemp );
 
 				// did the user successfully log on?
@@ -340,32 +341,32 @@ namespace Sudo.WindowsService
 
 					// signal that the user's credentials are
 					// now cached
-					//ui.AreCredentialsCached = true;
+					//lt.AreCredentialsCached = true;
 
 					// store the cached password
-					m_data_server.SetPassword( un, password );
+					m_data_server.SetPassword( fqun, password );
 
-					// persist the user information
-					m_data_server.SetUserInfo( un, ui );
+					// persist the SudoCallerInformation
+					m_data_server.SetInvalidLogonInfo( fqun, lt );
 
 					// schedule the user's cached logon for
 					// removal
-					m_data_server.RemoveUserInfo( 
-						un, m_data_server.GetLogonTimeout( un ) );
+					m_data_server.RemoveInvalidLogonInfo(
+						fqun, m_data_server.GetLogonTimeout( fqun ) );
 				}
 				else
 				{
 					// increment the number of invalid logons
 					// for this user
-					++ui.InvalidLogonsCount;
+					++lt.InvalidLogonsCount;
 
-					// persist the user information
-					m_data_server.SetUserInfo( un, ui );
+					// persist the SudoCallerInformation
+					m_data_server.SetInvalidLogonInfo( fqun, lt );
 
 					// schedule the user's invalid logon count
 					// for removal
-					m_data_server.RemoveUserInfo( un,
-						m_data_server.GetInvalidLogonTimeout( un ) );
+					m_data_server.RemoveInvalidLogonInfo( fqun,
+						m_data_server.GetInvalidLogonTimeout( fqun ) );
 
 					// return an error
 					return ( int ) SudoResultTypes.InvalidLogon;
@@ -373,7 +374,7 @@ namespace Sudo.WindowsService
 			}
 
 			/*
-			 * do 3 checks
+			 * do 4 checks
 			 * 
 			 * 1) check to see if the command the user is trying
 			 * to execute is a built-in shell command.  these are
@@ -387,6 +388,10 @@ namespace Sudo.WindowsService
 			 * the given command in the sudoers file.  if the user
 			 * is not allowed to execute the given command then
 			 * return an error.
+			 * 
+			 * 4) is the sudo console application on this machine
+			 * signed by the same strong name key as the sudo
+			 * windows service?  if not then return an error.
 			 */
 			if ( IsCommandBuiltin( commandPath ) )
 				return ( int ) SudoResultTypes.CommandNotAllowed;
@@ -394,7 +399,10 @@ namespace Sudo.WindowsService
 			if ( !IsCommandPathValid( ref commandPath ) )
 				return ( int ) SudoResultTypes.CommandNotAllowed;
 
-			if ( !m_data_server.IsCommandAllowed( un, commandPath, commandArguments ) )
+			if ( !m_data_server.IsCommandAllowed( fqun, commandPath, commandArguments ) )
+				return ( int ) SudoResultTypes.CommandNotAllowed;
+
+			if ( !VerifySameSignature( ConfigurationManager.AppSettings[ "consoleApplicationPath" ] ) )
 				return ( int ) SudoResultTypes.CommandNotAllowed;
 
 			// get the user token for the user who
@@ -402,16 +410,16 @@ namespace Sudo.WindowsService
 			IntPtr hUser = IntPtr.Zero;
 			
 			// get the user's logon token
-			QueryUserToken( un, ref hUser );
+			QueryUserToken( fqun, ref hUser );
 
 			// get the privileges group this user will
 			// join while this process is executed
-			string pg = m_data_server.GetPrivilegesGroup( un );
+			string pg = m_data_server.GetPrivilegesGroup( fqun );
 
 			// add the user to the privileges group if they
 			// are not already a member of it and record whether
 			// or not they are already a member of it
-			bool already_member = AddRemoveUser( un, 1, pg );
+			bool already_member = AddRemoveUser( fqun, 1, pg );
 
 			// start the process
 			Process p = CreateProcessAsUser( hUser, password, commandPath, commandArguments );
@@ -422,7 +430,7 @@ namespace Sudo.WindowsService
 			// remove the user from the privileges group if 
 			// they were not already a member of it
 			if ( !already_member )
-				AddRemoveUser( un, 0, pg );
+				AddRemoveUser( fqun, 0, pg );
 
 			return 0;
 		}
@@ -710,6 +718,74 @@ namespace Sudo.WindowsService
 			else
 				return ( string.Empty );
 		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="otherAssemblyFilePath"></param>
+		/// <remarks>
+		///		http://blogs.msdn.com/shawnfa/archive/2004/06/07/150378.aspx
+		/// </remarks>
+		private bool VerifySameSignature( string otherAssemblyFilePath )
+		{
+			// whether or not both the client and server
+			// assemblies have the same strong name signature
+			bool same_sig = false;
+
+			// get references to the client and server assemblies
+			Assembly client = Assembly.LoadFile( otherAssemblyFilePath );
+			Assembly server = Assembly.GetExecutingAssembly();
+
+			// client/server was verified
+			bool client_wf = false;
+			bool server_wf = false;
+
+			// if both the client and the server assemblies
+			// both have valid strong name keys then compare
+			// their public key tokens
+			if ( StrongNameSignatureVerificationEx(
+					client.Location, true, ref client_wf ) &&
+				StrongNameSignatureVerificationEx(
+					server.Location, true, ref server_wf ) )
+			{
+
+				// get the client and server public key tokens
+				byte[] client_pubkey = client.GetName().GetPublicKeyToken();
+				byte[] server_pubkey = server.GetName().GetPublicKeyToken();
+
+				// if the public key tokens are the same size
+				// then go deeper and verify them bit by bit
+				if ( client_pubkey.Length == server_pubkey.Length )
+				{
+					// assume both assemblies have the same
+					// signature until the bit by bit comparison
+					// proves us wrong
+
+					same_sig = true;
+					for ( int x = 0; x < client_pubkey.Length && same_sig; ++x )
+						if ( client_pubkey[ x ] != server_pubkey[ x ] )
+							same_sig = false;
+				}
+			}
+
+			return ( same_sig );
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="filePath"></param>
+		/// <param name="forceVerficiation"></param>
+		/// <param name="wasVerified"></param>
+		/// <returns></returns>
+		/// <remarks>
+		///		http://blogs.msdn.com/shawnfa/archive/2004/06/07/150378.aspx
+		/// </remarks>
+		[DllImport( "mscoree.dll", CharSet = CharSet.Unicode )]
+		private static extern bool StrongNameSignatureVerificationEx( 
+			string filePath, 
+			bool forceVerficiation, 
+			ref bool wasVerified );
 
 		#region IDisposable Members
 

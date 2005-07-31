@@ -31,6 +31,7 @@ using System.Xml;
 using System.Data;
 using System.Text;
 using System.Xml.Schema;
+using Sudo.PublicLibrary;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -92,7 +93,7 @@ namespace Sudo.Data.FileClient
 		///		the value of the userName parameter of this
 		///		method.
 		/// </returns>
-		private XmlNode GetUserNode( string userName )
+		private XmlNode FindUserNode( string userName )
 		{
 			// find the user in the sudoers file.  to do this
 			// we first build a xpath query which will look for
@@ -201,11 +202,105 @@ namespace Sudo.Data.FileClient
 		}
 
 		/// <summary>
+		///		Gets a Sudo.PublicLibrary.UserInfo structure
+		///		from the sudoers data store for the given user name.
+		/// </summary>
+		/// <param name="userName">
+		///		User name to get information for.
+		/// </param>
+		/// <returns>
+		///		Sudo.PublicLibrary.UserInfo structure for
+		///		the given user name.
+		/// </returns>
+		public UserInfo GetUserInfo( string userName )
+		{
+			UserInfo ui = new UserInfo();
+
+			// temp values
+			int itv;
+			string stv;
+			LoggingLevelTypes llttv;
+
+			// get the user node for this user
+			XmlNode unode = FindUserNode( userName );
+
+			GetUserAttributeValue( unode, true, "invalidLogons", out itv );
+			ui.InvalidLogons = itv;
+
+			GetUserAttributeValue( unode, true, "timesExceededInvalidLogons", out itv );
+			ui.TimesExceededInvalidLogons = itv;
+
+			GetUserAttributeValue( unode, true, "invalidLogonTimeout", out itv );
+			ui.InvalidLogonTimeout = itv;
+
+			GetUserAttributeValue( unode, true, "lockoutTimeout", out itv );
+			ui.LockoutTimeout = itv;
+
+			GetUserAttributeValue( unode, true, "logonTimeout", out itv );
+			ui.LogonTimeout = itv;
+
+			GetUserAttributeValue( unode, true, "privilegesGroup", out stv );
+			ui.PrivilegesGroup = stv;
+
+			GetUserAttributeValue( unode, true, "loggingLevel", out llttv );
+			ui.LoggingLevel = llttv;
+			
+			return ( ui );
+		}
+
+		/// <summary>
+		///		Gets a Sudo.PublicLibrary.CommandInfo structure
+		///		from the sudoers data store for the given user name,
+		///		command path, and command arguments.
+		/// </summary>
+		/// <param name="username">
+		///		User name to get information for.
+		/// </param>
+		/// <param name="commandPath">
+		///		Command path to get information for.
+		/// </param>
+		/// <param name="commandArguments">
+		///		Command arguments to get information for.
+		/// </param>
+		/// <returns>
+		///		Sudo.PublicLibrary.CommandInfo structure for
+		///		the given user name, command path, and command 
+		///		arguments.
+		/// </returns>
+		public CommandInfo GetCommandInfo(
+			string username,
+			string commandPath,
+			string commandArguments )
+		{
+			CommandInfo ci = new CommandInfo();
+
+			// find the user node
+			XmlNode u_node = FindUserNode( username );
+
+			if ( u_node == null )
+				return ( ci );
+
+			// find the command node
+			XmlNode c_node = FindCommandNode( u_node, commandPath, commandArguments );
+
+			if ( c_node == null )
+				return ( ci );
+
+			ci.IsCommandAllowed = IsCommandAllowed( u_node, c_node, commandArguments );
+
+			LoggingLevelTypes llttv;
+			GetCommandAttributeValue( u_node, true, c_node, "loggingLevel", out llttv );
+
+			return ( ci );
+		}
+
+		/// <summary>
 		///		Checks to see if the user has the right
 		///		to execute the given command with sudo.
 		/// </summary>
-		/// <param name="userName">
-		///		User name of user who invoked sudo.
+		/// <param name="userNode">
+		///		User node that represents the user that
+		///		invoked sudo.
 		/// </param>
 		/// <param name="commandPath">
 		///		Fully qualified path of the command being executed.
@@ -216,266 +311,74 @@ namespace Sudo.Data.FileClient
 		/// <returns>
 		///		True if the command is allowed, false if it is not.
 		/// </returns>
-		public bool IsCommandAllowed(
-			string userName,
+		private XmlNode FindCommandNode(
+			XmlNode userNode,
 			string commandPath,
 			string commandArguments )
 		{
-			#region user checks
-
-			// get the user node
-			XmlNode user_node = GetUserNode( userName );
-
-			//**********************************************************
-			// !!! RETURN RETURN RETURN !!!
-			//
-			// if the user is not found in the file
-			// then return false
-			if ( user_node == null )
-				return ( false );
-			
-			//**********************************************************
-			// !!! RETURN RETURN RETURN !!!
-			//
-			// is the user enabled?
-			FdsBool user_enabled;
-			GetUserAttributeValue( 
-				user_node, false, "enabled", out user_enabled );
-
-			if ( user_enabled == FdsBool.False )
-				return ( false );
-
-			//**********************************************************
-			// !!! RETURN RETURN RETURN !!!
-			//
-			// are all commands allowed?
-			FdsBool all_cmds_allwd;
-			GetUserAttributeValue( 
-				user_node, false, "allowAllCommands", out all_cmds_allwd );
-
-			if ( all_cmds_allwd == FdsBool.True )
-				return ( true );
-
-			#endregion
-
-			// if the user is not disabled we need to discover whether
-			// or not the command they are trying to sudo is allowed.
-			//
-			// to do this we must look in 4 potential locations in
-			// the following order
-			//
-			// 1) commands node local to user
-			// 2) commandGroupRefs node local to user
-			// 3) commands node local to user's parent user group
-			// 4) commandGroupRefs node local to user's parent user group
-			//
-			// ex. if the command is found in step 1 its allowances
-			// will be decided in step 1 and the result will be returned.
-			// the check only falls to the next step if the command is not
-			// found in a previous step.  in other words, if we reach
-			// step 2 then it means we did not find the command in step 1.
-
-			// define a xml node that will point to the
-			// node that represents the command the user
-			// is attempting to use sudo to execute
+			/*
+			 * if the user is not disabled we need to discover whether
+			 * or not the command they are trying to sudo is allowed.
+			 * to do this we must look in 4 potential locations in
+			 * the following order
+			 * 
+			 * 1) commands node local to user
+			 * 2) commandGroupRefs node local to user
+			 * 3) commands node local to user's parent user group
+			 * 4) commandGroupRefs node local to user's parent user group
+			 * 
+			 * ex. if the command is found in step 1 its allowances
+			 * will be decided in step 1 and the result will be returned.
+			 * the check only falls to the next step if the command is not
+			 * found in a previous step.  in other words, if we reach
+			 * step 2 then it means we did not find the command in step 1.
+			 * 
+			 * define a xml node that will point to the
+			 * node that represents the command the user
+			 * is attempting to use sudo to execute
+			 */
 			XmlNode cmd_node = null;
 
-			#region 1) commands node local to user
-
-			XmlNode local_cmds = user_node.SelectSingleNode(
+			// 1) commands node local to user
+			XmlNode local_cmds = userNode.SelectSingleNode(
 				"d:commands", m_namespace_mgr );
 			if ( local_cmds != null && local_cmds.HasChildNodes )
 				cmd_node = FindCommandNode( local_cmds, commandPath );
-
-			//**********************************************************
-			// !!! RETURN RETURN RETURN !!!
-			//
-			if ( cmd_node != null )
-				return ( IsCommandAllowed( user_node, cmd_node, commandArguments ) );
 			
-			#endregion
-
-
-			#region 2) commandGroupRefs node local to user
-			
-			XmlNode local_cmd_refs = user_node.SelectSingleNode(
-				"d:commandGroupRefs", m_namespace_mgr );
-			if ( local_cmd_refs != null && local_cmd_refs.HasChildNodes )
+			// 2) commandGroupRefs node local to user
+			if ( cmd_node == null )
 			{
-				bool cmd_found;
-				bool cmd_allowed = IsCommandRefAllowed( user_node,
-					local_cmd_refs, commandPath, commandArguments, out cmd_found );
+				XmlNode local_cmd_refs = userNode.SelectSingleNode(
+					"d:commandGroupRefs", m_namespace_mgr );
+				if ( local_cmd_refs != null && local_cmd_refs.HasChildNodes )
+				{
+					cmd_node = FindCommandNode( userNode,
+						local_cmd_refs, commandPath, commandArguments );
+				}
+			}
+			
+			// 3) commands node local to user's parent user group
+			if ( cmd_node == null )
+			{
+				XmlNode parent_cmds = userNode.ParentNode.ParentNode.SelectSingleNode(
+					"d:commands", m_namespace_mgr );
 
-				//**********************************************************
-				// !!! RETURN RETURN RETURN !!!
-				//
-				if ( cmd_found )
-					return ( cmd_allowed );
+				if ( parent_cmds != null && parent_cmds.HasChildNodes )
+					cmd_node = FindCommandNode( parent_cmds, commandPath );
 			}
 
-			#endregion
-
-
-			#region 3) commands node local to user's parent user group
-
-			XmlNode parent_cmds = user_node.ParentNode.ParentNode.SelectSingleNode(
-				"d:commands", m_namespace_mgr );
-			
-			if ( parent_cmds != null && parent_cmds.HasChildNodes )
-				cmd_node = FindCommandNode( parent_cmds, commandPath );
-
-			//**********************************************************
-			// !!! RETURN RETURN RETURN !!!
-			//
-			if ( cmd_node != null )
-				return ( IsCommandAllowed( user_node, cmd_node, commandArguments ) );
-
-			#endregion
-
-
-			#region 4) commandGroupRefs node local to user's parent user group
-
-			XmlNode parent_cmd_refs = user_node.ParentNode.ParentNode.SelectSingleNode(
-				"d:commandGroupRefs", m_namespace_mgr );
-			if ( parent_cmd_refs != null && parent_cmd_refs.HasChildNodes )
+			// 4) commandGroupRefs node local to user's parent user group
+			if ( cmd_node == null )
 			{
-				bool cmd_found;
-				bool cmd_allowed = IsCommandRefAllowed( user_node,
-					parent_cmd_refs, commandPath, commandArguments, out cmd_found );
-
-				//**********************************************************
-				// !!! RETURN RETURN RETURN !!!
-				//
-				if ( cmd_found )
-					return ( cmd_allowed );
+				XmlNode parent_cmd_refs = userNode.ParentNode.ParentNode.SelectSingleNode(
+					"d:commandGroupRefs", m_namespace_mgr );
+				if ( parent_cmd_refs != null && parent_cmd_refs.HasChildNodes )
+				{
+					cmd_node = FindCommandNode( userNode,
+							parent_cmd_refs, commandPath, commandArguments );
+				}
 			}
-
-			#endregion
-
-			// if the code has reached this point then the command
-			// was not found and therefore is not allowed.
-			return ( false );
-		}
-
-		/// <summary>
-		///		Gets the number of invalid
-		///		logon attempts the user is allowed.
-		/// </summary>
-		/// <param name="userName">
-		///		User name to get data for.
-		/// </param>
-		/// <returns>
-		///		Number of invalid logon attempts the
-		///		user is allowed.
-		/// </returns>
-		public int GetInvalidLogons( string userName )
-		{
-			int tv;
-			XmlNode unode = GetUserNode( userName );
-			GetUserAttributeValue( unode, true, "invalidLogons", out tv );
-			return ( tv );
-		}
-
-		/// <summary>
-		///		Gets the number of times the user
-		///		has exceeded their invalid logon
-		///		attempt limit.
-		/// </summary>
-		/// <param name="userName">
-		///		User name to get data for.
-		/// </param>
-		/// <returns>
-		///		Number of times the user has exceeded
-		///		their invalid logon attempt limit.
-		/// </returns>
-		public int GetTimesExceededInvalidLogons( string userName )
-		{
-			int tv;
-			XmlNode unode = GetUserNode( userName );
-			GetUserAttributeValue( unode, true, "timesExceededInvalidLogons", out tv );
-			return ( tv );
-		}
-
-		/// <summary>
-		///		Gets the number of seconds that the sudo
-		///		server keeps track of a user's invalid
-		///		logon attempts.
-		/// </summary>
-		/// <param name="userName">
-		///		User name to get data for.
-		/// </param>
-		/// <returns>
-		///		Number of seconds that the sudo server
-		///		keeps track of a user's invalid logon
-		///		attempts.
-		/// </returns>
-		public int GetInvalidLogonTimeout( string userName )
-		{
-			int tv;
-			XmlNode unode = GetUserNode( userName );
-			GetUserAttributeValue( unode, true, "invalidLogonTimeout", out tv );
-			return ( tv );
-		}
-
-		/// <summary>
-		///		Get's the number of seconds that a user
-		///		is locked out after exceeding their
-		///		invalid logon attempt limit.
-		/// </summary>
-		/// <param name="userName">
-		///		User name to get data for.
-		/// </param>
-		/// <returns>
-		///		Number of seconds that a user is locked out
-		///		after exceeding their invalid logon attempt
-		///		limit.
-		/// </returns>
-		public int GetLockoutTimeout( string userName )
-		{
-			int tv;
-			XmlNode unode = GetUserNode( userName );
-			GetUserAttributeValue( unode, true, "lockoutTimeout", out tv );
-			return ( tv );
-		}
-
-		/// <summary>
-		///		Gets the number of seconds that a
-		///		user's valid logon is cached.
-		/// </summary>
-		/// <param name="userName">
-		///		User name to get data for.
-		/// </param>
-		/// <returns>
-		///		Number of seconds that a user's
-		///		valid logon is cached.
-		/// </returns>
-		public int GetLogonTimeout( string userName )
-		{
-			int tv;
-			XmlNode unode = GetUserNode( userName );
-			GetUserAttributeValue( unode, true, "logonTimeout", out tv );
-			return ( tv );
-		}
-
-		/// <summary>
-		///		Gets the name of the group that possesses
-		///		the same privileges that the user will
-		///		when they use sudo.
-		/// </summary>
-		/// <param name="userName">
-		///		User name to get data for.
-		/// </param>
-		/// <returns>
-		///		Name of the group that possesses the
-		///		same privileges that the user will when
-		///		they use sudo.
-		/// </returns>
-		public string GetPrivilegesGroup( string userName )
-		{
-			string tv;
-			XmlNode unode = GetUserNode( userName );
-			GetUserAttributeValue( unode, true, "privilegesGroup", out tv );
-			return ( tv );
+			return ( cmd_node );
 		}
 
 		#endregion
@@ -498,6 +401,10 @@ namespace Sudo.Data.FileClient
 		///		the user is allowed to execute the
 		///		given command with sudo.
 		/// </summary>
+		/// <param name="userNode">
+		///		User node that represents the user that
+		///		invoked sudo.
+		/// </param>
 		/// <param name="commandNode">
 		///		Command node that represents the command
 		///		the user is attempting to execute with sudo.
@@ -513,6 +420,28 @@ namespace Sudo.Data.FileClient
 			XmlNode commandNode,
 			string commandArguments )
 		{
+			//**********************************************************
+			// !!! RETURN RETURN RETURN !!!
+			//
+			// is the user enabled?
+			FdsBool user_enabled;
+			GetUserAttributeValue(
+				userNode, false, "enabled", out user_enabled );
+
+			if ( user_enabled == FdsBool.False )
+				return ( false );
+
+			//**********************************************************
+			// !!! RETURN RETURN RETURN !!!
+			//
+			// are all commands allowed?
+			FdsBool all_cmds_allwd;
+			GetUserAttributeValue(
+				userNode, false, "allowAllCommands", out all_cmds_allwd );
+
+			if ( all_cmds_allwd == FdsBool.True )
+				return ( true );
+
 			//**********************************************************
 			// !!! RETURN RETURN RETURN !!!
 			//
@@ -579,13 +508,14 @@ namespace Sudo.Data.FileClient
 		/// 
 		///		True if the command is allowed, false if it is not.
 		/// </returns>
-		private bool IsCommandRefAllowed(
+		private XmlNode FindCommandNode(
 			XmlNode userNode,
 			XmlNode commandGroupRefsParent,
 			string commandPath,
-			string commandArguments,
-			out bool wasCommandFound )
+			string commandArguments )
 		{
+			XmlNode cmd_node = null;
+
 			// for each command group reference build a xpath
 			// query and then get the command group
 			foreach ( XmlNode cmd_ref in commandGroupRefsParent.ChildNodes )
@@ -603,9 +533,6 @@ namespace Sudo.Data.FileClient
 				XmlNode cmdgrp = m_xml_doc.SelectSingleNode(
 					cmdgrp_xpq, m_namespace_mgr );
 
-				// command node
-				XmlNode cmd_node = null;
-
 				// if the command group is found then search
 				// the command group for the command
 				if ( cmdgrp != null && cmdgrp.HasChildNodes )
@@ -614,14 +541,10 @@ namespace Sudo.Data.FileClient
 				// if the command is found determine if it is
 				// allowed to be executed
 				if ( cmd_node != null )
-				{
-					wasCommandFound = true;
-					return ( IsCommandAllowed( userNode, cmd_node, commandArguments ) );
-				}
+					break;
 			}
 
-			wasCommandFound = false;
-			return ( false );
+			return ( cmd_node );
 		}
 
 		/// <summary>
@@ -718,6 +641,20 @@ namespace Sudo.Data.FileClient
 			attributeValue = temp_value == string.Empty ?
 				FdsBool.Null :
 				( FdsBool ) Enum.Parse( typeof( FdsBool ), temp_value, true );
+		}
+
+		[System.Diagnostics.DebuggerStepThrough]
+		private void GetUserAttributeValue(
+			XmlNode userNode,
+			bool checkDefaults,
+			string attributeName,
+			out LoggingLevelTypes attributeValue )
+		{
+			string temp_value;
+			GetUserAttributeValue( userNode, checkDefaults, attributeName, out temp_value );
+			attributeValue = temp_value == string.Empty ?
+				0 :
+				( LoggingLevelTypes ) Enum.Parse( typeof( LoggingLevelTypes ), temp_value, true );
 
 		}
 
@@ -822,6 +759,22 @@ namespace Sudo.Data.FileClient
 			attributeValue = temp_value == string.Empty ?
 				FdsBool.Null :
 				( FdsBool ) Enum.Parse( typeof( FdsBool ), temp_value, true );
+		}
+
+		[System.Diagnostics.DebuggerStepThrough]
+		private void GetCommandAttributeValue(
+			XmlNode userNode,
+			bool checkDefaults,
+			XmlNode commandNode,
+			string attributeName,
+			out LoggingLevelTypes attributeValue )
+		{
+			string temp_value;
+			GetCommandAttributeValue(
+				userNode, checkDefaults, commandNode, attributeName, out temp_value );
+			attributeValue = temp_value == string.Empty ?
+				0 :
+				( LoggingLevelTypes ) Enum.Parse( typeof( LoggingLevelTypes ), temp_value, true );
 		}
 
 		[System.Diagnostics.DebuggerStepThrough]
