@@ -33,6 +33,7 @@ namespace Sudo.PublicLibrary
 	/// <summary>
 	///		Result types of ISudoServer.Sudo.
 	/// </summary>
+	[Serializable]
 	public enum SudoResultTypes : int
 	{
 		/// <summary>

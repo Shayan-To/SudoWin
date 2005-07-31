@@ -49,12 +49,12 @@ namespace Sudo.WindowsService
 		private Sudo.Data.IDataStore m_sudoers_ds;
 
 		/// <summary>
-		///		Collection of InvalidLogonInfo structures used
-		///		to track information about invalid logon attempts
-		///		made by users when they call sudo.
+		///		Collection of UserCache structures used
+		///		to track information about users when they
+		///		call sudo.
 		/// </summary>
-		private Dictionary<string, InvalidLogonInfo> m_ilis =
-			new Dictionary<string, InvalidLogonInfo>();
+		private Dictionary<string, UserCache> m_ucs =
+			new Dictionary<string, UserCache>();
 
 		/// <summary>
 		///		Collection of SecureStrings used to persist
@@ -65,14 +65,14 @@ namespace Sudo.WindowsService
 
 		/// <summary>
 		///		Collection of timers used to remove members
-		///		of m_ilis when their time is up.
+		///		of m_ucs when their time is up.
 		/// </summary>
 		private Dictionary<string, Timer> m_tmrs =
 			new Dictionary<string, Timer>();
 
 		/// <summary>
 		///		This mutex is used to synchronize access
-		///		to the m_ilis, m_passwords, and m_tmrs collections.
+		///		to the m_ucs, m_passwords, and m_tmrs collections.
 		/// </summary>
 		private Mutex m_coll_mtx = new Mutex( false );
 
@@ -110,77 +110,77 @@ namespace Sudo.WindowsService
 		}
 
 		/// <summary>
-		///		Gets the invalid logon info for the
-		///		given user name.
+		///		Gets the UserCache for the given
+		///		user name.
 		/// </summary>
 		/// <param name="userName">
 		///		User name to look for.
 		/// </param>
 		/// <returns>
-		///		If the InvalidLogonInfo structure for the given
+		///		If the UserCache structure for the given
 		///		user name exists in the cache then this
 		///		method will return the information for that
 		///		user name.
 		/// 
-		///		If the InvalidLogonInfo structure for the given 
+		///		If the UserCache structure for the given 
 		///		user name does not exist in the cache then this 
-		///		method will return a new InvalidLogonInfo structure.
+		///		method will return a new UserCache structure.
 		/// </returns>
 		[DebuggerHidden]
-		public InvalidLogonInfo GetInvalidLogonInfo( string userName )
+		public UserCache GetUserCache( string userName )
 		{
-			// InvalidLogonInfo structure this method will return
-			InvalidLogonInfo ili;
+			// UserCache structure this method will return
+			UserCache uc;
 
-			// get the InvalidLogonInfo structure with the given
+			// get the UserCache structure with the given
 			// user name as the collection's key
 			m_coll_mtx.WaitOne();
-			bool is_cached = m_ilis.TryGetValue( userName, out ili );
+			bool is_cached = m_ucs.TryGetValue( userName, out uc );
 			m_coll_mtx.ReleaseMutex();
 
 			if ( is_cached )
-				return ( ili );
+				return ( uc );
 			else
-				return ( new InvalidLogonInfo() );
+				return ( new UserCache() );
 		}
 
 		/// <summary>
-		///		If the InvalidLogonInfo for the given user name
-		///		does not already exist in the InvalidLogonInfo
+		///		If the UserCache for the given user name
+		///		does not already exist in the UserCache
 		///		collection then the it is added.
 		/// 
-		///		If the InvalidLogonInfo for the given user name
-		///		does already exist in the the InvalidLogonInfo
+		///		If the UserCache for the given user name
+		///		does already exist in the the UserCache
 		///		collection then the existing data is updated.
 		/// </summary>
 		/// <param name="userName">
-		///		User name to set the InvalidLogonInfo for.
+		///		User name to set the UserCache for.
 		/// </param>
-		/// <param name="invalidLogonInfo">
-		///		InvalidLogonInfo to set.
+		/// <param name="userCache">
+		///		UserCache to set.
 		/// </param>
 		[DebuggerHidden]
-		public void SetInvalidLogonInfo( 
+		public void SetUserCache( 
 			string userName, 
-			InvalidLogonInfo invalidLogonInfo )
+			UserCache userCache )
 		{
 			m_coll_mtx.WaitOne();
 			
-			// whether or not the invalidLogonInfo structure
+			// whether or not the userCache structure
 			// with the userName parameter for its key
-			// is already is the m_ilis collection
-			bool is_cached = m_ilis.ContainsKey( userName );
+			// is already is the m_ucs collection
+			bool is_cached = m_ucs.ContainsKey( userName );
 			
 			if ( is_cached )
-				m_ilis[ userName ] = invalidLogonInfo;
+				m_ucs[ userName ] = userCache;
 			else
-				m_ilis.Add( userName, invalidLogonInfo );
+				m_ucs.Add( userName, userCache );
 
 			m_coll_mtx.ReleaseMutex();
 		}
 
 		/// <summary>
-		///		Remove the InvalidLogonInfo structure from the collection.
+		///		Remove the UserCache structure from the collection.
 		/// </summary>
 		/// <param name="userName">
 		///		User name that is the key of the item in the collection
@@ -189,7 +189,7 @@ namespace Sudo.WindowsService
 		/// <param name="secondsUntil">
 		///		Number of seconds to wait until the item is removed.
 		/// </param>
-		public void RemoveInvalidLogonInfo( string userName, int secondsUntil )
+		public void RemoveUserCache( string userName, int secondsUntil )
 		{
 			m_coll_mtx.WaitOne();
 
@@ -204,7 +204,7 @@ namespace Sudo.WindowsService
 			else
 			{
 				m_tmrs.Add( userName, new Timer(
-					new TimerCallback( RemoveUserInfoCallback ),
+					new TimerCallback( RemoveUserCacheCallback ),
 					userName, secondsUntil * 1000, Timeout.Infinite ) );
 			}
 
@@ -212,13 +212,13 @@ namespace Sudo.WindowsService
 		}
 
 		/// <summary>
-		///		Callback method that removes a invalidLogonInfo structure
-		///		from m_ilis
+		///		Callback method that removes a userCache structure
+		///		from m_ucs
 		/// </summary>
 		/// <param name="state">
 		///		User name string.
 		/// </param>
-		private void RemoveUserInfoCallback( object state )
+		private void RemoveUserCacheCallback( object state )
 		{
 			m_coll_mtx.WaitOne();
 
@@ -226,10 +226,10 @@ namespace Sudo.WindowsService
 			// a user name string
 			string un = state as string;
 
-			// remove the invalidLogonInfo structure 
-			// for the given user name from
-			// m_ilis
-			m_ilis.Remove( un );
+			// if the user has a UserCache structure
+			// in the collection then remove it
+			if ( m_ucs.ContainsKey( un ) )
+				m_ucs.Remove( un );
 
 			// if the user has a persisted password clear
 			// it and then remove it from the collection
@@ -294,7 +294,7 @@ namespace Sudo.WindowsService
 		/// <param name="password">
 		///		Plain-text password to convert into a SecureString.
 		/// </param>
-		public void SetPassword( string userName, string password )
+		public void SetUserCache( string userName, string password )
 		{
 			m_coll_mtx.WaitOne();
 
@@ -323,13 +323,17 @@ namespace Sudo.WindowsService
 		/// <param name="userName">
 		///		User name to get information for.
 		/// </param>
-		/// <returns>
+		/// <param name="userInfo">
 		///		Sudo.PublicLibrary.UserInfo structure for
 		///		the given user name.
+		/// </param>
+		/// <returns>
+		///		True if the UserInfo struct is successfuly retrieved; 
+		///		false if otherwise.
 		/// </returns>
-		public UserInfo GetUserInfo( string userName )
+		public bool GetUserInfo( string userName, ref UserInfo userInfo )
 		{
-			return ( m_sudoers_ds.GetUserInfo( userName ) );
+			return ( m_sudoers_ds.GetUserInfo( userName, ref userInfo ) );
 		}
 
 		/// <summary>
@@ -346,17 +350,23 @@ namespace Sudo.WindowsService
 		/// <param name="commandArguments">
 		///		Command arguments to get information for.
 		/// </param>
-		/// <returns>
+		/// <param name="commandInfo">
 		///		Sudo.PublicLibrary.CommandInfo structure for
 		///		the given user name, command path, and command 
 		///		arguments.
+		/// </param>
+		/// <returns>
+		///		True if the CommandInfo struct is successfuly retrieved; 
+		///		false if otherwise.
 		/// </returns>
-		public CommandInfo GetCommandInfo(
+		public bool GetCommandInfo(
 			string username,
 			string commandPath,
-			string commandArguments )
+			string commandArguments,
+			ref CommandInfo commandInfo )
 		{
-			return ( m_sudoers_ds.GetCommandInfo( username, commandPath, commandArguments ) );
+			return ( m_sudoers_ds.GetCommandInfo( 
+				username, commandPath, commandArguments, ref commandInfo ) );
 		}
 
 		/// <summary>

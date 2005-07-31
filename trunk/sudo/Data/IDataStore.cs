@@ -71,11 +71,15 @@ namespace Sudo.Data
 		/// <param name="userName">
 		///		User name to get information for.
 		/// </param>
-		/// <returns>
+		/// <param name="userInfo">
 		///		Sudo.PublicLibrary.UserInfo structure for
 		///		the given user name.
+		/// </param>
+		/// <returns>
+		///		True if the UserInfo struct is successfuly retrieved; 
+		///		false if otherwise.
 		/// </returns>
-		UserInfo GetUserInfo( string userName );
+		bool GetUserInfo( string userName, ref UserInfo userInfo );
 
 		/// <summary>
 		///		Gets a Sudo.PublicLibrary.CommandInfo structure
@@ -91,14 +95,19 @@ namespace Sudo.Data
 		/// <param name="commandArguments">
 		///		Command arguments to get information for.
 		/// </param>
-		/// <returns>
+		/// <param name="commandInfo">
 		///		Sudo.PublicLibrary.CommandInfo structure for
 		///		the given user name, command path, and command 
 		///		arguments.
+		/// </param>
+		/// <returns>
+		///		True if the CommandInfo struct is successfuly retrieved; 
+		///		false if otherwise.
 		/// </returns>
-		CommandInfo GetCommandInfo( 
-			string username, 
-			string commandPath, 
-			string commandArguments );
+		bool GetCommandInfo(
+			string username,
+			string commandPath,
+			string commandArguments,
+			ref CommandInfo commandInfo );
 	}
 }

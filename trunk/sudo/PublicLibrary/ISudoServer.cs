@@ -55,7 +55,7 @@ namespace Sudo.PublicLibrary
 		///		An integer that can be cast as a 
 		///		SudoResultsTypes value.
 		/// </returns>
-		int Sudo(
+		SudoResultTypes Sudo(
 			string password,
 			string commandPath,
 			string commandArguments );
