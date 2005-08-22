@@ -39,10 +39,16 @@ namespace Sudo.WindowsService
 	/// <summary>
 	///		Class instantiated as a Singleton object used to 
 	///		store and access persistent information about sudoers
-	///		between calls to the sudo server.
+	///		between calls to the sudo sa.
 	/// </summary>
 	internal class DataServer : MarshalByRefObject
-	{ 
+	{
+		/// <summary>
+		///		Trace source that can be defined in the 
+		///		config file for Sudo.WindowsService.
+		/// </summary>
+		private TraceSource m_ts = new TraceSource( "traceSrc" );
+
 		/// <summary>
 		///		Interface used to access sudoers data.
 		/// </summary>
@@ -81,32 +87,44 @@ namespace Sudo.WindowsService
 		/// </summary>
 		public DataServer()
 		{
+			m_ts.TraceEvent( TraceEventType.Start, 10, "constructing DataServer" );
+
 			// get the sudoers data source connection string
-			string sudoers_ds_cnxn_string;
+			string sdcs;
 			ManagedMethods.GetConfigValue(
 				"sudoersDataStoreConnectionString",
-				out sudoers_ds_cnxn_string );
-			
-			// if the sudodersDataStoreConnectionString key is
-			// not specified in the config file then throw
-			// an exception
-			if ( sudoers_ds_cnxn_string.Length == 0 )
-				throw new System.Configuration.ConfigurationErrorsException(
-					"sudodersDataStoreConnectionString must be a " +
+				out sdcs );
+			m_ts.TraceEvent( TraceEventType.Verbose, 10,
+				"sudoersDataStoreConnectionString=" + sdcs );
+			if ( sdcs.Length == 0 )
+			{
+				string msg = "sudodersDataStoreConnectionString must be a " +
 					"specified key in the appSettings section of the " +
-					"config file" );
+					"config file";
+				m_ts.TraceEvent( TraceEventType.Critical, 10, msg );
+				throw new System.Configuration.ConfigurationErrorsException( msg );
+			}
 
-			// if a schema file uri was specified in the
-			// config file get the file uri
+			// get the schema file uri
 			string schema_uri;
 			ManagedMethods.GetConfigValue( "schemaFileUri", out schema_uri );
+			if ( schema_uri.Length == 0 )
+			{
+				string msg = "schemaFileUri must be a " +
+					"specified key in the appSettings section of the " +
+					"config file";
+				m_ts.TraceEvent( TraceEventType.Critical, 10, msg );
+				throw new System.Configuration.ConfigurationErrorsException( msg );
+			}
 
 			// use a sudoers file as the sudoers data store
 			m_sudoers_ds = new Sudo.Data.FileClient.FileDataStore()
 				as Sudo.Data.IDataStore;
 
 			// open a connection to the sudoers data store
-			m_sudoers_ds.Open( sudoers_ds_cnxn_string, new Uri( schema_uri ) );
+			m_sudoers_ds.Open( sdcs, new Uri( schema_uri ) );
+
+			m_ts.TraceEvent( TraceEventType.Start, 10, "constructed DataServer" );
 		}
 
 		/// <summary>
@@ -127,21 +145,50 @@ namespace Sudo.WindowsService
 		///		method will return a new UserCache structure.
 		/// </returns>
 		[DebuggerHidden]
-		public UserCache GetUserCache( string userName )
+		public bool GetUserCache( string userName, ref UserCache userCache )
 		{
-			// UserCache structure this method will return
-			UserCache uc;
+			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
+				"entering GetUserCache( string, ref UserCache )" );
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
+				"userName={0},userCache=", userName );
 
-			// get the UserCache structure with the given
-			// user name as the collection's key
 			m_coll_mtx.WaitOne();
-			bool is_cached = m_ucs.TryGetValue( userName, out uc );
+			bool isUserCacheCached = m_ucs.TryGetValue( userName, out userCache );
 			m_coll_mtx.ReleaseMutex();
 
-			if ( is_cached )
-				return ( uc );
-			else
-				return ( new UserCache() );
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+				"{0}, isUserCacheCached={1}", userName, isUserCacheCached );
+			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.ExitMethod,
+				"exiting GetUserCache( string, ref UserCache )" );
+
+			return ( isUserCacheCached );
+		}
+
+		[DebuggerHidden]
+		public bool GetUserCache( string userName, ref string password )
+		{
+			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
+				"entering GetUserCache( string, ref string )" );
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
+				"userName={0},password=", userName );
+			
+			m_coll_mtx.WaitOne();
+			bool isPasswordCached;
+			if ( isPasswordCached = m_passwords.ContainsKey( userName ) )
+			{
+				SecureString ss = m_passwords[ userName ];
+				IntPtr ps = Marshal.SecureStringToBSTR( ss );
+				password = Marshal.PtrToStringBSTR( ps );
+				Marshal.FreeBSTR( ps );
+			}
+			m_coll_mtx.ReleaseMutex();
+
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+				"{0}, isPasswordCached={1}", userName, isPasswordCached );
+			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.ExitMethod,
+				"exiting GetUserCache( string, ref string )" );
+
+			return ( isPasswordCached );
 		}
 
 		/// <summary>
@@ -180,16 +227,17 @@ namespace Sudo.WindowsService
 		}
 
 		/// <summary>
-		///		Remove the UserCache structure from the collection.
+		///		Expire the UserCache structure for the given userName
+		///		in the number of seconds defined in secondsUntil.
 		/// </summary>
 		/// <param name="userName">
 		///		User name that is the key of the item in the collection
 		///		to remove.
 		/// </param>
 		/// <param name="secondsUntil">
-		///		Number of seconds to wait until the item is removed.
+		///		Number of seconds to wait until the UserCache is expired.
 		/// </param>
-		public void RemoveUserCache( string userName, int secondsUntil )
+		public void ExpireUserCache( string userName, int secondsUntil )
 		{
 			m_coll_mtx.WaitOne();
 
@@ -204,7 +252,7 @@ namespace Sudo.WindowsService
 			else
 			{
 				m_tmrs.Add( userName, new Timer(
-					new TimerCallback( RemoveUserCacheCallback ),
+					new TimerCallback( ExpireUserCacheCallback ),
 					userName, secondsUntil * 1000, Timeout.Infinite ) );
 			}
 
@@ -212,13 +260,14 @@ namespace Sudo.WindowsService
 		}
 
 		/// <summary>
-		///		Callback method that removes a userCache structure
-		///		from m_ucs
+		///		Callback method that removes a UserCache structure
+		///		from m_ucs and a SecureString from m_passwords.
 		/// </summary>
 		/// <param name="state">
-		///		User name string.
+		///		User name that is the key to the m_passwords and m_ucs
+		///		collections with the objects that are to be removed.
 		/// </param>
-		private void RemoveUserCacheCallback( object state )
+		private void ExpireUserCacheCallback( object state )
 		{
 			m_coll_mtx.WaitOne();
 
@@ -245,41 +294,6 @@ namespace Sudo.WindowsService
 			m_tmrs.Remove( un );
 
 			m_coll_mtx.ReleaseMutex();
-		}
-
-		/// <summary>
-		///		Gets a plain-text version of the user's password
-		///		from the m_passwords collection.
-		/// </summary>
-		/// <param name="userName">
-		///		User name to get the password for and to use
-		///		as the key for the m_passwords collection.
-		/// </param>
-		/// <returns>
-		///		If the password exists in the collection a plain-text 
-		///		version of the users password that is persisted as a 
-		///		SecureString.
-		/// 
-		///		If the password does not exist an empty string.
-		/// </returns>
-		public string GetPassword( string userName )
-		{
-			m_coll_mtx.WaitOne();
-
-			string p = string.Empty;
-
-			if ( m_passwords.ContainsKey( userName ) )
-			{
-				SecureString ss = m_passwords[ userName ];
-
-				IntPtr ps = Marshal.SecureStringToBSTR( ss );
-				p = Marshal.PtrToStringBSTR( ps );
-				Marshal.FreeBSTR( ps );
-			}
-
-			m_coll_mtx.ReleaseMutex();
-
-			return ( p );
 		}
 
 		/// <summary>
@@ -339,20 +353,20 @@ namespace Sudo.WindowsService
 		/// <summary>
 		///		Gets a Sudo.PublicLibrary.CommandInfo structure
 		///		from the sudoers data store for the given user name,
-		///		command path, and command arguments.
+		///		command p, and command arguments.
 		/// </summary>
 		/// <param name="username">
 		///		User name to get information for.
 		/// </param>
 		/// <param name="commandPath">
-		///		Command path to get information for.
+		///		Command p to get information for.
 		/// </param>
 		/// <param name="commandArguments">
 		///		Command arguments to get information for.
 		/// </param>
 		/// <param name="commandInfo">
 		///		Sudo.PublicLibrary.CommandInfo structure for
-		///		the given user name, command path, and command 
+		///		the given user name, command p, and command 
 		///		arguments.
 		/// </param>
 		/// <returns>

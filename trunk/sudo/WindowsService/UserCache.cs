@@ -33,7 +33,7 @@ using System.Runtime.InteropServices;
 namespace Sudo.WindowsService
 {
 	/// <summary>
-	///		Used to store persistent information about server
+	///		Used to store persistent information about sa
 	///		access attempts made by the users.
 	/// </summary>
 	[Serializable]

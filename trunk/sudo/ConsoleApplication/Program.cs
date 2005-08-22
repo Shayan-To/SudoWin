@@ -246,7 +246,7 @@ namespace Sudo.ConsoleApplication
 					WriteOutput( "multiple invalid logon limit exceeded " +
 						"- temporary lockout enforced",
 						OutputMessageTypes.Error, ui_mode );
-					srt = SudoResultTypes.SudoUserLockedOut;
+					srt = SudoResultTypes.LockedOut;
 				}
 				else
 				{
@@ -287,7 +287,7 @@ namespace Sudo.ConsoleApplication
 									OutputMessageTypes.Error, ui_mode );
 								break;
 							}
-						case SudoResultTypes.SudoUserLockedOut:
+						case SudoResultTypes.LockedOut:
 							{
 								WriteOutput( "multiple invalid logon limit exceeded " +
 									"- temporary lockout enforced",

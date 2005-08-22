@@ -34,6 +34,7 @@ using System.Runtime.Remoting;
 using System.Security.Permissions;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
+using System.Diagnostics;
 
 namespace Sudo.WindowsService
 {
@@ -42,6 +43,12 @@ namespace Sudo.WindowsService
 	/// </summary>
 	public partial class Controller : ServiceBase
 	{
+		/// <summary>
+		///		Trace source that can be defined in the 
+		///		config file for Sudo.WindowsService.
+		/// </summary>
+		private TraceSource m_ts = new TraceSource( "traceSrc" );
+
 		/// <summary>
 		///		Default constructor.
 		/// </summary>
@@ -58,14 +65,22 @@ namespace Sudo.WindowsService
 		/// </param>
 		protected override void OnStart( string[] args )
 		{
-			// get path to the actual exe
+			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod, 
+				"entering OnStart" );
+			
+			// get p to the actual exe
 			Uri uri = new Uri( 
 				System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase );
+
+			string remote_config_uri = uri.LocalPath + ".config";
+
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose, 
+				"configuring remoting with " + remote_config_uri );
 			
 			// configure remoting channels and objects
-			RemotingConfiguration.Configure( uri.LocalPath + ".config" );
+			RemotingConfiguration.Configure( remote_config_uri );
 
-			// create the server object
+			// create the sa object
 			DataServer ds = Activator.GetObject( typeof( DataServer ),
 				System.Configuration.ConfigurationManager.AppSettings[ "dataServerUri" ] )
 				as DataServer;
@@ -74,8 +89,23 @@ namespace Sudo.WindowsService
 			// sudo clients can do so.  this will cause any exceptions that
 			// might get thrown while reading the sudoers data source to
 			// cause the service not to start, rather than crashing a sudo
-			// client application.
+			// ca application.
 			ds.Activate();
+
+			m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitMethod, 
+				"exiting OnStart" );
+		}
+
+		/// <summary>
+		///		Stops this service.
+		/// </summary>
+		protected override void OnStop()
+		{
+			m_ts.TraceEvent( TraceEventType.Start, ( int )  EventIds.EnterMethod, 
+				"entering OnStop" );
+			m_ts.Close();
+			m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitMethod, 
+				"exiting OnStop" );
 		}
 	}
 }

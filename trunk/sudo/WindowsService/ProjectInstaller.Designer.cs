@@ -36,12 +36,14 @@ namespace Sudo.WindowsService
 			this.serviceProcessInstaller1.Account = System.ServiceProcess.ServiceAccount.LocalSystem;
 			this.serviceProcessInstaller1.Password = null;
 			this.serviceProcessInstaller1.Username = null;
+			this.serviceProcessInstaller1.AfterInstall += new System.Configuration.Install.InstallEventHandler( this.serviceProcessInstaller1_AfterInstall );
 			// 
 			// serviceInstaller1
 			// 
-			this.serviceInstaller1.Description = "The Windows service that hosts the Sudo server.";
+			this.serviceInstaller1.Description = "The Windows service that hosts the Sudo sa.";
 			this.serviceInstaller1.DisplayName = "Sudo";
 			this.serviceInstaller1.ServiceName = "Sudo";
+			this.serviceInstaller1.AfterInstall += new System.Configuration.Install.InstallEventHandler( this.serviceInstaller1_AfterInstall );
 			// 
 			// ProjectInstaller
 			// 
