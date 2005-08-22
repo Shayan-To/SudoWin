@@ -56,10 +56,5 @@ namespace Sudo.ConsoleApplication
 			this.DialogResult = DialogResult.Cancel;
 			this.Close();
 		}
-
-		private void InputBox_Activated( object sender, EventArgs e )
-		{
-			this.txtboxPassword.Focus();
-		}
 	}
 }

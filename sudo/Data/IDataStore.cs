@@ -37,15 +37,6 @@ namespace Sudo.Data
 	public interface IDataStore : IDisposable
 	{
 		/// <summary>
-		///		Opens a connection to the sudoers data store.
-		/// </summary>
-		/// <param name="connectionString">
-		///		Connection string used to open a connection
-		///		to the sudoers data store.
-		/// </param>
-		void Open( string connectionString );
-
-		/// <summary>
 		///		Opens a connection to the sudoers data store
 		///		and validate the data with the given
 		///		schema file.

@@ -35,6 +35,7 @@ using Sudo.PublicLibrary;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace Sudo.Data.FileClient
 {
@@ -44,6 +45,12 @@ namespace Sudo.Data.FileClient
 	/// </summary>
 	public class FileDataStore : IDataStore
 	{
+		/// <summary>
+		///		Trace source that can be defined in the 
+		///		config file for Sudo.WindowsService.
+		/// </summary>
+		private TraceSource m_ts = new TraceSource( "traceSrc" );
+
 		/// <summary>
 		///		FileDataStore boolean that allows
 		///		bool to be null.
@@ -59,7 +66,7 @@ namespace Sudo.Data.FileClient
 		///		Format for translating a value in an xpath
 		///		query into all lowercase.
 		/// </summary>
-		const string XpathTranslateFormat = 
+		private const string XpathTranslateFormat = 
 			"translate({0},'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')";
 
 		/// <summary>
@@ -78,6 +85,8 @@ namespace Sudo.Data.FileClient
 		/// </summary>
 		public FileDataStore()
 		{
+			m_ts.TraceEvent( TraceEventType.Start, 10, "constructing FileDataStore" );
+			m_ts.TraceEvent( TraceEventType.Stop, 10, "constructed FileDataStore" );
 		}
 
 		/// <summary>
@@ -112,7 +121,6 @@ namespace Sudo.Data.FileClient
 				user_xpq, m_namespace_mgr );
 
 			return ( user_node );
-			
 		}
 
 		#region IDataStore Members
@@ -142,22 +150,15 @@ namespace Sudo.Data.FileClient
 			xrs.CloseInput = true;
 			xrs.IgnoreComments = true;
 
-			// if a schema file uri was specified
-			// then enable validation against it
-			// when the sudoers file is read
-			if ( schemaFileUri != null )
-			{
-				xrs.Schemas.Add( null, schemaFileUri.AbsoluteUri );
-				xrs.ValidationType = ValidationType.Schema;
-			}
+			xrs.Schemas.Add( null, schemaFileUri.AbsoluteUri );
+			xrs.ValidationType = ValidationType.Schema;
 			
 			// read in the sudoers file
 			XmlReader xr = XmlReader.Create( connectionString, xrs );
-
-			// load the xml reader into the 
-			// sudoers xml document.
+			
+			// load the xml reader into the sudoers xml document.
 			m_xml_doc.Load( xr );
-		
+
 			// close the xmlreader
 			xr.Close();
 
@@ -172,27 +173,11 @@ namespace Sudo.Data.FileClient
 				RegexOptions.Multiline | RegexOptions.IgnoreCase );
 			Match ns_m = ns_rx.Match( m_xml_doc.InnerXml );
 
-			// if the default namespace declaration was found then
-			// add the default namespace to the namespace manager
-			if ( ns_m.Success )
-			{
-				string default_ns = ns_m.Groups[ 1 ].Value;
-				// add the default namespace
-				m_namespace_mgr.AddNamespace( "d", default_ns );
-			}
+			string default_ns = ns_m.Groups[ 1 ].Value;
+			// add the default namespace
+			m_namespace_mgr.AddNamespace( "d", default_ns );
 		}
 
-		/// <summary>
-		///		Opens the sudoers xml file.
-		/// </summary>
-		/// <param name="connectionString">
-		///		Fully qualified path to the sudoers xml file.
-		/// </param>
-		public void Open( string connectionString )
-		{
-			Open( connectionString, null );
-		}
-		
 		/// <summary>
 		///		Present for compliance with IDataStore.
 		/// </summary>
@@ -384,7 +369,7 @@ namespace Sudo.Data.FileClient
 				if ( parent_cmd_refs != null && parent_cmd_refs.HasChildNodes )
 				{
 					cmd_node = FindCommandNode( userNode,
-							parent_cmd_refs, commandPath, commandArguments );
+						parent_cmd_refs, commandPath, commandArguments );
 				}
 			}
 			return ( cmd_node );
@@ -495,6 +480,10 @@ namespace Sudo.Data.FileClient
 		///		the command group reference name being
 		///		searches for.
 		/// </summary>
+		/// <param name="userNode">
+		///		User node from which to start looking for
+		///		the command node.
+		/// </param>
 		/// <param name="commandGroupRefsParent">
 		///		Node that has commandGroupRef nodes as children.
 		/// </param>
@@ -504,18 +493,10 @@ namespace Sudo.Data.FileClient
 		/// <param name="commandArguments">
 		///		Arguments of the command being executed.
 		/// </param>
-		/// <param name="wasCommandFound">
-		///		Whether or not the command groups that the
-		///		reference pointed to contained the command
-		///		node that represents the command path being
-		///		searched for.
-		/// </param>
 		/// <returns>
-		///		The return value of this method is only
-		///		significant if the out parameter wasCommandFound
-		///		is set to true.
-		/// 
-		///		True if the command is allowed, false if it is not.
+		///		Command node associated with the given userNode,
+		///		commandPath, and commandArguments from the 
+		///		sudoers data store.
 		/// </returns>
 		private XmlNode FindCommandNode(
 			XmlNode userNode,
@@ -575,7 +556,7 @@ namespace Sudo.Data.FileClient
 		{
 			// build the query used to look for the command node in
 			// the current node context with the given command path
-			string xpath_command_query = string.Format(
+			string cmd_xpq = string.Format(
 				CultureInfo.CurrentCulture,
 				@"d:command[{0} = {1}]",
 				string.Format( CultureInfo.CurrentCulture,
@@ -585,7 +566,7 @@ namespace Sudo.Data.FileClient
 
 			// look for the command node
 			XmlNode cmd_node = commandNodeParent.SelectSingleNode(
-				xpath_command_query, m_namespace_mgr );
+				cmd_xpq, m_namespace_mgr );
 
 			return ( cmd_node );
 		}
@@ -702,16 +683,21 @@ namespace Sudo.Data.FileClient
 		/// <summary>
 		///		Gets the value of a command attribute.
 		/// </summary>
-		/// <param name="attributeName">
-		///		Name of the attribute value to get.
-		/// </param>
 		/// <param name="userNode">
 		///		User node that the command node is physically
 		///		under or logically under by way of a command
 		///		group reference.
 		/// </param>
+		/// <param name="checkDefaults">
+		///		Whether or not to look at the default settings
+		///		for this attribute if it cannot be found at
+		///		a lower level.
+		/// </param>
 		/// <param name="commandNode">
 		///		Command node to get the attribute value from.
+		/// </param>
+		/// <param name="attributeName">
+		///		Name of the attribute value to get.
 		/// </param>
 		/// <param name="attributeValue">
 		///		Value of the of the attribute.

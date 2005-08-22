@@ -53,7 +53,7 @@ namespace Sudo.WindowsService
 {
 	/// <summary>
 	///		This is the class that the Sudo Windows service hosts
-	///		as the server object that the clients communicate with.
+	///		as the sa object that the clients communicate with.
 	/// </summary>
 	public class SudoServer :	MarshalByRefObject, 
 		
@@ -62,7 +62,13 @@ namespace Sudo.WindowsService
 								IDisposable
 	{
 		/// <summary>
-		///		Data server used by the sudo server to
+		///		Trace source that can be defined in the 
+		///		config file for Sudo.WindowsService.
+		/// </summary>
+		private TraceSource m_ts = new TraceSource( "traceSrc" );
+
+		/// <summary>
+		///		Data sa used by the sudo sa to
 		///		persist information between calls.
 		/// </summary>
 		private DataServer m_data_server = null;
@@ -83,17 +89,34 @@ namespace Sudo.WindowsService
 		{
 			get
 			{
-				// get the user name of the user who invoked sudo
+				m_ts.TraceEvent( TraceEventType.Start, 10, 
+					"entering get_ExceededInvalidLogonLimit" );
+
+				// declare this method's return value
+				bool hasExceeded;
+
 				string un = Thread.CurrentPrincipal.Identity.Name;
 
-				// get the UserCache structure for this user
-				UserCache usai = m_data_server.GetUserCache( un );
-
+				UserCache uc = new UserCache();
 				UserInfo ui = new UserInfo();
-				if ( m_data_server.GetUserInfo( un, ref ui ) )
-					return ( usai.TimesExceededInvalidLogonCount > ui.TimesExceededInvalidLogons );
+
+				if ( m_data_server.GetUserCache( un, ref uc ) &&
+					m_data_server.GetUserInfo( un, ref ui ) )
+				{
+					hasExceeded = uc.TimesExceededInvalidLogonCount >=
+						ui.TimesExceededInvalidLogons;
+				}
 				else
-					return ( false );
+				{
+					hasExceeded = false;
+				}
+
+				m_ts.TraceEvent( TraceEventType.Verbose, 10,
+					"{0}, hasExceeded={1}", un, hasExceeded );
+				m_ts.TraceEvent( TraceEventType.Stop, 10,
+					"exiting get_ExceededInvalidLogonLimit" );
+
+				return ( hasExceeded );
 			}
 		}
 
@@ -114,10 +137,22 @@ namespace Sudo.WindowsService
 		{
 			get
 			{
-				// get the user name of the user who invoked sudo
-				string un = Thread.CurrentPrincipal.Identity.Name;
+				m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.EnterPropertyGet,
+					"entering get_AreCredentialsCached" );
 
-				return ( m_data_server.GetPassword( un ).Length > 0 );
+				// declare this method's return value
+				bool areCached = false;
+
+				string un = Thread.CurrentPrincipal.Identity.Name;
+				string p = string.Empty;
+				areCached = m_data_server.GetUserCache( un, ref p );
+
+				m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+					"{0}, areCached={1}", un, areCached );
+				m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitPropertyGet,
+					"exiting get_AreCredentialsCached" );
+
+				return ( areCached );
 			}
 		}
 
@@ -126,9 +161,18 @@ namespace Sudo.WindowsService
 		/// </summary>
 		public SudoServer()
 		{
-			m_data_server = Activator.GetObject( typeof( DataServer ),
-				System.Configuration.ConfigurationManager.AppSettings[ "dataServerUri" ] )
-				as DataServer;
+			m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.EnterConstructor,
+				"constructing SudoServer" );
+
+			string dsuri = ConfigurationManager.AppSettings[ "dataServerUri" ];
+			
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+				"getting reference to SAO, m_data_server={0}", dsuri );
+
+			m_data_server = Activator.GetObject( typeof( DataServer ), dsuri ) as DataServer;
+
+			m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitConstructor,
+				"constructed SudoServer" );
 		}
 
 		/// <summary>
@@ -163,52 +207,69 @@ namespace Sudo.WindowsService
 			int which, 
 			string privilegesGroup )
 		{
-			// get the strict user name part of the user name string, 
-			// that is the user name without the domain part
+			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
+				"entering AddRemoveUser( string, int, string )" );
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
+				"{0}, which={1}, privilegesGroup={2}",
+				userName, which, privilegesGroup );
+			
+			// remove the domain from the userName string
 			string un_part = userName.Split( new char[] { '\\' } )[ 1 ];
 
-			// get entry for localhost
+			// get the directory entries for the localhost, the privileges
+			// group, and the user
 			DirectoryEntry localhost = new DirectoryEntry( "WinNT://" +
 				Environment.MachineName + ",computer" );
+			DirectoryEntry group = localhost.Children.Find( privilegesGroup );
+			DirectoryEntry user = localhost.Children.Find( un_part, "user" );
 
-			// get entry for the privileges group
-			DirectoryEntry privs_group = localhost.Children.Find( privilegesGroup );
-
-			// get entry for user to add
-			DirectoryEntry user = localhost.Children.Find(
-				un_part, "user" );
-
-			// used for adsi invocations
+			// used for adsi calls
 			object[] path = new object[] { user.Path };
 
-			// find out if the user is already a member
-			// of the administrators group
-			bool is_member = bool.Parse( Convert.ToString(
-				privs_group.Invoke( "IsMember", path ),
+			bool isAlreadyMember = bool.Parse( Convert.ToString(
+				group.Invoke( "IsMember", path ),
 				CultureInfo.CurrentCulture ) );
 
-			// add the user to privs group if they
-			// are not already a member
-			if ( which == 1 && !is_member )
-				privs_group.Invoke( "Add", path );
-			// remove the member from privs group
-			// if they are in the group
-			else if ( which == 0 && is_member )
-				privs_group.Invoke( "Remove", path );
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+				"{0}, isAlreadyMember={1}",
+				userName, isAlreadyMember );
+
+			// add user to privileges group
+			if ( which == 1 && !isAlreadyMember )
+			{
+				group.Invoke( "Add", path );
+
+				m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+					"{0}, added user to privileges group",
+					userName );
+			}
+
+			// remove user from privileges group
+			else if ( which == 0 && isAlreadyMember )
+			{
+				group.Invoke( "Remove", path );
+
+				m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+					"{0}, removed user from privileges group",
+					userName );
+			}
 
 			// save changes
-			privs_group.CommitChanges();
+			group.CommitChanges();
 
 			// cleanup
 			user.Dispose();
-			privs_group.Dispose();
+			group.Dispose();
 			localhost.Dispose();
 
-			return( is_member );
+			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.ExitMethod,
+				"exiting AddRemoveUser( string, int, string )" );
+
+			return( isAlreadyMember );
 		}
 
 		/// <summary>
-		///		Invokes sudo on the given command path.
+		///		Invokes sudo on the given command p.
 		/// </summary>
 		/// <param name="password">
 		///		Password of user invoking sudo.
@@ -222,335 +283,469 @@ namespace Sudo.WindowsService
 		///		sudo is being invoked on.
 		/// </param>
 		/// <returns>
-		///		An integer that can be cast as a 
-		///		SudoResultsTypes value.
+		///		A SudoResultTypes value.
 		/// </returns>
 		public SudoResultTypes Sudo(
 			string password,
 			string commandPath,
 			string commandArguments )
 		{
-			// get the fully qualified user name
-			string fqun = Thread.CurrentPrincipal.Identity.Name;
+			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
+				"entering Sudo( string, string, string )" );
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
+				"password=,commandPath={0},commandArguments={1}",
+				commandPath, commandArguments );
 
-			// get information about this user from the
-			// sudoers data store
+			string un = Thread.CurrentPrincipal.Identity.Name;
+
+			// check to see if the user is present in the sudoers data store
 			UserInfo ui = new UserInfo();
-			if ( !m_data_server.GetUserInfo( fqun, ref ui ) )
-				return ( SudoResultTypes.CommandNotAllowed );
-
-			// get the domain and user name parts of the fqun
-			Match identity_match = Regex.Match( fqun,
-				@"^([^\\]+)\\(.+)$" );
-			// domain name
-			string dn_part = identity_match.Groups[ 1 ].Value;
-			// user name
-			string un_part = identity_match.Groups[ 2 ].Value;
-
-			// get any previous information that may exist
-			// about the user accessing the sudo server
-			UserCache uc = m_data_server.GetUserCache( fqun );
-			
-			// has the user exceeded their invalid logon limit?
-			if ( uc.InvalidLogonCount >= ui.InvalidLogons )
+			if ( !m_data_server.GetUserInfo( un, ref ui ) )
 			{
-				// sudo result to return
-				SudoResultTypes srt;
-
-				// has the user exceeded the limit on the number
-				// of times they are allowed to exceed their
-				// invalid logon limit by 1?  if so this means that
-				// the user is continuing to attempt to run sudo
-				// even though they are locket out.  bad user!
-				if ( uc.TimesExceededInvalidLogonCount >= 
-					ui.TimesExceededInvalidLogons )
-				{
-					// notify the client that this user is locked out
-					srt = SudoResultTypes.SudoUserLockedOut;
-				}
-				// has the user exceeded the limit on the
-				// number of times they are allowed to exceed 
-				// their invalid logon limit
-				else if ( uc.TimesExceededInvalidLogonCount >=
-					ui.TimesExceededInvalidLogons - 1 )
-				{
-					// increment the number of times the user
-					// has reached their invalid logon limit
-					++uc.TimesExceededInvalidLogonCount;
-
-					// save the user's cache and schedule it
-					// for removal according to the user's
-					// LockoutTimeout value
-					m_data_server.SetUserCache( fqun, uc );
-					m_data_server.RemoveUserCache( fqun, ui.LockoutTimeout );
-
-					// notify the client that this user is locked out
-					srt = SudoResultTypes.SudoUserLockedOut;
-				}
-				// the user has not yet exceeded the number of
-				// times they are allowed to exceed their invalid
-				// logon limit
-				else
-				{
-					// increment the number of times the user
-					// has reached their invalid logon limit
-					++uc.TimesExceededInvalidLogonCount;
-
-					// reset the users invalid logon count
-					// to 0 so that they are allowed to try
-					// to execute sudo again
-					uc.InvalidLogonCount = 0;
-
-					// save the user's cache so that subsequent
-					// attempts by the user to call sudo will
-					// know how many invalid logon attempts the
-					// user has made
-					m_data_server.SetUserCache( fqun, uc );
-
-					srt = SudoResultTypes.TooManyInvalidLogons;
-				}
-
-				return ( srt );
+				m_ts.TraceEvent( TraceEventType.Information, ( int ) EventIds.Information,
+					"{0}, user not in sudoers data store", un );
+				
+				return ( LogResult( un, ui.LoggingLevel,
+					SudoResultTypes.CommandNotAllowed ) );
 			}
 
-			// try to get the cached password for the user
-			string cached_password = m_data_server.GetPassword( fqun );
-			
-			/*
-			 * if the user's cached password's length is greater
-			 * than zero then it means that a password was cached
-			 * for this user and you should set the password that
-			 * you are going to use to launch the process to this
-			 * cached password.
-			 * 
-			 * if the user's password is not cached then invoke
-			 * LogonUser to validate the credentials.  if
-			 * LogonUser fails then increment the user's bad
-			 * password attempt count and return an error.
-			 */
-			if ( cached_password.Length > 0 )
-				password = cached_password;
-			else
+			// make sure the user has not exceeded any invalid logon limits
+			UserCache uc = new UserCache();
+			if ( m_data_server.GetUserCache( un, ref uc ) && 
+				uc.InvalidLogonCount >= ui.InvalidLogons - 1 )
 			{
-				// define a temporary pointer to reference
-				// the users logon handle
-				IntPtr hTemp = IntPtr.Zero;
-
-				// attempt to log the user on.
-				bool loggedon = Win32.Native.LogonUser( un_part, dn_part, password,
-					LogonType.Interactive, LogonProvider.WinNT50, out hTemp );
-
-				// did the user successfully log on?
-				if ( loggedon )
-				{
-					// close the user's logon handle
-					Win32.Native.CloseHandle( hTemp );
-
-					// save the user's cache and schedule it
-					// for removal according to the user's
-					// LogonTimeout value
-					m_data_server.SetUserCache( fqun, password );
-					m_data_server.RemoveUserCache( fqun, ui.LogonTimeout );
-				}
-				else
-				{
-					// increment the number of invalid logons
-					// for this user
-					++uc.InvalidLogonCount;
-
-					// save the user's cache and schedule it
-					// for removal according to the user's
-					// InvalidLogonTimeout value
-					m_data_server.SetUserCache( fqun, uc );
-					m_data_server.RemoveUserCache( fqun, ui.InvalidLogonTimeout );
-
-					// return an error
-					return ( SudoResultTypes.InvalidLogon );
-				}
+				return ( LogResult( un, ui.LoggingLevel,
+					GetLimitDetails( un, ref ui, ref uc ) ) );
 			}
 
-			/*
-			 * do 4 checks
-			 * 
-			 * 1) check to see if the command the user is trying
-			 * to execute is a built-in shell command.  these are
-			 * not yet supported so return an error.
-			 * 
-			 * 2) check to see if the command the user is trying
-			 * to execute is a valid command path.  if not then
-			 * return an error.
-			 * 
-			 * 3) check to see if the user is allowed to execute
-			 * the given command in the sudoers file.  if the user
-			 * is not allowed to execute the given command then
-			 * return an error.
-			 * 
-			 * 4) is the sudo console application on this machine
-			 * signed by the same strong name key as the sudo
-			 * windows service?  if not then return an error.
-			 */
-			if ( IsCommandBuiltin( commandPath ) )
-				return ( SudoResultTypes.CommandNotAllowed );
-
-			if ( !IsCommandPathValid( ref commandPath ) )
-				return ( SudoResultTypes.CommandNotAllowed );
-
-			CommandInfo ci = new CommandInfo();
-			if ( m_data_server.GetCommandInfo( fqun, commandPath, commandArguments, ref ci ) )
+			// check to see if the user has a cached password
+			if ( !m_data_server.GetUserCache( un, ref password ) )
 			{
-				if ( !ci.IsCommandAllowed )
-					return ( SudoResultTypes.CommandNotAllowed );
+				// validate the users logon credentials
+				if ( !LogonUser( un, password, ref ui, ref uc ) )
+				{
+					return ( LogResult( un, ui.LoggingLevel,
+						SudoResultTypes.InvalidLogon ) );
+				}
 			}
-			else
-				return ( SudoResultTypes.CommandNotAllowed );
-
-			if ( !VerifySameSignature( ConfigurationManager.AppSettings[ "consoleApplicationPath" ] ) )
-				return ( SudoResultTypes.CommandNotAllowed );
-
-			// get the user token for the user who
-			// is executing the sudo client
-			IntPtr hUser = IntPtr.Zero;
 			
-			// get the user's logon token
-			QueryUserToken( fqun, ref hUser );
+			// verify the command being sudoed
+			if ( !VerifyCommand( un, ref commandPath, commandArguments ) )
+			{
+				return ( LogResult( un, ui.LoggingLevel,
+					SudoResultTypes.CommandNotAllowed ) );
+			}
 
-			// get the privileges group this user will
-			// join while this process is executed
-			string pg = ui.PrivilegesGroup;
+			// verify that this service and the sudo console app
+			// are both signed with the same strong name key
+			if ( !VerifySameSignature( un,
+				ConfigurationManager.AppSettings[ "consoleApplicationPath" ] ) )
+			{
+				return ( LogResult( un, ui.LoggingLevel,
+					SudoResultTypes.CommandNotAllowed ) );
+			}
 
-			// add the user to the privileges group if they
-			// are not already a member of it and record whether
-			// or not they are already a member of it
-			bool already_member = AddRemoveUser( fqun, 1, pg );
+			// sudo the command for the user
+			Sudo( un, password, ui.PrivilegesGroup, commandPath, commandArguments );
 
-			// start the process
-			Process p = CreateProcessAsUser( hUser, password, commandPath, commandArguments );
+			m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitMethod,
+				"exiting Sudo( string, string, string )" );
 
-			// wait for p to exit
-			p.WaitForExit();
-
-			// remove the user from the privileges group if 
-			// they were not already a member of it
-			if ( !already_member )
-				AddRemoveUser( fqun, 0, pg );
-
-			return ( 0 );
+			return ( LogResult( un, ui.LoggingLevel, 
+				SudoResultTypes.SudoK ) );
 		}
 
-
-		private Process CreateProcessAsUser( 
-			IntPtr userToken,
-			string password,
+		private void Sudo(
+			string userName, 
+			string password, 
+			string privilegesGroup,
 			string commandPath, 
 			string commandArguments )
 		{
+			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
+				"entering Sudo( string, string, string, string, string )" );
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
+				"userName={0},password=,privilegesGroup={1},commandPath={2},commandArguments={3}",
+				userName, privilegesGroup, commandPath, commandArguments );
+
+			// get the user's logon token
+			IntPtr hUser = IntPtr.Zero;
+			QueryUserToken( userName, ref hUser );
+
+			// add the user to the group and record if they
+			// were already a member of the group
+			bool am = AddRemoveUser( userName, 1, privilegesGroup );
+
+			// create the callback process and wait for it to exit so the user is
+			// not removed from the privileges group before the indended process starts
+			Process p = null;
+			if ( CreateProcessAsUser( hUser, password, commandPath, commandArguments, ref p ) )
+			{
+				p.WaitForExit();
+			}
+
+			// remove the user from the group if they were not already a member
+			if ( !am )
+				AddRemoveUser( userName, 0, privilegesGroup );
+
+			m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitMethod,
+				"exiting Sudo( string, string, string, string, string )" );
+		}
+
+		private SudoResultTypes LogResult(
+			string userName,
+			LoggingLevelTypes loggingLevel,
+			SudoResultTypes sudoResultType )
+		{
+			if ( loggingLevel != LoggingLevelTypes.None )
+			{
+				EventLogEntryType elet = 0;
+
+				switch ( sudoResultType )
+				{
+					case SudoResultTypes.CommandNotAllowed:
+					{
+						if ( loggingLevel == LoggingLevelTypes.Failure ||
+							loggingLevel == LoggingLevelTypes.Both )
+							elet = EventLogEntryType.FailureAudit;
+						break;
+					}
+					case SudoResultTypes.InvalidLogon:
+					{
+						if ( loggingLevel == LoggingLevelTypes.Failure ||
+							loggingLevel == LoggingLevelTypes.Both )
+							elet = EventLogEntryType.FailureAudit;
+						break;
+					}
+					case SudoResultTypes.LockedOut:
+					{
+						if ( loggingLevel == LoggingLevelTypes.Failure ||
+							loggingLevel == LoggingLevelTypes.Both )
+							elet = EventLogEntryType.FailureAudit;
+						break;
+					}
+					case SudoResultTypes.SudoK:
+					{
+						if ( loggingLevel == LoggingLevelTypes.Failure ||
+							loggingLevel == LoggingLevelTypes.Both )
+							elet = EventLogEntryType.SuccessAudit;
+						break;
+					}
+					case SudoResultTypes.TooManyInvalidLogons:
+					{
+						if ( loggingLevel == LoggingLevelTypes.Failure ||
+							loggingLevel == LoggingLevelTypes.Both )
+							elet = EventLogEntryType.FailureAudit;
+						break;
+					}
+				}
+
+				EventLog.WriteEntry( "Sudo",
+					string.Format( CultureInfo.CurrentCulture,
+						"{0} - {1}", userName, sudoResultType ),
+					elet,
+					( int ) sudoResultType );
+			}
+
+			return ( sudoResultType );
+		}
+
+		private bool VerifyCommand(
+			string userName,
+			ref string commandPath,
+			string commandArguments )
+		{
+			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
+				"entering VerifyCommand( string, ref string, string )" );
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
+				"userName={0},commandPath={1},commandArguments={2}",
+				userName, commandPath, commandArguments );
+			
+			CommandInfo ci = new CommandInfo();
+
+			// declare this method's return value
+			bool isCommandVerified = 
+				
+				!IsShellCommand( commandPath )
+
+				&&
+
+				IsCommandPathValid( ref commandPath )
+
+				&&
+				
+				m_data_server.GetCommandInfo( 
+					userName, 
+					commandPath, 
+					commandArguments, 
+					ref ci )
+
+				&&
+
+				ci.IsCommandAllowed;
+
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+				"{0}, isCommandVerified={1}", userName, isCommandVerified );
+			m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitMethod,
+				"exiting VerifyCommand( string, ref string, string )" );
+
+			return ( isCommandVerified );
+		}
+
+		private bool LogonUser( 
+			string userName,
+			string password, 
+			ref UserInfo userInfo,
+			ref UserCache userCache )
+		{
+			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
+				"entering LogonUser( string, string, ref UserInfo, ref UserCache )" );
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
+				"userName={0},password=,userInfo=,userCache=", userName);
+
+			// get the domain and user name parts of the userName
+			Match m = Regex.Match( userName, @"^([^\\]+)\\(.+)$" );
+			string dn_part = m.Groups[ 1 ].Value;
+			string un_part = m.Groups[ 2 ].Value;
+
+			// log the user on
+			IntPtr hLogon = IntPtr.Zero;
+			bool logonSuccessful = Win32.Native.LogonUser( un_part, dn_part, password,
+				LogonType.Interactive, LogonProvider.WinNT50, out hLogon );
+
+			if ( logonSuccessful )
+			{
+				Win32.Native.CloseHandle( hLogon );
+				
+				// cache the user's password and set it's expiration date
+				m_data_server.SetUserCache( userName, password );
+				m_data_server.ExpireUserCache( userName, userInfo.LogonTimeout );
+			}
+			else
+			{
+				++userCache.InvalidLogonCount;
+
+				// cache the user's InvalidLogonCount and set it's expiration date
+				m_data_server.SetUserCache( userName, userCache );
+				m_data_server.ExpireUserCache( userName, userInfo.InvalidLogonTimeout );
+			}
+
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+				"{0}, logonSuccessful={1}", userName, logonSuccessful );
+			m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitMethod,
+				"exiting LogonUser( string, ref string, string )" );
+
+			return ( logonSuccessful );
+		}
+
+		private SudoResultTypes GetLimitDetails( 
+			string userName, 
+			ref UserInfo userInfo, 
+			ref UserCache userCache )
+		{
+			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
+				"entering GetLimitDetails( string, ref UserInfo, ref UserCache )" );
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
+				"userName={0},userInfo=,userCache=", userName );
+
+			// declare this method's return value
+			SudoResultTypes sudoResult;
+
+			// let the user know they have been locked out
+			if ( userCache.TimesExceededInvalidLogonCount >=
+				userInfo.TimesExceededInvalidLogons )
+			{
+				sudoResult = SudoResultTypes.LockedOut;
+				m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+					"{0}, previously locked out", userName );
+			}
+			
+			// lock the user out and set their lockout expiration
+			else if ( userCache.TimesExceededInvalidLogonCount >=
+				userInfo.TimesExceededInvalidLogons - 1 )
+			{
+				++userCache.TimesExceededInvalidLogonCount;
+
+				m_data_server.SetUserCache( userName, userCache );
+				m_data_server.ExpireUserCache( userName, userInfo.LockoutTimeout );
+
+				sudoResult = SudoResultTypes.LockedOut;
+				m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+					"{0}, locked out", userName );
+			}
+
+			// move the user 1 step closer to being locked out
+			else
+			{
+				++userCache.TimesExceededInvalidLogonCount;
+
+				// reset the user's invalid logon count so their
+				// next call to sudo does not immediately result
+				// in an SudoResultTypes.TooManyInvalidLogons
+				userCache.InvalidLogonCount = 0;
+
+				m_data_server.SetUserCache( userName, userCache );
+				sudoResult = SudoResultTypes.TooManyInvalidLogons;
+				m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+					"{0}, {1} invalid attempts away from being locked out", 
+					userName, 
+					userInfo.TimesExceededInvalidLogons - userCache.TimesExceededInvalidLogonCount );
+			}
+
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+				"{0}, sudoResult={1}", userName, sudoResult );
+			m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitMethod,
+				"exiting GetLimitDetails( string, ref UserInfo, ref UserCache )" );
+
+			return ( sudoResult );
+		}
+
+		private bool CreateProcessAsUser( 
+			IntPtr userToken,
+			string password,
+			string commandPath, 
+			string commandArguments,
+			ref Process newProcess )
+		{
+			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
+				"entering CreateProcessAsUser( IntPtr, string, string, string )" );
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
+				"userToken=,password=,commandPath={0},commandArguments={1}", 
+				commandPath, commandArguments );
+
+			// needed to create a new process
 			SecurityAttributes sa = new SecurityAttributes();
 			sa.InheritHandle = false;
 			sa.SecurityDescriptor = IntPtr.Zero;
 			sa.Length = Marshal.SizeOf( sa );
 
+			// bind the new process to the interactive desktop
 			StartupInfo si = new StartupInfo();
 			si.Desktop = "WinSta0\\Default";
 			si.Size = Marshal.SizeOf( si );
 
-			string formatted_cpath = string.Format(
+			// build a formatted command path to call the Sudo.ConsoleApplication with
+			string fcp = string.Format(
 				CultureInfo.CurrentCulture,
 				"\"{0}\" -c -p \"{1}\" \"{2}\" {3}",
 				ConfigurationManager.AppSettings[ "consoleApplicationPath" ],
 				 password,
 				commandPath, commandArguments );
 
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+				"formatted command path={0}",
+				Regex.Replace( fcp, @"\-p ""([^""]*)""", "-p" ) );
+
 			ProcessInformation pi;
-			bool started = Native.CreateProcessAsUser(
-				userToken, 
-				null, 
-				formatted_cpath,
+			bool newProcessCreated = Native.CreateProcessAsUser(
+				userToken,
+				null,
+				fcp,
 				ref sa, ref sa,
-				false, 
+				false,
 				( int ) ProcessCreationFlags.CreateNoWindow | ( int ) ProcessPriorityTypes.Normal,
 				IntPtr.Zero, null, ref si, out pi );
 
-			if ( !started )
-				throw new Win32Exception( Marshal.GetLastWin32Error() );
-			else
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+				"processCreated={0}" + ( newProcessCreated ? "" : ", win32error={1}" ), 
+				newProcessCreated, 
+				newProcessCreated ? 0 : Marshal.GetLastWin32Error() );
+
+			if ( newProcessCreated )
 			{
 				// get a managed reference to the process
-				Process p = Process.GetProcessById( pi.ProcessId );
-				
+				newProcess = Process.GetProcessById( pi.ProcessId );
+
 				// free the unmanaged handles
 				WtsApi32.Native.CloseHandle( pi.Thread );
 				WtsApi32.Native.CloseHandle( pi.Process );
-
-				return ( p );
 			}
+
+			m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitMethod,
+				"exiting CreateProcessAsUser( IntPtr, string, string, string )" );
+
+			return ( newProcessCreated );
 		}
 
 		/// <summary>
-		///		Gets the logon token of the user who is
-		///		executing the sudo client.
+		///		Retrieves the logon token for the user that is 
+		///		logged into the computer with a user name that is
+		///		equal to the parameter userName.
 		/// </summary>
 		/// <param name="userName">
 		///		User name to get token for.
 		/// </param>
-		/// <param name="userTokenHandle">
+		/// <param name="userToken">
 		///		User logon token.
 		/// </param>
-		/// <exception cref="System.ComponentModel.Win32Exception" />
-		private void QueryUserToken( string userName, ref IntPtr userTokenHandle )
+		/// <returns>
+		///		True if the token was retrieved, otherwise false.
+		/// </returns>
+		private bool QueryUserToken( string userName, ref IntPtr userToken )
 		{
-			// open a handle to the local server
+			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
+				"entering QueryUserToken( string, ref IntPtr )" );
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
+				"userName={0},userToken=", userName );
+
+			// open a handle to the localhost
 			IntPtr hSvr = WtsApi32.Native.WtsOpenServer( null );
 
+			// get a list of the sessions on the localhost
+			WtsApi32.WtsSessionInfo[] wsis;
 			try
 			{
-				// enumerate the sessions on the terminal server
-				WtsApi32.WtsSessionInfo[] wsis = WtsApi32.Managed.WtsEnumerateSessions( hSvr );
+				wsis = WtsApi32.Managed.WtsEnumerateSessions( hSvr );
+			}
+			catch ( Win32Exception e )
+			{
+				m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Error,
+					"{0}, WtsEnumerateSessions FAILED, Win32Error={1}",
+					userName, e.ErrorCode );
+				m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitMethod,
+					"exiting QueryUserToken( userName, ref IntPtr" );
+				return ( false );
+			}
 
-				for ( int x = 0; x < wsis.Length && userTokenHandle == IntPtr.Zero; ++x )
-				{
-					string un = string.Empty;	// user name
-					string dn = string.Empty;	// domain name
+			// check all the sessions on the server to get the logon token
+			// of the user that has the same user name as the userName parameter
+			for ( int x = 0; x < wsis.Length && userToken == IntPtr.Zero; ++x )
+			{
+				// declare 2 strings to hold the user name and domain name
+				string un = string.Empty, dn = string.Empty;
 
-					// get the user name
-					WtsApi32.Managed.WtsQuerySessionInformation(
+				// compare the session's user name with the userName
+				// parameter and get the logon token if they are equal
+				if ( WtsApi32.Managed.WtsQuerySessionInformation(
 						hSvr, wsis[ x ].SessionId,
 						WtsApi32.WtsQueryInfoTypes.WtsUserName,
-						out un );
+						out un )
 
-					// get the domain name
+					&&
+
 					WtsApi32.Managed.WtsQuerySessionInformation(
 						hSvr, wsis[ x ].SessionId,
 						WtsApi32.WtsQueryInfoTypes.WtsDomainName,
-						out dn );
+						out dn )
 
-					// domainname\username
-					string dnun = string.Empty;
+					&&
 
-					// if both the user name and domain name
-					// were successfully retrieved then
-					// format them into dn\un
-					if ( un.Length > 0 && dn.Length > 0 )
-					{
-						dnun = string.Format( CultureInfo.CurrentCulture,
-							"{0}\\{1}", dn, un );
-					}
-
-					// if dnun matches the name of the user whose
-					// security principal is attached to the current thread,
-					// i.e. the user who executed the remote client, then
-					// grab the user token, he/she's our guy/gal.
-					if ( dnun == userName )
-					{
-						WtsApi32.Native.WtsQueryUserToken(
-							wsis[ x ].SessionId, ref userTokenHandle );
-					}
+					( ( dn + "\\" + un ) == userName ) )
+				{
+					WtsApi32.Native.WtsQueryUserToken(
+						wsis[ x ].SessionId, ref userToken );
 				}
 			}
-			finally
-			{
-				if ( hSvr != IntPtr.Zero )
-					WtsApi32.Native.WtsCloseServer( hSvr );
-			}
+
+			if ( hSvr != IntPtr.Zero )
+				WtsApi32.Native.WtsCloseServer( hSvr );
+
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+				"{0}, tokenRetrieved={1}", userName, userToken != IntPtr.Zero );
+			m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitMethod,
+				"exiting QueryUserToken( userName, ref IntPtr" );
+			
+			return ( userToken != IntPtr.Zero );
 		}
 
 		/// <summary>
@@ -560,103 +755,89 @@ namespace Sudo.WindowsService
 		///		or somewhere in one of the directories 
 		///		specified in the environment variable %PATH%.
 		/// </summary>
-		/// <param name="cmdName">
+		/// <param name="commandPath">
 		///		Command to check.  If this method returns true
 		///		this parameter will be set to the fully
-		///		qualified path of the command.
+		///		qualified p of the command.
 		/// </param>
 		/// <returns>
-		///		True if the command exists and false if it does not.
+		///		True if the command exists, otherwise false.
 		/// </returns>
-		private bool IsCommandPathValid( ref string cmdName )
+		private bool IsCommandPathValid( ref string commandPath )
 		{
-			// method scope var used to hold
-			// the results of tests to see if
-			// the given command exists somewhere
-			bool cmd_exists = false;
+			// declare this method's return value
+			bool isValid = false;
 
-			// if cmdName contains a slash or a backslash
-			// then test the existence of the command exactly
-			// as entered and with the executable file
-			// extensions and immediately return the results
-			// of this test.
-			if ( cmdName.Contains( "\\" ) ||
-				cmdName.Contains( "/" ) )
+			// check to see if commandPath exists as entered or 
+			// as entered with any of the known executable file
+			// extensions appended to it
+			if ( commandPath.Contains( "\\" ) ||
+				commandPath.Contains( "/" ) )
 			{
-				// if the command exists *exactly* as entered
-				// then return true immediately
-				cmd_exists = File.Exists( cmdName );
-
-				// if the command does not exist exactly as
-				// entered then test it with known executable
-				// file extensions appended to the end
-				if ( !cmd_exists )
-					cmd_exists = TestFileExtensions( cmdName ).Length > 0;
+				// check to see if the commandPath exists
+				if ( !( isValid = File.Exists( commandPath ) ) )
+				{
+					// check to see if commandPath exists with any of the
+					// known executable file extensions appended to it
+					isValid = ( commandPath = TestFileExtensions( commandPath ) ).Length > 0;
+				}
 			}
-			// at this point we must check to see
-			// if the command exists in one of the
-			// path directories
+			
+			// check to see if commandPath exists in any of the folders
+			// listed in the PATH environment variable
 			else
 			{
-				string path = Environment.GetEnvironmentVariable( "path" );
+				string p = Environment.GetEnvironmentVariable( "PATH" );
+				string[] pdirs = p.Split( new char[] { ';' } );
 
-				// create an array to hold the path directories
-				string[] path_dirs = path.Split( new char[] { ';' } );
-
-				// loop through the directories specified in
-				// in %PATH% checking if the command name
-				// exists in one of those directories.  the 
-				// loop will break if the end of the %PATH%
-				// directories array is reached or if the 
-				// command is found.
-				for ( int x = 0; x < path_dirs.Length && !cmd_exists; ++x )
+				for ( int x = 0; x < pdirs.Length && !isValid; ++x )
 				{
-					string path_dir = path_dirs[ x ];
+					string pd = pdirs[ x ];
 
-					// if the directory does not end with a
-					// trailing slash then we must add one
-					if ( !Regex.IsMatch( path_dir, @"^.+(\\|/)$" ) )
+					// add a trailing slash to the path directory
+					// if it does not have one
+					if ( !Regex.IsMatch( pd, @"^.+(\\|/)$" ) )
 					{
-						// if backslashes are used then append
-						// a backslash to the end of the path
-						if ( path_dir.IndexOf( '\\' ) > -1 )
-							path_dir += "\\";
-						// append a slash to the end of the path
+						// add the appropriate type of slash,
+						// i.e. a slash or a backslash
+						if ( pd.IndexOf( '\\' ) > -1 )
+							pd += "\\";
 						else
-							path_dir += "/";
+							pd += "/";
 					}
 
-					// set the fully qualified command path
-					cmdName = path_dir + cmdName;
-					cmdName = TestFileExtensions( cmdName );
-					cmd_exists = cmdName.Length > 0;
+					// check to see if commandPath exists with
+					// the current path directory prepended to it
+					commandPath = pd + commandPath;
+
+					commandPath = TestFileExtensions( commandPath );
+					isValid = commandPath.Length > 0;
 				}
 			}
 
-			return ( cmd_exists );
+			return ( isValid );
 		}
 
 		/// <summary>
-		///		Tests the given command path to see if
-		///		the command is a command built in to
-		///		command.com.
+		///		Tests the given commandPath to see if
+		///		the command is a Windows shell command.
 		/// </summary>
-		/// <param name="commandName">
+		/// <param name="commandPath">
 		///		Command to test.
 		/// </param>
 		/// <returns>
-		///		True if the command is builtin, false if otherwise.
+		///		True if the command is a shell command, otherwise false.
 		/// </returns>
-		private bool IsCommandBuiltin( string commandName )
+		private bool IsShellCommand( string commandPath )
 		{
-			return ( Regex.IsMatch( commandName,
+			return ( Regex.IsMatch( commandPath,
 				"(cd)|(dir)|(type)",
 				RegexOptions.IgnoreCase ) );
 		}
 
 		/// <summary>
 		///		Tests all the executable file extensions on
-		///		the command path parameter in order to determine
+		///		the command p parameter in order to determine
 		///		whether the given command name is a valid 
 		///		executable without the extension on the end.
 		/// </summary>
@@ -665,7 +846,7 @@ namespace Sudo.WindowsService
 		/// </param>
 		/// <returns>
 		///		If a command with an executable file extension was
-		///		found then this method returns the fully qualified path 
+		///		found then this method returns the fully qualified p 
 		///		to the command with the correct file extension 
 		///		appended to the end.
 		/// 
@@ -674,103 +855,124 @@ namespace Sudo.WindowsService
 		/// </returns>
 		private string TestFileExtensions( string commandPath )
 		{
-			// used to exit the below for loop early
-			// if the fully qualified command path is found
-			bool cmd_exists = false;
+			// declare this method's return value
+			string withExtension = string.Empty;
 
-			// used to hold the fully qualified command path with
-			// an executable extension tacked on at the end
-			string cmd_path_with_ext = string.Empty;
+			// declare a bool that is true of the
+			// command exists with the given file
+			// extension
+			bool ce = false;
 
-			// check all the possible executable extensions
-			for ( int x = 0; x < 4 && !cmd_exists; ++x )
+			// test all the possible executable extensions
+			for ( int x = 0; x < 4 && !ce; ++x )
 			{
 				switch ( x )
 				{
 					case 0:
-						{
-							cmd_path_with_ext = commandPath + ".exe";
-							break;
-						}
+					{
+						withExtension = commandPath + ".exe";
+						break;
+					}
 					case 1:
-						{
-							cmd_path_with_ext = commandPath + ".bat";
-							break;
-						}
+					{
+						withExtension = commandPath + ".bat";
+						break;
+					}
 					case 2:
-						{
-							cmd_path_with_ext = commandPath + ".cmd";
-							break;
-						}
+					{
+						withExtension = commandPath + ".cmd";
+						break;
+					}
 					case 3:
-						{
-							cmd_path_with_ext = commandPath + ".lnk";
-							break;
-						}
+					{
+						withExtension = commandPath + ".lnk";
+						break;
+					}
 				}
 
-				cmd_exists = File.Exists( cmd_path_with_ext );
+				m_ts.TraceEvent( TraceEventType.Verbose, 10, withExtension );
+
+				// set the the return value to an empty string
+				// if the file does not exist and this is the
+				// last iteration of this loop
+				if ( !( ce = File.Exists( withExtension ) ) )
+					withExtension = string.Empty;
 			}
 
-			// if the command exists then return
-			// the fully qualified path to it else
-			// return an empty string
-			if ( cmd_exists )
-				return ( cmd_path_with_ext );
-			else
-				return ( string.Empty );
+			return ( withExtension );
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="userName"></param>
 		/// <param name="otherAssemblyFilePath"></param>
 		/// <remarks>
 		///		http://blogs.msdn.com/shawnfa/archive/2004/06/07/150378.aspx
 		/// </remarks>
-		private bool VerifySameSignature( string otherAssemblyFilePath )
+		private bool VerifySameSignature( 
+			string userName,
+			string otherAssemblyFilePath )
 		{
-			// whether or not both the client and server
-			// assemblies have the same strong name signature
-			bool same_sig = false;
+			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
+				"entering VerifySameSignature( string, string )" );
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
+				"{0}, otherAssemblyFilePath={1}", userName, otherAssemblyFilePath );
 
-			// get references to the client and server assemblies
-			Assembly client = Assembly.LoadFile( otherAssemblyFilePath );
-			Assembly server = Assembly.GetExecutingAssembly();
+			// declare this method's return value
+			bool isVerified = false;
 
-			// client/server was verified
-			bool client_wf = false;
-			bool server_wf = false;
+			// load the Sudo.ConsoleApplication assembly
+			Assembly ca = Assembly.LoadFile( otherAssemblyFilePath );
 
-			// if both the client and the server assemblies
-			// both have valid strong name keys then compare
-			// their public key tokens
-			if ( StrongNameSignatureVerificationEx(
-					client.Location, true, ref client_wf ) &&
+			// get a reference to the Sudo.WindowsService assembly
+			Assembly sa = Assembly.GetExecutingAssembly();
+
+			// declare 2 bools to hold the results of both the
+			// server and the client private key verficiation tests
+			bool ca_wv = false; 
+			bool sa_wv = false;
+
+			// verify that the console application and
+			// the service application are both signed
+			// by the same private key
+			if ( isVerified = ( StrongNameSignatureVerificationEx(
+					ca.Location, true, ref ca_wv ) &&
 				StrongNameSignatureVerificationEx(
-					server.Location, true, ref server_wf ) )
+					sa.Location, true, ref sa_wv ) ) )
 			{
+				m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+					"private keys verified={0}", isVerified );
 
-				// get the client and server public key tokens
-				byte[] client_pubkey = client.GetName().GetPublicKeyToken();
-				byte[] server_pubkey = server.GetName().GetPublicKeyToken();
+				// get the ca and sa public key tokens
+				byte[] ca_pubkey = ca.GetName().GetPublicKeyToken();
+				byte[] sa_pubkey = sa.GetName().GetPublicKeyToken();
 
-				// if the public key tokens are the same size
-				// then go deeper and verify them bit by bit
-				if ( client_pubkey.Length == server_pubkey.Length )
+				// verify that both public key tokens are the same length
+				if ( ca_pubkey.Length == sa_pubkey.Length )
 				{
-					// assume both assemblies have the same
-					// signature until the bit by bit comparison
-					// proves us wrong
+					// verify that each bit of the the public key tokens
+					for ( int x = 0; x < ca_pubkey.Length && isVerified; ++x )
+					{
+						isVerified = ca_pubkey[ x ] == sa_pubkey[ x ];
+					}
 
-					same_sig = true;
-					for ( int x = 0; x < client_pubkey.Length && same_sig; ++x )
-						if ( client_pubkey[ x ] != server_pubkey[ x ] )
-							same_sig = false;
+					m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+						"public key tokens verified={0}", isVerified );
 				}
 			}
+			else
+			{
+				m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+					"private keys not verified" );
+			}
 
-			return ( same_sig );
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+				"key signatures verified={0}", isVerified );
+			m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitMethod,
+				"exiting VerifySameSignature( string, string )" );
+
+			return ( isVerified );
 		}
 
 		/// <summary>
@@ -796,7 +998,10 @@ namespace Sudo.WindowsService
 		/// </summary>
 		public void Dispose()
 		{
-			// do nothing
+			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterDispose,
+				"entering Dispose" );
+			m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitDispose,
+				"exiting Dispose" );
 		}
 
 		#endregion

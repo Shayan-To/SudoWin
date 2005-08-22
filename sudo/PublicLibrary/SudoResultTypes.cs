@@ -37,6 +37,11 @@ namespace Sudo.PublicLibrary
 	public enum SudoResultTypes : int
 	{
 		/// <summary>
+		///		Ok
+		/// </summary>
+		SudoK = 0,
+
+		/// <summary>
 		///		Given command path is not allowed.
 		/// </summary>
 		CommandNotAllowed = 1,
@@ -60,6 +65,6 @@ namespace Sudo.PublicLibrary
 		///		be locked out from sudo for a given amount
 		///		of time.
 		/// </summary>
-		SudoUserLockedOut = 4,
+		LockedOut = 4,
 	}
 }
