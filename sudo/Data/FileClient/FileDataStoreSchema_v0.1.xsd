@@ -28,7 +28,7 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 -->
-<xs:schema id="FileDataStoreSchema" targetNamespace="http://sudowin.sourceforge.net/schemas/FileDataStoreSchema_v0.1" xmlns="http://sudowin.sourceforge.net/schemas/FileDataStoreSchema_v0.1" xmlns:mstns="http://sudowin.sourceforge.net/schemas/FileDataStoreSchema_v0.1" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" version="0.1" msdata:CaseSensitive="true" elementFormDefault="qualified">
+<xs:schema id="FileDataStoreSchema" targetNamespace="http://sudowin.sourceforge.net/schemas/FileDataStoreSchema_v0.1/" xmlns="http://sudowin.sourceforge.net/schemas/FileDataStoreSchema_v0.1/" xmlns:mstns="http://sudowin.sourceforge.net/schemas/FileDataStoreSchema_v0.1/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" version="0.1" msdata:CaseSensitive="true" elementFormDefault="qualified">
     <xs:element name="sudoers">
         <xs:complexType>
             <xs:sequence>

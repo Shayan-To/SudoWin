@@ -10,6 +10,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{57689E0E-FA82-4263-BE48-F824AEF0C940}"
 	ProjectSection(SolutionItems) = postProject
 		License.txt = License.txt
+		Readme.txt = Readme.txt
+		Sudo for Windows.url = Sudo for Windows.url
 		sudoers.xml = sudoers.xml
 	EndProjectSection
 EndProject
