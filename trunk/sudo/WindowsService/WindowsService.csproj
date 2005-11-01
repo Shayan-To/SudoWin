@@ -57,7 +57,7 @@
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml" />
-    <Reference Include="WtsApi32.NET, Version=0.0.2027.32065, Culture=neutral, PublicKeyToken=ed40a5c41345d3c5, processorArchitecture=MSIL">
+    <Reference Include="WtsApi32.NET, Version=0.0.2028.16795, Culture=neutral, PublicKeyToken=ed40a5c41345d3c5, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\WtsApi32\WtsApi32\bin\Debug\WtsApi32.NET.dll</HintPath>
     </Reference>

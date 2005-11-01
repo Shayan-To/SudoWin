@@ -97,7 +97,7 @@ namespace Sudo.WindowsService
 			m_ts.TraceEvent( TraceEventType.Verbose, 10,
 				"sudoersDataStoreConnectionString=" + sdcs );
 			if ( sdcs.Length == 0 )
-			{
+			{   
 				string msg = "sudodersDataStoreConnectionString must be a " +
 					"specified key in the appSettings section of the " +
 					"config file";
@@ -133,6 +133,9 @@ namespace Sudo.WindowsService
 		/// </summary>
 		/// <param name="userName">
 		///		User name to look for.
+		/// </param>
+		/// <param name="userCache">
+		///		Reference to returned UserCache structure.
 		/// </param>
 		/// <returns>
 		///		If the UserCache structure for the given

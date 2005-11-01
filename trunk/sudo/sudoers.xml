@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<sudoers	xmlns="http://sudowin.sourceforge.net/schemas/FileDataStoreSchema_v0.1"
+<sudoers	xmlns="http://sudowin.sourceforge.net/schemas/FileDataStoreSchema_v0.1/"
 			privilegesGroup="Administrators" 
 			invalidLogons="3"
 			timesExceededInvalidLogons="3"
@@ -12,7 +12,7 @@
 	<users>
 		<userGroup name="standard">
 			<users>
-				<user name="alchemist\sakutz" allowAllCommands ="true">
+				<user name="marmer\akutz" allowAllCommands ="true">
 					<commands>
 						<command path="c:\windows\system32\regsvr32.exe" />
 						<command path="c:\program files\dvd decrypter\dvddecrypter.exe"/>
