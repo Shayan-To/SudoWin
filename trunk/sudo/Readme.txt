@@ -13,10 +13,13 @@ NOTES
 
 FILES INCLUDED
 --------------
-Sudo.WindowsService.exe
-Sudo.WindowsService.exe.config
-Sudoers.xml
-Sudo.ConsoleApplication.exe
+\Sudoers.xml
+
+\WindowsService\bin\Release\Sudo.WindowsService.exe
+\WindowsService\bin\Release\Sudo.WindowsService.exe.config
+
+\ConsoleApplication\bin\Release\Sudo.ConsoleApplication.exe
+\ConsoleApplication\bin\Release\Sudo.ConsoleApplication.exe.config
 
 
 INSTALL
