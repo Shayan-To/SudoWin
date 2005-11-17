@@ -19,6 +19,7 @@ FILES INCLUDED
 
 \WindowsService\bin\Release\Sudo.WindowsService.exe
 \WindowsService\bin\Release\Sudo.WindowsService.exe.config
+\WindowsService\bin\Release\WtsApi32.NET.dll
 
 \ConsoleApplication\bin\Release\Sudo.ConsoleApplication.exe
 \ConsoleApplication\bin\Release\Sudo.ConsoleApplication.exe.config

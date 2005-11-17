@@ -70,7 +70,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Content Include="Sudo for Windows.url" />
     <None Include="sudo.snk" />
   </ItemGroup>
   <ItemGroup>

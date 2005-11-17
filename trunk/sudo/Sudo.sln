@@ -8,10 +8,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApplication", "ConsoleApplication\ConsoleApplication.csproj", "{5CA0F5B5-797A-4CA5-A644-31A7CEE42614}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{57689E0E-FA82-4263-BE48-F824AEF0C940}"
-	ProjectSection(SolutionItems) = postProject
+	ProjectSection(SolutionItems) = preProject
 		License.txt = License.txt
 		Readme.txt = Readme.txt
-		Sudo for Windows.url = Sudo for Windows.url
 		sudoers.xml = sudoers.xml
 	EndProjectSection
 EndProject
