@@ -1,5 +1,7 @@
 NOTES
 -----
+- The version number of the package is based on the version number of the Release version of Sudo.WindowsService.exe.
+
 - Sudo for Windows currently only supports local users and groups.  Active Directory users and groups will be supported in a near-future release.
 
 - The path to the Windows service log file must exist.
