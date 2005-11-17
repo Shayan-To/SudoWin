@@ -8,6 +8,8 @@ NOTES
 
 - Administrators do not have sudo privileges by default.  Administrators must be in the sudoers group and in the sudoers data source to have sudo privileges.
 
+- You must be a member of the Administrators group to install Sudo for Windows
+
 
 FILES INCLUDED
 --------------
@@ -19,8 +21,6 @@ Sudo.ConsoleApplication.exe
 
 INSTALL
 -------
-
-* You must be an administrator to install Sudo for Windows
 
 1) Create a local group called "Sudoers" to contain the group of users that will have Sudo privileges.  This group is defined in the service's application configuration file.
 
@@ -46,7 +46,6 @@ INSTALL
 	
 8) Set the Sudo service to start automatically.
 	
-7) Copy the Sudo.ConsoleApplication.exe file to your %SystemRoot%\system32 directory.  Alternatively you could also create a new directory for this file, but if you do be sure to include the new directory in the System PATH variable so that it is executable from any location.
+7) Copy the file "Sudo.ConsoleApplication.exe" to your %SystemRoot%\system32 directory.  Alternatively you could also create a new directory for this file, but if you do be sure to include the new directory in the System PATH variable so that it is executable from any location.  I also renamed the file to "sudo.exe" to coincide with its impetus program.
 
 8) That's it!  You should be able to run any command through Sudo now.  Be sure to read about the Sudoers data source.
-

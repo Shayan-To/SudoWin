@@ -204,7 +204,7 @@ namespace Sudo.ConsoleApplication
 				Assembly.GetExecutingAssembly().GetName().CodeBase );
 
 			// configure remoting channels and objects
-			RemotingConfiguration.Configure( uri.LocalPath + ".config" );
+			RemotingConfiguration.Configure( uri.LocalPath + ".config", true );
 
 			// get the server object that is used to elevate
 			// privleges and act as a backend store for

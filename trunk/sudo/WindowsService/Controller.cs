@@ -78,7 +78,7 @@ namespace Sudo.WindowsService
 				"configuring remoting with " + remote_config_uri );
 			
 			// configure remoting channels and objects
-			RemotingConfiguration.Configure( remote_config_uri );
+			RemotingConfiguration.Configure( remote_config_uri, true );
 
 			// create the sa object
 			DataServer ds = Activator.GetObject( typeof( DataServer ),

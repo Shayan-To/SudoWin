@@ -91,7 +91,7 @@ namespace Sudo.WindowsService
 
 			// get the sudoers data source connection string
 			string sdcs;
-			ManagedMethods.GetConfigValue(
+			ManagedMethods.GetConfigValue( 
 				"sudoersDataStoreConnectionString",
 				out sdcs );
 			m_ts.TraceEvent( TraceEventType.Verbose, 10,
