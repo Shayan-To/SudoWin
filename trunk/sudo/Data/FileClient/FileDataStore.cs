@@ -267,35 +267,34 @@ namespace Sudo.Data.FileClient
 			string commandArguments,
 			ref CommandInfo commandInfo )
 		{
-       		// find the user node
-			XmlNode u_node = FindUserNode( username );
-
-			if ( u_node == null )
-				return ( false );
-
-            // TODO: make AllCommandsEnabled bit more elegant
-            //
-            // even though the command node might be null, return true now
-            // if the user is authorized to sudo all commands.  the null reference
-            // will never be referenced later on
             //**********************************************************
             // !!! RETURN RETURN RETURN !!!
             //
-            // are all commands allowed?
+       		// find the user node
+			XmlNode u_node = FindUserNode( username );
+            if (u_node == null)
+            {
+                return (false);
+            }
+
+            //**********************************************************
+            // !!! RETURN RETURN RETURN !!!
+            //
+            // check to see if the user is explicitly allowed to execute
+            // all commands
             FdsBool all_cmds_allwd;
             GetUserAttributeValue(
                 u_node, false, "allowAllCommands", out all_cmds_allwd);
-            if (all_cmds_allwd == FdsBool.True)
-            {
-                commandInfo.IsCommandAllowed = true;
+            if (commandInfo.IsCommandAllowed = (all_cmds_allwd == FdsBool.True))
                 return (true);
-            }
-
+            
+            //**********************************************************
+            // !!! RETURN RETURN RETURN !!!
+            //
             // find the command node
 			XmlNode c_node = FindCommandNode( u_node, commandPath, commandArguments );
-
-			if ( c_node == null )
-				return ( false );
+            if (c_node == null)
+                return (false);
 
 			commandInfo.IsCommandAllowed = IsCommandAllowed( u_node, c_node, commandArguments );
 
@@ -439,20 +438,8 @@ namespace Sudo.Data.FileClient
 			FdsBool user_enabled;
 			GetUserAttributeValue(
 				userNode, false, "enabled", out user_enabled );
-
 			if ( user_enabled == FdsBool.False )
 				return ( false );
-
-			//**********************************************************
-			// !!! RETURN RETURN RETURN !!!
-			//
-			// are all commands allowed?
-			FdsBool all_cmds_allwd;
-			GetUserAttributeValue(
-				userNode, false, "allowAllCommands", out all_cmds_allwd );
-
-			if ( all_cmds_allwd == FdsBool.True )
-				return ( true );
 
 			//**********************************************************
 			// !!! RETURN RETURN RETURN !!!
