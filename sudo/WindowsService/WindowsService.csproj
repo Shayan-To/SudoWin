@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50215</ProductVersion>
+    <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{70E1FEE7-BC44-4C61-AD2B-39A2A77AA56C}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -59,7 +59,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="WtsApi32.NET, Version=0.0.2028.16795, Culture=neutral, PublicKeyToken=ed40a5c41345d3c5, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\WtsApi32\WtsApi32\bin\Debug\WtsApi32.NET.dll</HintPath>
+      <HintPath>..\..\..\..\WtsApi32\WtsApi32\bin\Debug\WtsApi32.NET.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

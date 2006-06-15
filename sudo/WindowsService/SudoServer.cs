@@ -462,26 +462,30 @@ namespace Sudo.WindowsService
 			
 			CommandInfo ci = new CommandInfo();
 
+            bool a;
+            bool b;
+            bool c;
+            bool d;
 			// declare this method's return value
-			bool isCommandVerified = 
-				
-				!IsShellCommand( commandPath )
+            bool isCommandVerified =
 
-				&&
+                (a = !IsShellCommand(commandPath))
 
-				IsCommandPathValid( ref commandPath )
+                &&
 
-				&&
-				
-				m_data_server.GetCommandInfo( 
-					userName, 
-					commandPath, 
-					commandArguments, 
-					ref ci )
+                (b = IsCommandPathValid(ref commandPath))
 
-				&&
+                &&
 
-				ci.IsCommandAllowed;
+                (c = m_data_server.GetCommandInfo(
+                    userName,
+                    commandPath,
+                    commandArguments,
+                    ref ci))
+
+                &&
+
+                (d = ci.IsCommandAllowed);
 
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
 				"{0}, isCommandVerified={1}", userName, isCommandVerified );
