@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50215</ProductVersion>
+    <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{7937C406-0E88-4E48-AA1F-964E8FB8C1AD}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -43,7 +43,9 @@
     <Compile Include="FileClient\FileDataStore.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="FileClient\FileDataStoreSchema_v0.1.xsd" />
+    <None Include="FileClient\FileDataStoreSchema_v0.1.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="FileClient\FileDataStoreSchema_v0.1.xsx">
       <DependentUpon>FileDataStoreSchema_v0.1.xsd</DependentUpon>
     </None>

@@ -267,13 +267,31 @@ namespace Sudo.Data.FileClient
 			string commandArguments,
 			ref CommandInfo commandInfo )
 		{
-			// find the user node
+       		// find the user node
 			XmlNode u_node = FindUserNode( username );
 
 			if ( u_node == null )
 				return ( false );
 
-			// find the command node
+            // TODO: make AllCommandsEnabled bit more elegant
+            //
+            // even though the command node might be null, return true now
+            // if the user is authorized to sudo all commands.  the null reference
+            // will never be referenced later on
+            //**********************************************************
+            // !!! RETURN RETURN RETURN !!!
+            //
+            // are all commands allowed?
+            FdsBool all_cmds_allwd;
+            GetUserAttributeValue(
+                u_node, false, "allowAllCommands", out all_cmds_allwd);
+            if (all_cmds_allwd == FdsBool.True)
+            {
+                commandInfo.IsCommandAllowed = true;
+                return (true);
+            }
+
+            // find the command node
 			XmlNode c_node = FindCommandNode( u_node, commandPath, commandArguments );
 
 			if ( c_node == null )
