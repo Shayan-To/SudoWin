@@ -27,8 +27,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
-using System.Collections.Generic;
 using System.Text;
+using System.Reflection;
+using Sudo.PublicLibrary;
+using System.Diagnostics;
+using System.Runtime.Remoting;
+using System.Text.RegularExpressions;
+using System.Security.Principal;
 
 namespace Sudo.CallbackApplication
 {
@@ -36,7 +41,97 @@ namespace Sudo.CallbackApplication
 	{
 		static void Main( string[] args )
 		{
+			#region configure remoting
 
+			// get path to the actual exe
+			Uri uri = new Uri(
+				Assembly.GetExecutingAssembly().GetName().CodeBase );
+
+			// configure remoting channels and objects
+			RemotingConfiguration.Configure( uri.LocalPath + ".config", true );
+
+			// get the server object that is used to elevate
+			// privleges and act as a backend store for
+			// caching credentials
+
+			// get an array of the registered well known client urls
+			WellKnownClientTypeEntry[] wkts =
+				RemotingConfiguration.GetRegisteredWellKnownClientTypes();
+
+			// loop through the list of well known clients until
+			// the SudoServer object is found
+			ISudoServer iss = null;
+			for ( int x = 0; x < wkts.Length && iss == null; ++x )
+			{
+				iss = Activator.GetObject( typeof( ISudoServer ),
+					wkts[ x ].ObjectUrl ) as ISudoServer;
+			}
+
+			#endregion
+
+			// we need to talk to the sudo service to fetch the user's password
+			CreateProcessLoadProfile( "", args[ 0 ], args[ 1 ] );
+		}
+
+		/// <summary>
+		///		Creates a new process with commandPath and commandArguments
+		///		and loads the executing user's profile when doing so.
+		/// </summary>
+		/// <param name="password">
+		///		Password of the executing user.
+		/// </param>
+		/// <param name="commandPath">
+		///		Command path to create new process with.
+		/// </param>
+		/// <param name="commandArguments">
+		///		Command arguments used with commandPath.
+		/// </param>
+		private static void CreateProcessLoadProfile(
+			string password,
+			string commandPath,
+			string commandArguments )
+		{
+			ProcessStartInfo psi = new ProcessStartInfo();
+			psi.FileName = commandPath;
+			psi.Arguments = commandArguments;
+			
+			// MUST be false when specifying credentials
+			psi.UseShellExecute = false;
+
+			// MUST be true so that the user's profile will
+			// be loaded and any new group memberships will
+			// be respected
+			psi.LoadUserProfile = true;
+
+			// get the domain and user name parts of the current
+			// windows identity
+			Match identity_match = Regex.Match(
+				WindowsIdentity.GetCurrent().Name,
+				@"^([^\\]+)\\(.+)$" );
+			// domain name
+			string dn = identity_match.Groups[ 1 ].Value;
+			// user name
+			string un = identity_match.Groups[ 2 ].Value;
+
+			// only set the domain if it is an actual domain and
+			// not the name of the local machine, i.e. a local account
+			// invoking sudo
+			if ( !Regex.IsMatch( dn,
+				Environment.MachineName, RegexOptions.IgnoreCase ) )
+			{
+				psi.Domain = dn;
+			}
+
+			psi.UserName = un;
+
+			// transform the plain-text password into a
+			// SecureString so that the ProcessStartInfo class
+			// can use it
+			psi.Password = new System.Security.SecureString();
+			for ( int x = 0; x < password.Length; ++x )
+				psi.Password.AppendChar( password[ x ] );
+
+			Process.Start( psi );
 		}
 	}
 }

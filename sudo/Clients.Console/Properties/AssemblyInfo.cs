@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2005, Schley Andrew Kutz <sakutz@gmail.com>
+Copyright (c) 2005, 2006, Schley Andrew Kutz <akutz@lostcreations.com>
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -10,9 +10,9 @@ are permitted provided that the following conditions are met:
     * Redistributions in binary form must reproduce the above copyright notice,
     this list of conditions and the following disclaimer in the documentation
     and/or other materials provided with the distribution.
-    * Neither the name of Lost Creations nor the names of its contributors may
-    be used to endorse or promote products derived from this software without
-    specific prior written permission.
+    * Neither the name of l o s t c r e a t i o n s nor the names of its 
+    contributors may be used to endorse or promote products derived from this 
+    software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -33,12 +33,12 @@ using System.Runtime.CompilerServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle( "Sudo.ConsoleApplication" )]
+[assembly: AssemblyTitle( "Sudo.Clients.Console" )]
 [assembly: AssemblyDescription( "A console application interface to the sudo server." )]
 [assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "Lost Creations" )]
+[assembly: AssemblyCompany( "l o s t c r e a t i o n s" )]
 [assembly: AssemblyProduct( "Sudo" )]
-[assembly: AssemblyCopyright( "Copyright © Lost Creations 2005" )]
+[assembly: AssemblyCopyright( "Copyright © l o s t c r e a t i o n s 2006" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
