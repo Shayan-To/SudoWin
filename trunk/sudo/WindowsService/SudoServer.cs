@@ -123,7 +123,7 @@ namespace Sudo.WindowsService
 		///		True if the user's credentials are cached, 
 		///		false if otherwise.
 		/// </summary>
-		/// /// <remmarks>
+		/// <remmarks>
 		///		The value of this property does not
 		///		have to be respected by the client, but 
 		///		the server will return an immediate 
@@ -136,7 +136,7 @@ namespace Sudo.WindowsService
 		{
 			get
 			{
-				m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.EnterPropertyGet,
+				m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterPropertyGet,
 					"entering get_AreCredentialsCached" );
 
 				// declare this method's return value
@@ -145,6 +145,7 @@ namespace Sudo.WindowsService
 				string un = Thread.CurrentPrincipal.Identity.Name;
 				string p = string.Empty;
 				areCached = m_data_server.GetUserCache( un, ref p );
+				p = string.Empty;
 
 				m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
 					"{0}, areCached={1}", un, areCached );
@@ -155,12 +156,35 @@ namespace Sudo.WindowsService
 			}
 		}
 
+		// TODO: Figure out how to get the password to the callback application
+
+		/// <summary>
+		///		Returns the cached password of the user 
+		/// </summary>
+		public string CurrentUsersPassword
+		{
+			get
+			{
+				m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterPropertyGet,
+					"entering get_CurrentUsersPassword" );
+
+				string un = Thread.CurrentPrincipal.Identity.Name;
+				string p = string.Empty;
+				m_data_server.GetUserCache( un, ref p );
+
+				m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitPropertyGet,
+					"exiting get_CurrentUsersPassword" );
+
+				return ( p );
+			}
+		}
+
 		/// <summary>
 		///		Default constructor.
 		/// </summary>
 		public SudoServer()
 		{
-			m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.EnterConstructor,
+			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterConstructor,
 				"constructing SudoServer" );
 
 			string dsuri = ConfigurationManager.AppSettings[ "dataServerUri" ];

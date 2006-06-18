@@ -315,12 +315,6 @@ usage: sudo [OPTION]... [COMMAND] [ARGUMENTS]
 executes the COMMAND and its ARGUMENTS in the security context of a user's
 assigned privileges group
 
-    -c, --current-context     executes command within the current
-                              security context
-
-                              this option must be used in conjunction
-                              with the -p option
-
     -p, --password            password of the user executing sudo
 
                               if this option is not specified and
@@ -334,9 +328,9 @@ assigned privileges group
 
     examples:
 
-      sudo c:\program files\dvddecrypter\dvddecrypter.exe
+      sudo c:\program files\microsoft visual studio 8\common7\ide\devenv.exe
 
-        will launch dvd decrypter with administrative privileges
+        will launch visual studio .net 2005 with administrative privileges
 
       sudo -p mypassword cmd
 

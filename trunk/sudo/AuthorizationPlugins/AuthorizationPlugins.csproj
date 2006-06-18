@@ -10,7 +10,8 @@
     <RootNamespace>Sudo.Data</RootNamespace>
     <AssemblyName>Sudo.Data</AssemblyName>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>sudo.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,9 +41,6 @@
   <ItemGroup>
     <Compile Include="IAuthorizationPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="sudo.snk" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PublicLibrary\PublicLibrary.csproj">
