@@ -29,16 +29,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using Win32;
 using System;
 using System.IO;
-using Sudo.AuthorizationPlugins;
 using System.Text;
 using System.Security;
 using System.Threading;
 using System.Reflection;
 using Sudo.PublicLibrary;
 using System.Diagnostics;
+using System.Configuration;
 using System.Globalization;
 using System.ComponentModel;
 using System.DirectoryServices;
+using Sudo.AuthorizationPlugins;
 using System.Security.Principal;
 using System.Collections.Generic;
 using System.Security.Permissions;
@@ -46,7 +47,6 @@ using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Contexts;
 using System.Runtime.Remoting.Messaging;
-using System.Configuration;
 
 namespace Sudo.WindowsService
 {
@@ -462,30 +462,26 @@ namespace Sudo.WindowsService
 			
 			CommandInfo ci = new CommandInfo();
 
-            bool a;
-            bool b;
-            bool c;
-            bool d;
 			// declare this method's return value
-            bool isCommandVerified =
+			bool isCommandVerified =
 
-                (a = !IsShellCommand(commandPath))
+				!IsShellCommand( commandPath )
 
-                &&
+				&&
 
-                (b = IsCommandPathValid(ref commandPath))
+				IsCommandPathValid( ref commandPath )
 
-                &&
+				&&
 
-                (c = m_data_server.GetCommandInfo(
-                    userName,
-                    commandPath,
-                    commandArguments,
-                    ref ci))
+				m_data_server.GetCommandInfo(
+					userName,
+					commandPath,
+					commandArguments,
+					ref ci )
 
-                &&
+				&&
 
-                (d = ci.IsCommandAllowed);
+				ci.IsCommandAllowed;
 
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
 				"{0}, isCommandVerified={1}", userName, isCommandVerified );
