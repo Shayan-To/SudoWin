@@ -43,6 +43,7 @@ namespace Sudo.WindowsService
 			this.serviceInstaller1.Description = "The Windows service that hosts the Sudo sa.";
 			this.serviceInstaller1.DisplayName = "Sudo";
 			this.serviceInstaller1.ServiceName = "Sudo";
+			this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
 			this.serviceInstaller1.AfterInstall += new System.Configuration.Install.InstallEventHandler( this.serviceInstaller1_AfterInstall );
 			// 
 			// ProjectInstaller

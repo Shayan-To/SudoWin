@@ -40,15 +40,8 @@
   <ItemGroup>
     <Compile Include="IAuthorizationPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="FileClient\FileDataStore.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="FileClient\FileDataStoreSchema_v0.1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="FileClient\FileDataStoreSchema_v0.1.xsx">
-      <DependentUpon>FileDataStoreSchema_v0.1.xsd</DependentUpon>
-    </None>
     <None Include="sudo.snk" />
   </ItemGroup>
   <ItemGroup>
