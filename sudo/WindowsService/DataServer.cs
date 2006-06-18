@@ -33,6 +33,8 @@ using Sudo.PublicLibrary;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace Sudo.WindowsService
 {
@@ -50,9 +52,9 @@ namespace Sudo.WindowsService
 		private TraceSource m_ts = new TraceSource( "traceSrc" );
 
 		/// <summary>
-		///		Interface used to access sudoers data.
+		///		Interface used to access the authorization data source.
 		/// </summary>
-		private Sudo.AuthorizationPlugins.IAuthorizationPlugin m_sudoers_ds;
+		private Sudo.AuthorizationPlugins.IAuthorizationPlugin m_auth_ds;
 
 		/// <summary>
 		///		Collection of UserCache structures used
@@ -89,15 +91,15 @@ namespace Sudo.WindowsService
 		{
 			m_ts.TraceEvent( TraceEventType.Start, 10, "constructing DataServer" );
 
-			// get the sudoers data source connection string
-			string sdcs;
+			// get the authorization plugin connection string
+			string authz_cnxn_str;
 			ManagedMethods.GetConfigValue( 
 				"authorizationPluginConnectionString",
-				out sdcs );
+				out authz_cnxn_str );
 			m_ts.TraceEvent( TraceEventType.Verbose, 10,
-				"authorizationPluginConnectionString=" + sdcs );
-			if ( sdcs.Length == 0 )
-			{   
+				"authorizationPluginConnectionString=" + authz_cnxn_str );
+			if ( authz_cnxn_str.Length == 0 )
+			{
 				string msg = "sudodersDataStoreConnectionString must be a " +
 					"specified key in the appSettings section of the " +
 					"config file";
@@ -105,24 +107,53 @@ namespace Sudo.WindowsService
 				throw new System.Configuration.ConfigurationErrorsException( msg );
 			}
 
-			// get the schema file uri
-			string schema_uri;
-			ManagedMethods.GetConfigValue( "schemaFileUri", out schema_uri );
-			if ( schema_uri.Length == 0 )
+			// get the authorization plugin schema file uri
+			string authz_schema_uri;
+			ManagedMethods.GetConfigValue( "authorizationPluginSchemaFileUri", out authz_schema_uri );
+			//if ( authz_schema_uri.Length == 0 )
+			//{
+			//	string msg = "authorizationPluginSchemaFileUri must be a " +
+			//		"specified key in the appSettings section of the " +
+			//		"config file";
+			//	m_ts.TraceEvent( TraceEventType.Critical, 10, msg );
+			//	throw new System.Configuration.ConfigurationErrorsException( msg );
+			//}
+
+			// get and parse the authorization plugin uri
+			string authz_plugin_uri;
+			ManagedMethods.GetConfigValue( "authorizationPluginAssembly", out authz_plugin_uri );
+			if ( authz_plugin_uri.Length == 0 )
 			{
-				string msg = "schemaFileUri must be a " +
+				string msg = "authorizationPluginAssembly must be a " +
 					"specified key in the appSettings section of the " +
 					"config file";
 				m_ts.TraceEvent( TraceEventType.Critical, 10, msg );
 				throw new System.Configuration.ConfigurationErrorsException( msg );
 			}
+			Regex rx_authz_plugin_uri = new Regex( "^(?<type>[^,]+),(?<assembly>.+)$", RegexOptions.IgnoreCase );
+			Match m_authz_plugin_uri = rx_authz_plugin_uri.Match( authz_plugin_uri );
+			if ( !m_authz_plugin_uri.Success )
+			{
+				string msg = "authorizationPluginAssembly is not " +
+					"properly formatted";
+				m_ts.TraceEvent( TraceEventType.Critical, 10, msg );
+				throw new System.Configuration.ConfigurationErrorsException( msg );
+			}
 
-			// use a sudoers file as the sudoers data store
-			m_sudoers_ds = new Sudo.AuthorizationPlugins.FileClient.FileDataStore()
+			// load the authorization plugin
+			Assembly authz_plugin_assem = Assembly.Load( m_authz_plugin_uri.Groups[ "assembly" ].Value );
+			m_auth_ds = authz_plugin_assem.CreateInstance( m_authz_plugin_uri.Groups[ "type" ].Value )
 				as Sudo.AuthorizationPlugins.IAuthorizationPlugin;
+			if ( m_auth_ds == null )
+			{
+				string msg = "there was an error in loading the specified " +
+					"authorizationPluginAssembly";
+				m_ts.TraceEvent( TraceEventType.Critical, 10, msg );
+				throw new System.Configuration.ConfigurationErrorsException( msg );
+			}
 
-			// open a connection to the sudoers data store
-			m_sudoers_ds.Open( sdcs, new Uri( schema_uri ) );
+			// open a connection to the authorization plugin's data source
+			m_auth_ds.Open( authz_cnxn_str, new Uri( authz_schema_uri ) );
 
 			m_ts.TraceEvent( TraceEventType.Start, 10, "constructed DataServer" );
 		}
@@ -335,7 +366,7 @@ namespace Sudo.WindowsService
 
 		/// <summary>
 		///		Gets a Sudo.PublicLibrary.UserInfo structure
-		///		from the sudoers data store for the given user name.
+		///		from the authorization plugin for the given user name.
 		/// </summary>
 		/// <param name="userName">
 		///		User name to get information for.
@@ -350,12 +381,12 @@ namespace Sudo.WindowsService
 		/// </returns>
 		public bool GetUserInfo( string userName, ref UserInfo userInfo )
 		{
-			return ( m_sudoers_ds.GetUserInfo( userName, ref userInfo ) );
+			return ( m_auth_ds.GetUserInfo( userName, ref userInfo ) );
 		}
 
 		/// <summary>
 		///		Gets a Sudo.PublicLibrary.CommandInfo structure
-		///		from the sudoers data store for the given user name,
+		///		from the authorization plugin for the given user name,
 		///		command p, and command arguments.
 		/// </summary>
 		/// <param name="username">
@@ -382,7 +413,7 @@ namespace Sudo.WindowsService
 			string commandArguments,
 			ref CommandInfo commandInfo )
 		{
-			return ( m_sudoers_ds.GetCommandInfo( 
+			return ( m_auth_ds.GetCommandInfo( 
 				username, commandPath, commandArguments, ref commandInfo ) );
 		}
 

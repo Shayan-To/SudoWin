@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2005, Schley Andrew Kutz <sakutz@gmail.com>
+Copyright (c) 2005, 2006, Schley Andrew Kutz <akutz@lostcreations.com>
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -10,9 +10,9 @@ are permitted provided that the following conditions are met:
     * Redistributions in binary form must reproduce the above copyright notice,
     this list of conditions and the following disclaimer in the documentation
     and/or other materials provided with the distribution.
-    * Neither the name of Lost Creations nor the names of its contributors may
-    be used to endorse or promote products derived from this software without
-    specific prior written permission.
+    * Neither the name of l o s t c r e a t i o n s nor the names of its 
+    contributors may be used to endorse or promote products derived from this 
+    software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -55,7 +55,7 @@ namespace Sudo.AuthorizationPlugins.Xml
 		///		XmlAuthorizationPlugin boolean that allows
 		///		bool to be null.
 		/// </summary>
-		private enum FdsBool : short
+		private enum XapBool : short
 		{
 			False = 0,
 			True = 1,
@@ -70,12 +70,12 @@ namespace Sudo.AuthorizationPlugins.Xml
 			"translate({0},'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')";
 
 		/// <summary>
-		///		For parsing the sudoers xml file.
+		///		For parsing the xml file.
 		/// </summary>
 		private XmlDocument m_xml_doc = new XmlDocument();
 
 		/// <summary>
-		///		For resolving namespaces in the sudoers file
+		///		For resolving namespaces in the xml file
 		///		so that xpath queries will work.
 		/// </summary>
 		private XmlNamespaceManager m_namespace_mgr;
@@ -104,7 +104,7 @@ namespace Sudo.AuthorizationPlugins.Xml
 		/// </returns>
 		private XmlNode FindUserNode( string userName )
 		{
-			// find the user in the sudoers file.  to do this
+			// find the user in the xml file.  to do this
 			// we first build a xpath query which will look for
 			// the user with the given user name
 			string user_xpq = string.Format(
@@ -115,7 +115,7 @@ namespace Sudo.AuthorizationPlugins.Xml
 				string.Format( CultureInfo.CurrentCulture,
 					XpathTranslateFormat, "'" + userName + "'" ) );
 
-			// find the user's node in the sudoers file.  if the 
+			// find the user's node in the xml file.  if the 
 			// user is not found then the query will return null 
 			XmlNode user_node = m_xml_doc.SelectSingleNode(
 				user_xpq, m_namespace_mgr );
@@ -126,26 +126,25 @@ namespace Sudo.AuthorizationPlugins.Xml
 		#region IAuthorizationPlugin Members
 
 		/// <summary>
-		///		Opens a connection to the sudoers data store
+		///		Opens a connection to the xml file
 		///		and validate the data with the given
 		///		schema file.
 		/// </summary>
 		/// <param name="connectionString">
-		///		Connection string used to open a connection
-		///		to the sudoers data store.
+		///		The uri of the xml file to open.
 		/// </param>
 		/// <param name="schemaFileUri">
 		///		Uri of schema file to use to validate the data.
 		/// </param>
 		public void Open( string connectionString, Uri schemaFileUri )
 		{
-			// throw an exception if the sudoers file is not found
+			// throw an exception if the xml file is not found
 			if ( !System.IO.File.Exists( connectionString ) )
 				throw new System.IO.FileNotFoundException(
-					"sudoers file not found", connectionString );
+					"xml file not found", connectionString );
 			
 			// create a xmlreadersettings object
-			// to specify how to read in the sudoers file
+			// to specify how to read in the file
 			XmlReaderSettings xrs = new XmlReaderSettings();
 			xrs.CloseInput = true;
 			xrs.IgnoreComments = true;
@@ -153,16 +152,16 @@ namespace Sudo.AuthorizationPlugins.Xml
 			xrs.Schemas.Add( null, schemaFileUri.AbsoluteUri );
 			xrs.ValidationType = ValidationType.Schema;
 			
-			// read in the sudoers file
+			// read in the file
 			XmlReader xr = XmlReader.Create( connectionString, xrs );
 			
-			// load the xml reader into the sudoers xml document.
+			// load the xml reader into the xml document.
 			m_xml_doc.Load( xr );
 
 			// close the xmlreader
 			xr.Close();
 
-			// create the namespace manager using the sudoers file name table
+			// create the namespace manager using the xml file name table
 			m_namespace_mgr = new XmlNamespaceManager( m_xml_doc.NameTable );
 
 			// if there is a default namespace specified in the
@@ -173,8 +172,8 @@ namespace Sudo.AuthorizationPlugins.Xml
 				RegexOptions.Multiline | RegexOptions.IgnoreCase );
 			Match ns_m = ns_rx.Match( m_xml_doc.InnerXml );
 
-			string default_ns = ns_m.Groups[ 1 ].Value;
 			// add the default namespace
+			string default_ns = ns_m.Groups[ 1 ].Value;
 			m_namespace_mgr.AddNamespace( "d", default_ns );
 		}
 
@@ -188,7 +187,7 @@ namespace Sudo.AuthorizationPlugins.Xml
 
 		/// <summary>
 		///		Gets a Sudo.PublicLibrary.UserInfo structure
-		///		from the sudoers data store for the given user name.
+		///		from the xml file for the given user name.
 		/// </summary>
 		/// <param name="userName">
 		///		User name to get information for.
@@ -240,7 +239,7 @@ namespace Sudo.AuthorizationPlugins.Xml
 
 		/// <summary>
 		///		Gets a Sudo.PublicLibrary.CommandInfo structure
-		///		from the sudoers data store for the given user name,
+		///		from the xml file for the given user name,
 		///		command path, and command arguments.
 		/// </summary>
 		/// <param name="username">
@@ -267,31 +266,29 @@ namespace Sudo.AuthorizationPlugins.Xml
 			string commandArguments,
 			ref CommandInfo commandInfo )
 		{
-       		// find the user node
+			// find the user node
 			XmlNode u_node = FindUserNode( username );
 
 			if ( u_node == null )
 				return ( false );
 
-            // TODO: make AllCommandsEnabled bit more elegant
-            //
-            // even though the command node might be null, return true now
-            // if the user is authorized to sudo all commands.  the null reference
-            // will never be referenced later on
-            //**********************************************************
-            // !!! RETURN RETURN RETURN !!!
-            //
-            // are all commands allowed?
-            FdsBool all_cmds_allwd;
-            GetUserAttributeValue(
-                u_node, false, "allowAllCommands", out all_cmds_allwd);
-            if (all_cmds_allwd == FdsBool.True)
-            {
-                commandInfo.IsCommandAllowed = true;
-                return (true);
-            }
+			// even though the command node might be null, return true now
+			// if the user is authorized to sudo all commands.  the null reference
+			// will never be referenced later on
+			//**********************************************************
+			// !!! RETURN RETURN RETURN !!!
+			//
+			// are all commands allowed?
+			XapBool all_cmds_allwd;
+			GetUserAttributeValue(
+				u_node, false, "allowAllCommands", out all_cmds_allwd );
+			if ( all_cmds_allwd == XapBool.True )
+			{
+				commandInfo.IsCommandAllowed = true;
+				return ( true );
+			}
 
-            // find the command node
+			// find the command node
 			XmlNode c_node = FindCommandNode( u_node, commandPath, commandArguments );
 
 			if ( c_node == null )
@@ -436,23 +433,12 @@ namespace Sudo.AuthorizationPlugins.Xml
 			// !!! RETURN RETURN RETURN !!!
 			//
 			// is the user enabled?
-			FdsBool user_enabled;
+			XapBool user_enabled;
 			GetUserAttributeValue(
 				userNode, false, "enabled", out user_enabled );
 
-			if ( user_enabled == FdsBool.False )
+			if ( user_enabled == XapBool.False )
 				return ( false );
-
-			//**********************************************************
-			// !!! RETURN RETURN RETURN !!!
-			//
-			// are all commands allowed?
-			FdsBool all_cmds_allwd;
-			GetUserAttributeValue(
-				userNode, false, "allowAllCommands", out all_cmds_allwd );
-
-			if ( all_cmds_allwd == FdsBool.True )
-				return ( true );
 
 			//**********************************************************
 			// !!! RETURN RETURN RETURN !!!
@@ -462,10 +448,10 @@ namespace Sudo.AuthorizationPlugins.Xml
 			// pass a null value for the userNode parameter so that
 			// the we won't look past the command node's immediate
 			// parent for this attribute value
-			FdsBool cmd_enabled;
+			XapBool cmd_enabled;
 			GetCommandAttributeValue(
 				null, false, commandNode, "enabled", out cmd_enabled );
-			if ( cmd_enabled == FdsBool.False )
+			if ( cmd_enabled == XapBool.False )
 				return ( false );
 
 			//**********************************************************
@@ -642,13 +628,13 @@ namespace Sudo.AuthorizationPlugins.Xml
 			XmlNode userNode,
 			bool checkDefaults,
 			string attributeName,
-			out FdsBool attributeValue )
+			out XapBool attributeValue )
 		{
 			string temp_value;
 			GetUserAttributeValue( userNode, checkDefaults, attributeName, out temp_value );
 			attributeValue = temp_value == string.Empty ?
-				FdsBool.Null :
-				( FdsBool ) Enum.Parse( typeof( FdsBool ), temp_value, true );
+				XapBool.Null :
+				( XapBool ) Enum.Parse( typeof( XapBool ), temp_value, true );
 		}
 
 		[System.Diagnostics.DebuggerStepThrough]
@@ -764,14 +750,14 @@ namespace Sudo.AuthorizationPlugins.Xml
 			bool checkDefaults,
 			XmlNode commandNode,
 			string attributeName,
-			out FdsBool attributeValue )
+			out XapBool attributeValue )
 		{
 			string temp_value;
 			GetCommandAttributeValue( 
 				userNode, checkDefaults, commandNode, attributeName, out temp_value );
 			attributeValue = temp_value == string.Empty ?
-				FdsBool.Null :
-				( FdsBool ) Enum.Parse( typeof( FdsBool ), temp_value, true );
+				XapBool.Null :
+				( XapBool ) Enum.Parse( typeof( XapBool ), temp_value, true );
 		}
 
 		[System.Diagnostics.DebuggerStepThrough]
