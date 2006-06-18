@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<sudoers	xmlns="http://sudowin.sourceforge.net/schemas/FileDataStoreSchema_v0.1/"
+			privilegesGroup="Administrators" 
+			invalidLogons="3"
+			timesExceededInvalidLogons="3"
+			invalidLogonTimeout="180"
+			lockoutTimeout="180" 
+			logonTimeout="60" 
+			startTime="00:00:00.00000" 
+			endTime="23:59:59.99999" 
+			loggingLevel="Both">
+	<users>
+		<userGroup name="standard">
+			<users>
+				<user name="poppy\akutz" allowAllCommands ="true">
+					<commands>
+						<command path="c:\windows\system32\regsvr32.exe" />
+						<command path="c:\program files\dvd decrypter\dvddecrypter.exe"/>
+					</commands>
+				</user>
+			</users>
+			<commands>
+				<command path="c:\windows\system32\notepad.exe" />
+			</commands>
+			<commandGroupRefs>
+				<commandGroupRef commandGroupName="standard"/>
+			</commandGroupRefs>
+		</userGroup>
+	</users>
+	<commands>
+		<commandGroup name="standard">
+			<command path="c:\windows\system32\cmd.exe" />
+			<command path="C:\Program Files\Microsoft Visual Studio 8\Common7\ide\devenv.exe" />
+		</commandGroup>
+	</commands>
+</sudoers>
