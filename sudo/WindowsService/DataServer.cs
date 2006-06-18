@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2005, Schley Andrew Kutz <sakutz@gmail.com>
+Copyright (c) 2005, 2006, Schley Andrew Kutz <akutz@lostcreations.com>
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -10,9 +10,9 @@ are permitted provided that the following conditions are met:
     * Redistributions in binary form must reproduce the above copyright notice,
     this list of conditions and the following disclaimer in the documentation
     and/or other materials provided with the distribution.
-    * Neither the name of Lost Creations nor the names of its contributors may
-    be used to endorse or promote products derived from this software without
-    specific prior written permission.
+    * Neither the name of l o s t c r e a t i o n s nor the names of its 
+    contributors may be used to endorse or promote products derived from this 
+    software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -52,7 +52,7 @@ namespace Sudo.WindowsService
 		/// <summary>
 		///		Interface used to access sudoers data.
 		/// </summary>
-		private Sudo.Data.IDataStore m_sudoers_ds;
+		private Sudo.AuthorizationPlugins.IAuthorizationPlugin m_sudoers_ds;
 
 		/// <summary>
 		///		Collection of UserCache structures used
@@ -92,10 +92,10 @@ namespace Sudo.WindowsService
 			// get the sudoers data source connection string
 			string sdcs;
 			ManagedMethods.GetConfigValue( 
-				"sudoersDataStoreConnectionString",
+				"authorizationPluginConnectionString",
 				out sdcs );
 			m_ts.TraceEvent( TraceEventType.Verbose, 10,
-				"sudoersDataStoreConnectionString=" + sdcs );
+				"authorizationPluginConnectionString=" + sdcs );
 			if ( sdcs.Length == 0 )
 			{   
 				string msg = "sudodersDataStoreConnectionString must be a " +
@@ -118,8 +118,8 @@ namespace Sudo.WindowsService
 			}
 
 			// use a sudoers file as the sudoers data store
-			m_sudoers_ds = new Sudo.Data.FileClient.FileDataStore()
-				as Sudo.Data.IDataStore;
+			m_sudoers_ds = new Sudo.AuthorizationPlugins.FileClient.FileDataStore()
+				as Sudo.AuthorizationPlugins.IAuthorizationPlugin;
 
 			// open a connection to the sudoers data store
 			m_sudoers_ds.Open( sdcs, new Uri( schema_uri ) );
