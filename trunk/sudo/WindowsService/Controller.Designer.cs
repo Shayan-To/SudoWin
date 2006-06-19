@@ -61,8 +61,11 @@ namespace Sudo.WindowsService
 		/// </summary>
 		private void InitializeComponent()
 		{
-			components = new System.ComponentModel.Container();
-			this.ServiceName = "Service1";
+			// 
+			// Controller
+			// 
+			this.ServiceName = "Sudo";
+
 		}
 
 		#endregion

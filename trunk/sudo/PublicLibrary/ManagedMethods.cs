@@ -75,41 +75,6 @@ namespace Sudo.PublicLibrary
 			}
 		}
 
-		/// <summary>
-		///		Gets an UIModeTypes value from 
-		///		the host process's config file.
-		/// </summary>
-		/// <param name="keyName">
-		///		Name of key to get.
-		/// </param>
-		/// <param name="keyValue">
-		///		Will be the parsed UIModeTypes.
-		///		0 if not found or cannot parse.
-		///	</param>
-		[DebuggerHidden]
-		static public void GetConfigValue(
-			string keyName,
-			out UIModeTypes uiModeTypesValue )
-		{
-			string temp;
-			GetConfigValue( keyName, out temp );
-			if ( temp.Length == 0 )
-				uiModeTypesValue = 0;
-			else
-			{
-				try
-				{
-					uiModeTypesValue = ( UIModeTypes )
-						Enum.Parse( typeof( UIModeTypes ),
-						temp, true );
-				}
-				catch
-				{
-					uiModeTypesValue = 0;
-				}
-			}
-		}
-
 		[DebuggerHidden]
 		[Conditional( "TRACE" )]
 		static public void TraceWrite(

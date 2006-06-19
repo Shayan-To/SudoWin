@@ -14,7 +14,9 @@ namespace Sudo.Clients.Gui
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault( false );
-			Application.Run( new MainForm() );
+			MainForm mf = new MainForm();
+			if ( !mf.ExitedEarlyWithCachedCredentials )
+				Application.Run( mf );
 		}
 	}
 }

@@ -42,7 +42,16 @@ namespace Sudo.Clients.Gui
 {
 	public partial class MainForm : Form
 	{
+		/// <summary>
+		///		The secure channel used to communicate with the sudo server.
+		/// </summary>
 		private ISudoServer m_isudo_server;
+
+		/// <summary>
+		///		True if the user has cached credentials and the
+		///		form does not need to be displayed; otherwise false.
+		/// </summary>
+		internal bool ExitedEarlyWithCachedCredentials = false;
 
 		public MainForm()
 		{
@@ -107,15 +116,85 @@ namespace Sudo.Clients.Gui
 			m_lbl_sudoed_cmd.Text = sudoed_cmd.Name;
 			m_picbox_sudoed_cmd.Image = 
 				Icon.ExtractAssociatedIcon( sudoed_cmd.FullName ).ToBitmap();
+
+			// let the user know if they are locked out
+			if ( m_isudo_server.ExceededInvalidLogonLimit )
+			{
+				m_txtbox_password.Enabled = false;
+				m_btn_ok.Enabled = false;
+				m_lbl_warning.Text = "Locked out";
+			}
+
+			// go ahead if the credentials are cached
+			if ( m_isudo_server.AreCredentialsCached )
+			{
+				btnOk_Click( null, null );
+			}
 		}
 
 		private void btnOk_Click( object sender, EventArgs e )
 		{
-			string password = m_txtbox_password.Text;
 			
+			// holds the result of the sudo invocation
+			SudoResultTypes srt;
+
+			// let the user know if they are locked out
+			if ( m_isudo_server.ExceededInvalidLogonLimit )
+			{
+				srt = SudoResultTypes.LockedOut;
+			}
+			else
+			{
+				// get the password
+				string password = m_isudo_server.AreCredentialsCached ?
+					string.Empty : m_txtbox_password.Text;
+
+				// get the command path and arguments
+				string[] args = Environment.GetCommandLineArgs();
+				string cmd_path = args[ 1 ];
+				string cmd_args = string.Join( " ", args, 2, args.Length - 2 );
+
+				// invoke sudo
+				srt = m_isudo_server.Sudo( password, cmd_path, cmd_args );
+			}
+
+			switch ( srt )
+			{
+				case SudoResultTypes.SudoK :
+				{
+					ExitedEarlyWithCachedCredentials = true;
+					this.Close();
+					break;
+				}
+				case SudoResultTypes.InvalidLogon:
+				{
+					m_lbl_warning.Text = "Invalid logon";
+					m_txtbox_password.Text = string.Empty;
+					break;
+				}
+				case SudoResultTypes.TooManyInvalidLogons:
+				{
+					m_lbl_warning.Text = "Invalid logon limit exceeded";
+					m_txtbox_password.Enabled = false;
+					m_btn_ok.Enabled = false;
+					break;
+				}
+				case SudoResultTypes.CommandNotAllowed:
+				{
+					m_lbl_warning.Text = "Command not allowed";
+					break;
+				}
+				case SudoResultTypes.LockedOut:
+				{
+					m_txtbox_password.Enabled = false;
+					m_btn_ok.Enabled = false;
+					m_lbl_warning.Text = "Locked out";
+					break;
+				}
+			}
 		}
 
-		private void btnCancel_Click( object sender, EventArgs e )
+		private void m_btn_cancel_Click( object sender, EventArgs e )
 		{
 			Application.Exit();
 		}

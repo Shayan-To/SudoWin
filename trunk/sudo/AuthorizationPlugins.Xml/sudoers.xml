@@ -14,8 +14,7 @@
 			<users>
 				<user name="poppy\akutz" allowAllCommands ="true">
 					<commands>
-						<command path="c:\windows\system32\regsvr32.exe" />
-						<command path="c:\program files\dvd decrypter\dvddecrypter.exe"/>
+						<command path="c:\windows\system32\regedit.exe" />
 					</commands>
 				</user>
 			</users>
