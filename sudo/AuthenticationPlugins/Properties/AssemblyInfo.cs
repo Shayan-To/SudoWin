@@ -1,3 +1,4 @@
+﻿/*
 Copyright (c) 2005, 2006, Schley Andrew Kutz <akutz@lostcreations.com>
 All rights reserved.
 
@@ -23,19 +24,39 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
-CHANGELOG
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
-2006/06/17
-----------
-- changed the license copyright notice  to reflect the change from 
-"sakutz@gmail.com" to "akutz@lostcreations.com" and from "Lost Creations" to 
-"l o s t c r e a t i o n s"
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+[assembly: AssemblyTitle( "Sudo.AuthenticationPlugins" )]
+[assembly: AssemblyDescription( "" )]
+[assembly: AssemblyConfiguration( "" )]
+[assembly: AssemblyCompany( "l o s t c r e a t i o n s" )]
+[assembly: AssemblyProduct( "Sudo.AuthenticationPlugins" )]
+[assembly: AssemblyCopyright( "Copyright © l o s t c r e a t i o n s 2006" )]
+[assembly: AssemblyTrademark( "" )]
+[assembly: AssemblyCulture( "" )]
 
-- changed the project "Data" to "AuthorizationPlugins"
+// Setting ComVisible to false makes the types in this assembly not visible 
+// to COM components.  If you need to access a type in this assembly from 
+// COM, set the ComVisible attribute to true on that type.
+[assembly: ComVisible( false )]
 
-- changed the namespace "Sudo.Data" to "Sudo.AuthorizationPlugins"
+// The following GUID is for the ID of the typelib if this project is exposed to COM
+[assembly: Guid( "22f2f6ae-182a-4576-b268-a4d272fa6c61" )]
 
-- changed the interface "IDataStore" to "IAuthorizationPlugin"
-
-- created the "IAuthenticationPlugin" interface
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+[assembly: AssemblyVersion( "0.0.*" )]

@@ -33,7 +33,9 @@ namespace Sudo.AuthorizationPlugins
 {
 	/// <summary>
 	///		IAuthorizationPlugin defines the interface for all classes that 
-	///		are designed to operate as an authorization plugin for sudo.
+	///		are designed to operate as an authorization plugin for sudo.  
+	///		The sudo server uses authorization plugins to verify that a user 
+	///		is allowed to execute a given command with elevated privileges.
 	/// </summary>
 	public interface IAuthorizationPlugin : IDisposable
 	{

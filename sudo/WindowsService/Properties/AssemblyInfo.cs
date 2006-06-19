@@ -36,7 +36,7 @@ using System.Runtime.CompilerServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle( "Sudo.WindowsService" )]
-[assembly: AssemblyDescription( "The Windows service that hosts the Sudo sa." )]
+[assembly: AssemblyDescription( "Hosts the server that sudo clients communicate with in order to facilitate privilege escalation." )]
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "l o s t c r e a t i o n s" )]
 [assembly: AssemblyProduct( "Sudo" )]
