@@ -695,7 +695,6 @@ namespace Sudo.WindowsService
 			{
 				// get a managed reference to the process
 				newProcess = Process.GetProcessById( pi.ProcessId );
-
 				// free the unmanaged handles
 				WtsApi32.Native.CloseHandle( pi.Thread );
 				WtsApi32.Native.CloseHandle( pi.Process );
