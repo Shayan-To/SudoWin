@@ -12,7 +12,7 @@
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <TargetZone>LocalIntranet</TargetZone>
     <GenerateManifests>false</GenerateManifests>
-    <SignAssembly>false</SignAssembly>
+    <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>sudo.snk</AssemblyOriginatorKeyFile>
     <PublishUrl>http://localhost/WinSudo.Service/</PublishUrl>
     <Install>true</Install>
@@ -83,6 +83,10 @@
     <Compile Include="UserCache.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AuthorizationPlugins.Xml\AuthorizationPlugins.Xml.csproj">
+      <Project>{3F717A4C-D43E-4520-82AA-417497FDE2B7}</Project>
+      <Name>AuthorizationPlugins.Xml</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AuthorizationPlugins\AuthorizationPlugins.csproj">
       <Project>{7937C406-0E88-4E48-AA1F-964E8FB8C1AD}</Project>
       <Name>AuthorizationPlugins</Name>

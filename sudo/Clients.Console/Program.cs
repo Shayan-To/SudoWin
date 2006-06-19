@@ -89,6 +89,7 @@ namespace Sudo.ConsoleApplication
 				// -c -p %pwd% %cmd%
 				// -p %pwd% %cmd% %arg1%
 				// %cmd% %arg1% %arg2% %arg3%
+				/*
 				case 4:
 				{
 					if ( Regex.IsMatch( args[ 0 ], @"^--?(c|(current-context))$" ) &&
@@ -107,16 +108,18 @@ namespace Sudo.ConsoleApplication
 					}
 					break;
 				}
+				*/
 				// args.Length > 4
 				default:
 				{
-					if ( Regex.IsMatch( args[ 0 ], @"^--?(c|(current-context))$" ) &&
+					/*if ( Regex.IsMatch( args[ 0 ], @"^--?(c|(current-context))$" ) &&
 						Regex.IsMatch( args[ 1 ], @"^--?(p|(password))$" ) )
 					{
 						CreateProcessLoadProfile( args[ 2 ], args[ 3 ], 
 							string.Join( " ", args, 4, args.Length - 4 ) );
 					}
-					else if ( Regex.IsMatch( args[ 0 ], @"^--?(p|(password))$" ) )
+					
+					else */ if ( Regex.IsMatch( args[ 0 ], @"^--?(p|(password))$" ) )
 					{
 						InvokeSudo( args[ 1 ], args[ 2 ], 
 							string.Join( " ", args, 3, args.Length - 3 ) );
@@ -131,6 +134,7 @@ namespace Sudo.ConsoleApplication
 			}
 		}
 
+		/*
 		/// <summary>
 		///		Creates a new process with commandPath and commandArguments
 		///		and loads the executing user's profile when doing so.
@@ -191,7 +195,8 @@ namespace Sudo.ConsoleApplication
 
 			Process.Start( psi );
 		}
-
+		*/
+		 
 		private static void InvokeSudo( 
 			string password, 
 			string commandPath, 
@@ -230,11 +235,13 @@ namespace Sudo.ConsoleApplication
 			// try to get this from the host process's
 			// config file.  if that fails set the
 			// number of allowed attempts to 'Gui'
+			/*
 			UIModeTypes ui_mode;
 			ManagedMethods.GetConfigValue( "uiMode",
 				out ui_mode );
 			if ( ui_mode == 0 )
 				ui_mode = UIModeTypes.Gui;
+			*/
 
 			// holds the result of the sudo invocation
 			SudoResultTypes srt;
@@ -243,9 +250,13 @@ namespace Sudo.ConsoleApplication
 			{
 				if ( iss.ExceededInvalidLogonLimit )
 				{
+					Console.WriteLine( "multiple invalid logon limit exceeded -- " +
+						"temporary lockout enforced" );
+					/*
 					WriteOutput( "multiple invalid logon limit exceeded " +
 						"- temporary lockout enforced",
 						OutputMessageTypes.Error, ui_mode );
+					*/
 					srt = SudoResultTypes.LockedOut;
 				}
 				else
@@ -255,7 +266,7 @@ namespace Sudo.ConsoleApplication
 					// are cached then do not bother asking the user for
 					// their password
 					password = password.Length > 0 || iss.AreCredentialsCached ?
-						string.Empty : GetPassword( ui_mode );
+						string.Empty : GetPassword( /* ui_mode */ );
 
 					// invoke sudo
 					srt = iss.Sudo( password, commandPath, commandArguments );
@@ -271,27 +282,32 @@ namespace Sudo.ConsoleApplication
 					{
 						case SudoResultTypes.InvalidLogon:
 						{
-							WriteOutput( "invalid logon",
-								OutputMessageTypes.Error, ui_mode );
+							Console.WriteLine( "invalid logon" );
+							/*WriteOutput( "invalid logon",
+								OutputMessageTypes.Error, ui_mode );*/
 							break;
 						}
 						case SudoResultTypes.TooManyInvalidLogons:
 						{
-							WriteOutput( "invalid logon limit exceeded",
-								OutputMessageTypes.Error, ui_mode );
+							Console.WriteLine( "invalid logon limit exceeded" );
+							/*WriteOutput( "invalid logon limit exceeded",
+								OutputMessageTypes.Error, ui_mode );*/
 							break;
 						}
 						case SudoResultTypes.CommandNotAllowed:
 						{
-							WriteOutput( "command not allowed",
-								OutputMessageTypes.Error, ui_mode );
+							Console.WriteLine( "command not allowed" );
+							/*WriteOutput( "command not allowed",
+								OutputMessageTypes.Error, ui_mode );*/
 							break;
 						}
 						case SudoResultTypes.LockedOut:
 						{
-							WriteOutput( "multiple invalid logon limit exceeded " +
+							Console.WriteLine( "multiple invalid logon limit exceeded -- " +
+								"- temporary lockout enforced" );
+							/*WriteOutput( "multiple invalid logon limit exceeded " +
 								"- temporary lockout enforced",
-								OutputMessageTypes.Error, ui_mode );
+								OutputMessageTypes.Error, ui_mode );*/
 							break;
 						}
 					}
@@ -302,7 +318,7 @@ namespace Sudo.ConsoleApplication
 		private static void PrintVersion()
 		{
 			Console.WriteLine();
-			Console.WriteLine( "sudo for windows by akutz@lostcreations.com" );
+			Console.WriteLine( "sudo for windows by akutz at lostcreations dot com" );
 			Console.WriteLine( "{0}",
 				Assembly.GetExecutingAssembly().GetName().Version.ToString( 4 ) );
 			Console.WriteLine();
@@ -343,7 +359,7 @@ assigned privileges group
 			Console.WriteLine( menu );
 		}
 
-		static private string GetPassword( UIModeTypes uiMode )
+		static private string GetPassword( /* UIModeTypes uiMode */ )
 		{
 			// password for this method to return
 			string password = string.Empty;
@@ -352,7 +368,7 @@ assigned privileges group
 			// a password with a form or
 			// read the password in from
 			// the command line
-			switch ( uiMode )
+			/*switch ( uiMode )
 			{
 				case UIModeTypes.Gui:
 				{
@@ -368,7 +384,7 @@ assigned privileges group
 					break;
 				}
 				case UIModeTypes.CommandLine:
-				{
+				{*/
 					// read the password in from the command
 					// line char by char, not displaying the
 					// password of course.  append all the
@@ -386,13 +402,14 @@ assigned privileges group
 						cki = Console.ReadKey( true );
 					} while ( cki.Key != ConsoleKey.Enter );
 					password = pwd.ToString();
-					break;
+					/*break;
 				}
-			}
+			}*/
 
 			return ( password );
 		}
 
+		/*
 		static private void WriteOutput(
 			string output,
 			OutputMessageTypes outputMessageType,
@@ -403,65 +420,65 @@ assigned privileges group
 			switch ( interactionMethod )
 			{
 				case UIModeTypes.CommandLine:
+				{
+					string format = string.Empty;
+
+					switch ( outputMessageType )
 					{
-						string format = string.Empty;
-
-						switch ( outputMessageType )
+						case OutputMessageTypes.Error:
 						{
-							case OutputMessageTypes.Error:
-								{
-									format = "error - {0}";
-									break;
-								}
-							case OutputMessageTypes.Standard:
-								{
-									format = "{0}";
-									break;
-								}
+							format = "error - {0}";
+							break;
 						}
-
-						Console.WriteLine();
-						Console.WriteLine( format, output );
-						break;
+						case OutputMessageTypes.Standard:
+						{
+							format = "{0}";
+							break;
+						}
 					}
+
+					Console.WriteLine();
+					Console.WriteLine( format, output );
+					break;
+				}
 				case UIModeTypes.Gui:
-					{
-						// get the type of message box
-						// icon to display
-						MessageBoxIcon mbi = 0;
+				{
+					// get the type of message box
+					// icon to display
+					MessageBoxIcon mbi = 0;
 
-						switch ( outputMessageType )
+					switch ( outputMessageType )
+					{
+						case OutputMessageTypes.Error:
 						{
-							case OutputMessageTypes.Error:
-								{
-									mbi = MessageBoxIcon.Error;
-									break;
-								}
-							case OutputMessageTypes.Standard:
-								{
-									mbi = MessageBoxIcon.Information;
-									break;
-								}
+							mbi = MessageBoxIcon.Error;
+							break;
 						}
-
-						// create a bogus form so it
-						// can own the message box
-						Form f = new Form();
-						f.ShowInTaskbar = false;
-
-						// show the message box
-						MessageBox.Show( f, output, "sudo",
-							MessageBoxButtons.OK, mbi );
-
-						f.Dispose();
-						break;
+						case OutputMessageTypes.Standard:
+						{
+							mbi = MessageBoxIcon.Information;
+							break;
+						}
 					}
+
+					// create a bogus form so it
+					// can own the message box
+					Form f = new Form();
+					f.ShowInTaskbar = false;
+
+					// show the message box
+					MessageBox.Show( f, output, "sudo",
+						MessageBoxButtons.OK, mbi );
+
+					f.Dispose();
+					break;
+				}
 				default:
-					{
-						//do nothing
-						break;
-					}
+				{
+					//do nothing
+					break;
+				}
 			}
-		}
+		}*/
 	}
 }
