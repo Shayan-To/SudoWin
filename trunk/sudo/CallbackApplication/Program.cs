@@ -32,8 +32,8 @@ using System.Reflection;
 using Sudo.PublicLibrary;
 using System.Diagnostics;
 using System.Runtime.Remoting;
-using System.Text.RegularExpressions;
 using System.Security.Principal;
+using System.Text.RegularExpressions;
 
 namespace Sudo.CallbackApplication
 {
@@ -41,6 +41,7 @@ namespace Sudo.CallbackApplication
 	{
 		static void Main( string[] args )
 		{
+			/*
 			#region configure remoting
 
 			// get path to the actual exe
@@ -68,9 +69,10 @@ namespace Sudo.CallbackApplication
 			}
 
 			#endregion
+			*/
 
-			// we need to talk to the sudo service to fetch the user's password
-			CreateProcessLoadProfile( "", args[ 0 ], args[ 1 ] );
+			string cmd_args = args.Length == 2 ? string.Empty : string.Join( " ", args, 2, args.Length - 2 );
+			CreateProcessLoadProfile( args[ 0 ], args[ 1 ], cmd_args );
 		}
 
 		/// <summary>

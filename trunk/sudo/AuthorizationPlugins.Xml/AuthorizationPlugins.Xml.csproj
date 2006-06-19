@@ -7,8 +7,8 @@
     <ProjectGuid>{3F717A4C-D43E-4520-82AA-417497FDE2B7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AuthorizationPlugins.Xml</RootNamespace>
-    <AssemblyName>AuthorizationPlugins.Xml</AssemblyName>
+    <RootNamespace>Sudo.AuthorizationPlugins.Xml</RootNamespace>
+    <AssemblyName>Sudo.AuthorizationPlugins.Xml</AssemblyName>
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

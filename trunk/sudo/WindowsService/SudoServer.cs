@@ -362,7 +362,7 @@ namespace Sudo.WindowsService
 			// verify that this service and the sudo console app
 			// are both signed with the same strong name key
 			if ( !VerifySameSignature( un,
-				ConfigurationManager.AppSettings[ "consoleApplicationPath" ] ) )
+				ConfigurationManager.AppSettings[ "callbackApplicationPath" ] ) )
 			{
 				return ( LogResult( un, ui.LoggingLevel,
 					SudoResultTypes.CommandNotAllowed ) );
@@ -650,14 +650,24 @@ namespace Sudo.WindowsService
 			// build a formatted command path to call the Sudo.ConsoleApplication with
 			string fcp = string.Format(
 				CultureInfo.CurrentCulture,
-				"\"{0}\" -c -p \"{1}\" \"{2}\" {3}",
-				ConfigurationManager.AppSettings[ "consoleApplicationPath" ],
+				
+				// i took this out for now until i decide whether or not
+				// i want to bother with command line switches in the callback 
+				// application
+				//"\"{0}\" -c -p \"{1}\" \"{2}\" {3}",
+				
+				"\"{0}\"  \"{1}\" \"{2}\" {3}",
+				ConfigurationManager.AppSettings[ "callbackApplicationPath" ],
 				 password,
 				commandPath, commandArguments );
 
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
 				"formatted command path={0}",
-				Regex.Replace( fcp, @"\-p ""([^""]*)""", "-p" ) );
+				
+				// see the last comment as to why this is commented out
+				//Regex.Replace( fcp, @"\-p ""([^""]*)""", "-p" ) );
+				
+				Regex.Replace( fcp, @"  ""([^""]*)""", "" ) );
 
 			ProcessInformation pi;
 			bool newProcessCreated = Native.CreateProcessAsUser(

@@ -7,8 +7,8 @@
     <ProjectGuid>{E8BC324F-6B4B-4608-976B-4CACCAB017D9}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CallbackApplication</RootNamespace>
-    <AssemblyName>CallbackApplication</AssemblyName>
+    <RootNamespace>Sudo.CallbackApplication</RootNamespace>
+    <AssemblyName>Sudo.CallbackApplication</AssemblyName>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>sudo.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
