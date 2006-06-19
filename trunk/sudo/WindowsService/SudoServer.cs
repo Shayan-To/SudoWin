@@ -156,29 +156,6 @@ namespace Sudo.WindowsService
 			}
 		}
 
-		// TODO: Figure out how to get the password to the callback application
-
-		/// <summary>
-		///		Returns the cached password of the user 
-		/// </summary>
-		public string CurrentUsersPassword
-		{
-			get
-			{
-				m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterPropertyGet,
-					"entering get_CurrentUsersPassword" );
-
-				string un = Thread.CurrentPrincipal.Identity.Name;
-				string p = string.Empty;
-				m_data_server.GetUserCache( un, ref p );
-
-				m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitPropertyGet,
-					"exiting get_CurrentUsersPassword" );
-
-				return ( p );
-			}
-		}
-
 		/// <summary>
 		///		Default constructor.
 		/// </summary>
@@ -531,15 +508,45 @@ namespace Sudo.WindowsService
 			string dn_part = m.Groups[ 1 ].Value;
 			string un_part = m.Groups[ 2 ].Value;
 
-			// log the user on
-			IntPtr hLogon = IntPtr.Zero;
-			bool logonSuccessful = Win32.Native.LogonUser( un_part, dn_part, password,
-				LogonType.Interactive, LogonProvider.WinNT50, out hLogon );
+			// get and parse the authentication plugin uri
+			string authn_plugin_uri;
+			ManagedMethods.GetConfigValue( "authenticationPluginAssembly", out authn_plugin_uri );
+			if ( authn_plugin_uri.Length == 0 )
+			{
+				string msg = "authenticationPluginAssembly must be a " +
+					"specified key in the appSettings section of the " +
+					"config file";
+				m_ts.TraceEvent( TraceEventType.Critical, 10, msg );
+				throw new System.Configuration.ConfigurationErrorsException( msg );
+			}
+			Regex rx_authn_plugin_uri = new Regex( "^(?<type>[^,]+),(?<assembly>.+)$", RegexOptions.IgnoreCase );
+			Match m_authn_plugin_uri = rx_authn_plugin_uri.Match( authn_plugin_uri );
+			if ( !m_authn_plugin_uri.Success )
+			{
+				string msg = "authenticationPluginAssembly is not " +
+					"properly formatted";
+				m_ts.TraceEvent( TraceEventType.Critical, 10, msg );
+				throw new System.Configuration.ConfigurationErrorsException( msg );
+			}
+
+			// load the authentication plugin
+			Assembly authn_plugin_assem = Assembly.Load( m_authn_plugin_uri.Groups[ "assembly" ].Value );
+			Sudo.AuthenticationPlugins.IAuthenticationPlugin authn_ds = 
+				authn_plugin_assem.CreateInstance( m_authn_plugin_uri.Groups[ "type" ].Value )
+				as Sudo.AuthenticationPlugins.IAuthenticationPlugin;
+			if ( authn_ds == null )
+			{
+				string msg = "there was an error in loading the specified " +
+					"authenticationPluginAssembly";
+				m_ts.TraceEvent( TraceEventType.Critical, 10, msg );
+				throw new System.Configuration.ConfigurationErrorsException( msg );
+			}
+
+			// verify the user's credentials
+			bool logonSuccessful = authn_ds.VerifyCredentials( dn_part, un_part, password );
 
 			if ( logonSuccessful )
 			{
-				Win32.Native.CloseHandle( hLogon );
-				
 				// cache the user's password and set it's expiration date
 				m_data_server.SetUserCache( userName, password );
 				m_data_server.ExpireUserCache( userName, userInfo.LogonTimeout );

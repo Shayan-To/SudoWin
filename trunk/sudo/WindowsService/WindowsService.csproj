@@ -83,6 +83,14 @@
     <Compile Include="UserCache.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AuthenticationPlugins.LocalComputer\AuthenticationPlugins.LocalComputer.csproj">
+      <Project>{A92EF75C-1853-4500-AEBC-2770DA2478CA}</Project>
+      <Name>AuthenticationPlugins.LocalComputer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AuthenticationPlugins\AuthenticationPlugins.csproj">
+      <Project>{5180BFF2-FADD-49CC-B0F3-E7EF1A7F9CCA}</Project>
+      <Name>AuthenticationPlugins</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AuthorizationPlugins.Xml\AuthorizationPlugins.Xml.csproj">
       <Project>{3F717A4C-D43E-4520-82AA-417497FDE2B7}</Project>
       <Name>AuthorizationPlugins.Xml</Name>

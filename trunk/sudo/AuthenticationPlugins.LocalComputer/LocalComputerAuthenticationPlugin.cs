@@ -1,3 +1,4 @@
+/*
 Copyright (c) 2005, 2006, Schley Andrew Kutz <akutz@lostcreations.com>
 All rights reserved.
 
@@ -23,19 +24,39 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
-CHANGELOG
+using System;
+using Sudo.PublicLibrary;
 
-2006/06/17
-----------
-- changed the license copyright notice  to reflect the change from 
-"sakutz@gmail.com" to "akutz@lostcreations.com" and from "Lost Creations" to 
-"l o s t c r e a t i o n s"
-
-- changed the project "Data" to "AuthorizationPlugins"
-
-- changed the namespace "Sudo.Data" to "Sudo.AuthorizationPlugins"
-
-- changed the interface "IDataStore" to "IAuthorizationPlugin"
-
-- created the "IAuthenticationPlugin" interface
+namespace Sudo.AuthenticationPlugins.LocalComputer
+{
+	
+	public class LocalComputerAuthenticationPlugin : IAuthenticationPlugin
+	{
+		/// <summary>
+		///		Verifies the credentials of a user with a password.
+		/// </summary>
+		/// <param name="domainOrComputerName">
+		///		Domain name or computer name the user account belongs to.
+		/// </param>
+		/// <param name="userName">
+		///		Username of account to validate.
+		/// </param>
+		/// <param name="password">
+		///		Password for the given username.
+		/// </param>
+		/// <returns>
+		///		True if the credentials are successfully verified; otherwise false.
+		/// </returns>
+		public bool VerifyCredentials( string domainOrComputerName, string userName, string password )
+		{
+			IntPtr hLogon = IntPtr.Zero;
+			bool logonSuccessful = Win32.Native.LogonUser( userName, domainOrComputerName, password,
+				Win32.LogonType.Interactive, Win32.LogonProvider.WinNT50, out hLogon );
+			if ( logonSuccessful )
+				Win32.Native.CloseHandle( hLogon );
+			return ( logonSuccessful );
+		}
+	}
+}
