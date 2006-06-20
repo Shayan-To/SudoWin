@@ -145,6 +145,21 @@ namespace Sudo.Clients.Console
 
 			#endregion
 
+			bool is_sudo_server_comm_link_open = false;
+			try
+			{
+				is_sudo_server_comm_link_open = iss.IsConnectionOpen;
+			}
+			catch
+			{
+			}
+
+			if ( !is_sudo_server_comm_link_open )
+			{
+				System.Console.WriteLine( "Sudo service is dead to you" );
+				return;
+			}
+
 			// holds the result of the sudo invocation
 			SudoResultTypes srt;
 

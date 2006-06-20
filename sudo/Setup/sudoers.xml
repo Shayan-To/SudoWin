@@ -43,7 +43,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<users>
 		<userGroup name="standard">
 			<users>
-				<user name="" />
+				<user name="HOSTNAME\USERNAME" />
 			</users>
 			<commandGroupRefs>
 				<commandGroupRef commandGroupName="standard"/>

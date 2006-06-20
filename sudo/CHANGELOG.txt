@@ -26,16 +26,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 CHANGELOG
 
+2006/06/20
+----------
+
+
 2006/06/17
 ----------
 - changed the license copyright notice  to reflect the change from 
 "sakutz@gmail.com" to "akutz@lostcreations.com" and from "Lost Creations" to 
 "l o s t c r e a t i o n s"
 
-- changed the project "Data" to "AuthorizationPlugins"
-
-- changed the namespace "Sudo.Data" to "Sudo.AuthorizationPlugins"
-
-- changed the interface "IDataStore" to "IAuthorizationPlugin"
-
-- created the "IAuthenticationPlugin" interface
+- changed too much to count
