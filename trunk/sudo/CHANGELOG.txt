@@ -28,7 +28,7 @@ CHANGELOG
 
 2006/06/20
 ----------
-- released Sudo for Windows version 0.0.1 (r70)
+- released Sudo for Windows version 0.1.0 (r73)
 
 2006/06/17
 ----------
