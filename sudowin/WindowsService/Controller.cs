@@ -39,7 +39,7 @@ using System.Diagnostics;
 namespace Sudowin.WindowsService
 {
 	/// <summary>
-	///		Service controller for the Sudo service.
+	///		Service controller for the Sudowin service.
 	/// </summary>
 	public partial class Controller : ServiceBase
 	{

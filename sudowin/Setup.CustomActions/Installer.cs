@@ -50,6 +50,8 @@ namespace Sudowin.Setup.CustomActions
 		{
 			base.Install( stateSaver );
 
+			#region Create the sudoers group
+
 			// create a group called Sudoers on the local machine if it
 			// does not exist
 			DirectoryEntry de = new DirectoryEntry( string.Format( "WinNT://{0},computer",
@@ -73,6 +75,8 @@ namespace Sudowin.Setup.CustomActions
 
 			grp.Close();
 			de.Close();
+
+			#endregion
 
 			// TODO: ask what users should be sudoers and add them to the group and sudoers.xml file
 
@@ -190,10 +194,32 @@ namespace Sudowin.Setup.CustomActions
 			xml_doc.Save( connectionString );
 
 			#endregion
+
+			#region Rename Sudowin.Clients.Console.exe to sudo.exe and add directory to system path
+
+			string exe_old_path = string.Format( @"{0}Clients\Console\Sudowin.Clients.Console.exe", target_dir );
+			string cfg_old_path = string.Format( @"{0}Clients\Console\Sudowin.Clients.Console.exe.config", target_dir );
+			string exe_new_path = string.Format( @"{0}Clients\Console\sudo.exe", target_dir );
+			string cfg_new_path = string.Format( @"{0}Clients\Console\sudo.exe.config", target_dir );
+
+			File.Move( exe_old_path, exe_new_path );
+			File.Move( cfg_old_path, cfg_new_path );
+
+			string path = Environment.GetEnvironmentVariable( "PATH" );
+			path = path[ path.Length - 1 ] == ';' ?
+				string.Format( @"{0}{1}Clients\Console", path, target_dir ) :
+				string.Format( @"{0};{1}Clients\Console", path, target_dir );
+			Environment.SetEnvironmentVariable( "PATH", path, EnvironmentVariableTarget.Machine );
+
+			#endregion
 		}
 
 		public override void Rollback( System.Collections.IDictionary savedState )
 		{
+			string target_dir = this.Context.Parameters[ "TargetDir" ];
+
+			#region Delete the sudoers group
+
 			// delete the Sudoers group on the local machine if it exists
 			DirectoryEntry de = new DirectoryEntry( string.Format( "WinNT://{0},computer",
 				Environment.MachineName ) );
@@ -213,7 +239,30 @@ namespace Sudowin.Setup.CustomActions
 			}
 			de.Close();
 
+			#endregion
+
 			base.Rollback( savedState );
+
+			#region Remove sudo.exe and remove directory from system path
+
+			string exe_new_path = string.Format( @"{0}Clients\Console\sudo.exe", target_dir );
+			string cfg_new_path = string.Format( @"{0}Clients\Console\sudo.exe.config", target_dir );
+
+			if ( File.Exists( exe_new_path ) )
+				File.Delete( exe_new_path );
+			if ( File.Exists( cfg_new_path ) )
+				File.Delete( cfg_new_path );
+
+			string path = Environment.GetEnvironmentVariable( "PATH" );
+			string rem_path_patt = string.Format( @"(.*)({0}Clients\\Console)(.*)", target_dir.Replace( @"\", @"\\" ) );
+			if ( Regex.IsMatch( path, rem_path_patt ) )
+			{
+				path = Regex.Replace( path, rem_path_patt, "$1$2" );
+				path.Replace( ";;", ";" );
+				Environment.SetEnvironmentVariable( "PATH", path, EnvironmentVariableTarget.Machine );
+			}
+
+			#endregion
 
 			// remove the installation directory
 			//string target_dir = this.Context.Parameters[ "TargetDir" ];
@@ -223,6 +272,10 @@ namespace Sudowin.Setup.CustomActions
 
 		public override void Uninstall( System.Collections.IDictionary savedState )
 		{
+			string target_dir = this.Context.Parameters[ "TargetDir" ];
+
+			#region Delete the sudoers group
+
 			// delete the Sudoers group on the local machine if it exists
 			DirectoryEntry de = new DirectoryEntry( string.Format( "WinNT://{0},computer",
 				Environment.MachineName ) );
@@ -241,13 +294,36 @@ namespace Sudowin.Setup.CustomActions
 				grp.Close();
 			}
 			de.Close();
-			
+
+			#endregion
+
 			base.Uninstall( savedState );
 
 			// remove the installation directory
 			//string target_dir = this.Context.Parameters[ "TargetDir" ];
 			//if ( Directory.Exists( target_dir ) )
 			//	Directory.Delete( target_dir );
+
+			#region Remove sudo.exe and remove directory from system path
+
+			string exe_new_path = string.Format( @"{0}Clients\Console\sudo.exe", target_dir );
+			string cfg_new_path = string.Format( @"{0}Clients\Console\sudo.exe.config", target_dir );
+
+			if ( File.Exists( exe_new_path ) )
+				File.Delete( exe_new_path );
+			if ( File.Exists( cfg_new_path ) )
+				File.Delete( cfg_new_path );
+
+			string path = Environment.GetEnvironmentVariable( "PATH" );
+			string rem_path_patt = string.Format( @"(.*)({0}Clients\\Console)(.*)", target_dir.Replace( @"\", @"\\" ) );
+			if ( Regex.IsMatch( path, rem_path_patt ) )
+			{
+				path = Regex.Replace( path, rem_path_patt, "$1$2" );
+				path.Replace( ";;", ";" );
+				Environment.SetEnvironmentVariable( "PATH", path, EnvironmentVariableTarget.Machine );
+			}
+
+			#endregion
 		}
 	}
 }

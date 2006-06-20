@@ -142,19 +142,19 @@ namespace Sudowin.Clients.Gui
 					Icon.ExtractAssociatedIcon( sudoed_cmd.FullName ).ToBitmap();
 			}
 
-			// check to see if the sudo service is stopped
-			System.ServiceProcess.ServiceController sc = new System.ServiceProcess.ServiceController( "Sudo" );
+			// check to see if the Sudowin service is stopped
+			System.ServiceProcess.ServiceController sc = new System.ServiceProcess.ServiceController( "Sudowin" );
 			if ( sc.Status == System.ServiceProcess.ServiceControllerStatus.Stopped )
 			{
 				m_txtbox_password.Enabled = false;
 				m_btn_ok.Enabled = false;
-				m_lbl_warning.Text = "Sudo service is stopped";
+				m_lbl_warning.Text = "Sudowin service is stopped";
 			}
 			else if ( !is_sudo_server_comm_link_open )
 			{
 				m_txtbox_password.Enabled = false;
 				m_btn_ok.Enabled = false;
-				m_lbl_warning.Text = "Sudo service is dead to you";
+				m_lbl_warning.Text = "Sudowin service is dead to you";
 			}
 			else
 			{

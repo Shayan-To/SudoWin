@@ -29,7 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace Sudowin.WindowsService
 {
 	/// <summary>
-	///		Service controller for the Sudo service.
+	///		Service controller for the Sudowin service.
 	/// </summary>
 	partial class Controller
 	{
@@ -64,7 +64,7 @@ namespace Sudowin.WindowsService
 			// 
 			// Controller
 			// 
-			this.ServiceName = "Sudo";
+			this.ServiceName = "Sudowin";
 
 		}
 
