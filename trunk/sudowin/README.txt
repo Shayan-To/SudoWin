@@ -28,7 +28,8 @@ POST INSTALLATION STEPS
 -----------------------
 
 - You should edit the sudoers.xml file so that the users you want to have sudo
-privileges are in the file.  This file is located at INSTALLDIR\Server\sudoers.xml.
+privileges are in the file.  This file is located at INSTALLDIR\Server\sudoers.xml.  
+After you perform this step you will need to restart the Sudowin service.
 
 - You need to add the users you want to be able to communicatie with the sudo 
 server to the local user group "Sudoers".  These users will have log out and 
