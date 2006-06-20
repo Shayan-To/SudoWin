@@ -33,20 +33,50 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_082F8CA4CF8743FCD5E86B8FBB67207B"
-        "OwnerKey" = "8:_80C7CC052E7F48468EA8973014EFD061"
+        "MsmKey" = "8:_19B04F9D647D416CB54032A859D84643"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_082F8CA4CF8743FCD5E86B8FBB67207B"
+        "MsmKey" = "8:_239FED9DFB0AD518D79333766CFED1A2"
+        "OwnerKey" = "8:_0531D01F8E414B5D9C4AD9FF615A6E34"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_239FED9DFB0AD518D79333766CFED1A2"
+        "OwnerKey" = "8:_FDA5EAD60852412C8A046951BDC5396F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_239FED9DFB0AD518D79333766CFED1A2"
         "OwnerKey" = "8:_B2D58AB4021B4AACB21C0DB976863040"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_19B04F9D647D416CB54032A859D84643"
-        "OwnerKey" = "8:_UNDEFINED"
+        "MsmKey" = "8:_239FED9DFB0AD518D79333766CFED1A2"
+        "OwnerKey" = "8:_80C7CC052E7F48468EA8973014EFD061"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_239FED9DFB0AD518D79333766CFED1A2"
+        "OwnerKey" = "8:_6400FA4A59D14C17BF864C43809D9985"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_239FED9DFB0AD518D79333766CFED1A2"
+        "OwnerKey" = "8:_19B04F9D647D416CB54032A859D84643"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_239FED9DFB0AD518D79333766CFED1A2"
+        "OwnerKey" = "8:_8A985F1DC77BC7D0F2D88A74D2B4735B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -57,44 +87,14 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_5DE423986F0EE38E9B61EDF2071EB51A"
-        "OwnerKey" = "8:_0531D01F8E414B5D9C4AD9FF615A6E34"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_5DE423986F0EE38E9B61EDF2071EB51A"
-        "OwnerKey" = "8:_FDA5EAD60852412C8A046951BDC5396F"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_5DE423986F0EE38E9B61EDF2071EB51A"
-        "OwnerKey" = "8:_B2D58AB4021B4AACB21C0DB976863040"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_5DE423986F0EE38E9B61EDF2071EB51A"
+        "MsmKey" = "8:_2BB22C6A096541E1C683EA49658106F4"
         "OwnerKey" = "8:_80C7CC052E7F48468EA8973014EFD061"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_5DE423986F0EE38E9B61EDF2071EB51A"
-        "OwnerKey" = "8:_6400FA4A59D14C17BF864C43809D9985"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_5DE423986F0EE38E9B61EDF2071EB51A"
-        "OwnerKey" = "8:_19B04F9D647D416CB54032A859D84643"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_5DE423986F0EE38E9B61EDF2071EB51A"
-        "OwnerKey" = "8:_C28AB338C4229192F8FC62A92D4A5A09"
+        "MsmKey" = "8:_2BB22C6A096541E1C683EA49658106F4"
+        "OwnerKey" = "8:_B2D58AB4021B4AACB21C0DB976863040"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -123,6 +123,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_8A985F1DC77BC7D0F2D88A74D2B4735B"
+        "OwnerKey" = "8:_19B04F9D647D416CB54032A859D84643"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_8A985F1DC77BC7D0F2D88A74D2B4735B"
+        "OwnerKey" = "8:_80C7CC052E7F48468EA8973014EFD061"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_B2D58AB4021B4AACB21C0DB976863040"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -143,18 +155,6 @@
         {
         "MsmKey" = "8:_BCCC01F5CB98414091B5518F79AFDE00"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C28AB338C4229192F8FC62A92D4A5A09"
-        "OwnerKey" = "8:_19B04F9D647D416CB54032A859D84643"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C28AB338C4229192F8FC62A92D4A5A09"
-        "OwnerKey" = "8:_80C7CC052E7F48468EA8973014EFD061"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -185,6 +185,24 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_6400FA4A59D14C17BF864C43809D9985"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_2BB22C6A096541E1C683EA49658106F4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_8A985F1DC77BC7D0F2D88A74D2B4735B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_239FED9DFB0AD518D79333766CFED1A2"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -232,12 +250,6 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_082F8CA4CF8743FCD5E86B8FBB67207B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_611CA151227F4EA1A5A42A6164D6BB4F"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -250,19 +262,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C28AB338C4229192F8FC62A92D4A5A09"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_0531D01F8E414B5D9C4AD9FF615A6E34"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_5DE423986F0EE38E9B61EDF2071EB51A"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -498,23 +498,23 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_082F8CA4CF8743FCD5E86B8FBB67207B"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_239FED9DFB0AD518D79333766CFED1A2"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Sudo.AuthenticationPlugins, Version=0.0.2362.3420, Culture=neutral, PublicKeyToken=0f2b6a54484742df, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Sudo.PublicLibrary, Version=0.0.2362.4145, Culture=neutral, PublicKeyToken=0f2b6a54484742df, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_082F8CA4CF8743FCD5E86B8FBB67207B"
+                    "_239FED9DFB0AD518D79333766CFED1A2"
                     {
-                    "Name" = "8:Sudo.AuthenticationPlugins.dll"
+                    "Name" = "8:Sudo.PublicLibrary.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:Sudo.AuthenticationPlugins.dll"
+            "SourcePath" = "8:Sudo.PublicLibrary.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
-            "Folder" = "8:_0EEBD34F6985487A9B2AE96B2825B864"
+            "Folder" = "8:_80B9D81846C547108C2460CDE50CE525"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -549,23 +549,23 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_5DE423986F0EE38E9B61EDF2071EB51A"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_2BB22C6A096541E1C683EA49658106F4"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Sudo.PublicLibrary, Version=0.0.2362.3420, Culture=neutral, PublicKeyToken=0f2b6a54484742df, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Sudo.AuthenticationPlugins, Version=0.0.2362.4146, Culture=neutral, PublicKeyToken=0f2b6a54484742df, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_5DE423986F0EE38E9B61EDF2071EB51A"
+                    "_2BB22C6A096541E1C683EA49658106F4"
                     {
-                    "Name" = "8:Sudo.PublicLibrary.dll"
+                    "Name" = "8:Sudo.AuthenticationPlugins.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:Sudo.PublicLibrary.dll"
+            "SourcePath" = "8:Sudo.AuthenticationPlugins.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
-            "Folder" = "8:_80B9D81846C547108C2460CDE50CE525"
+            "Folder" = "8:_0EEBD34F6985487A9B2AE96B2825B864"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -600,34 +600,14 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BCCC01F5CB98414091B5518F79AFDE00"
-            {
-            "SourcePath" = "8:sudoers.xml"
-            "TargetName" = "8:sudoers.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_0EEBD34F6985487A9B2AE96B2825B864"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C28AB338C4229192F8FC62A92D4A5A09"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_8A985F1DC77BC7D0F2D88A74D2B4735B"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Sudo.AuthorizationPlugins, Version=0.0.2362.3421, Culture=neutral, PublicKeyToken=0f2b6a54484742df, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Sudo.AuthorizationPlugins, Version=0.0.2362.4146, Culture=neutral, PublicKeyToken=0f2b6a54484742df, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_C28AB338C4229192F8FC62A92D4A5A09"
+                    "_8A985F1DC77BC7D0F2D88A74D2B4735B"
                     {
                     "Name" = "8:Sudo.AuthorizationPlugins.dll"
                     "Attributes" = "3:512"
@@ -649,6 +629,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BCCC01F5CB98414091B5518F79AFDE00"
+            {
+            "SourcePath" = "8:sudoers.xml"
+            "TargetName" = "8:sudoers.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_0EEBD34F6985487A9B2AE96B2825B864"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DEE30F704D124AC3B88A9C0850ECBDFC"
@@ -833,6 +833,13 @@
         }
         "LaunchCondition"
         {
+            "{836E08B8-0285-4809-BA42-01DB6754A45D}:_1732B45B7A1C4A12A5C0F50257D4E202"
+            {
+            "Name" = "8:AdminUser"
+            "Condition" = "8:AdminUser=1"
+            "Message" = "8:You must be an administrator to install Sudo for Windows."
+            "InstallUrl" = "8:"
+            }
         }
         "Locator"
         {
@@ -845,14 +852,14 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Sudo for Windows"
-        "ProductCode" = "8:{D70F388B-27DB-4C0D-845A-CD5F7ED38794}"
-        "PackageCode" = "8:{AFFEE68D-B601-49BA-AD0A-CA6A7F1B0176}"
+        "ProductCode" = "8:{850B4186-66F2-424C-A244-B58F95E62204}"
+        "PackageCode" = "8:{E7DA5620-5DD6-4999-8326-333D48D86004}"
         "UpgradeCode" = "8:{3B0AA51B-8E14-49F5-B299-22C35C55088B}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:00.00.0066"
+        "ProductVersion" = "8:0.0.1"
         "Manufacturer" = "8:l o s t c r e a t i o n s"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:http://sudowin.sourceforge.net"
@@ -1773,7 +1780,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_0531D01F8E414B5D9C4AD9FF615A6E34"
             {
-            "SourcePath" = "8:..\\CallbackApplication\\obj\\Debug\\Sudo.CallbackApplication.exe"
+            "SourcePath" = "8:..\\CallbackApplication\\obj\\Release\\Sudo.CallbackApplication.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_80B9D81846C547108C2460CDE50CE525"
@@ -1829,7 +1836,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_19B04F9D647D416CB54032A859D84643"
             {
-            "SourcePath" = "8:..\\AuthorizationPlugins.Xml\\obj\\Debug\\Sudo.AuthorizationPlugins.Xml.dll"
+            "SourcePath" = "8:..\\AuthorizationPlugins.Xml\\obj\\Release\\Sudo.AuthorizationPlugins.Xml.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_0EEBD34F6985487A9B2AE96B2825B864"
@@ -1857,7 +1864,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_611CA151227F4EA1A5A42A6164D6BB4F"
             {
-            "SourcePath" = "8:..\\PublicLibrary\\obj\\Debug\\Sudo.PublicLibrary.dll"
+            "SourcePath" = "8:..\\PublicLibrary\\obj\\Release\\Sudo.PublicLibrary.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_7B87532F41544EA7BCDEE4AF71E8592B"
@@ -1885,7 +1892,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_6400FA4A59D14C17BF864C43809D9985"
             {
-            "SourcePath" = "8:..\\Clients.Console\\obj\\Debug\\Sudo.Clients.Console.exe"
+            "SourcePath" = "8:..\\Clients.Console\\obj\\Release\\Sudo.Clients.Console.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_7B87532F41544EA7BCDEE4AF71E8592B"
@@ -1913,7 +1920,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_80C7CC052E7F48468EA8973014EFD061"
             {
-            "SourcePath" = "8:..\\WindowsService\\obj\\Debug\\Sudo.WindowsService.exe"
+            "SourcePath" = "8:..\\WindowsService\\obj\\Release\\Sudo.WindowsService.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_0EEBD34F6985487A9B2AE96B2825B864"
@@ -1941,7 +1948,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_B2D58AB4021B4AACB21C0DB976863040"
             {
-            "SourcePath" = "8:..\\AuthenticationPlugins.LocalComputer\\obj\\Debug\\Sudo.AuthenticationPlugins.LocalComputer.dll"
+            "SourcePath" = "8:..\\AuthenticationPlugins.LocalComputer\\obj\\Release\\Sudo.AuthenticationPlugins.LocalComputer.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_0EEBD34F6985487A9B2AE96B2825B864"
@@ -1969,7 +1976,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_B5F5D4A4C5B447CAB9CBC6765747E6F3"
             {
-            "SourcePath" = "8:..\\PublicLibrary\\obj\\Debug\\Sudo.PublicLibrary.dll"
+            "SourcePath" = "8:..\\PublicLibrary\\obj\\Release\\Sudo.PublicLibrary.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_0F6972F9FA3843559B7C9B6F05E6C970"
@@ -1997,7 +2004,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_B7E9A14375274729BB8D84FF5610941B"
             {
-            "SourcePath" = "8:..\\PublicLibrary\\obj\\Debug\\Sudo.PublicLibrary.dll"
+            "SourcePath" = "8:..\\PublicLibrary\\obj\\Release\\Sudo.PublicLibrary.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_0EEBD34F6985487A9B2AE96B2825B864"
@@ -2025,7 +2032,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_F7EE222CD4C341B98B2D60005F55AFB4"
             {
-            "SourcePath" = "8:..\\Setup.CustomActions\\obj\\Debug\\Sudo.Setup.CustomActions.dll"
+            "SourcePath" = "8:..\\Setup.CustomActions\\obj\\Release\\Sudo.Setup.CustomActions.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_323995B1EC50486D8151A5AF9A260FF2"
@@ -2053,7 +2060,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_FDA5EAD60852412C8A046951BDC5396F"
             {
-            "SourcePath" = "8:..\\Clients.Gui\\obj\\Debug\\Sudo.Clients.Gui.exe"
+            "SourcePath" = "8:..\\Clients.Gui\\obj\\Release\\Sudo.Clients.Gui.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_0F6972F9FA3843559B7C9B6F05E6C970"
