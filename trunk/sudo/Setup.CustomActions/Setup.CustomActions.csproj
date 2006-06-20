@@ -4,12 +4,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{3F717A4C-D43E-4520-82AA-417497FDE2B7}</ProjectGuid>
+    <ProjectGuid>{82E5CCD5-7C49-48FD-997C-DF045D6E6A21}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sudo.AuthorizationPlugins.Xml</RootNamespace>
-    <AssemblyName>Sudo.AuthorizationPlugins.Xml</AssemblyName>
-    <SignAssembly>false</SignAssembly>
+    <RootNamespace>Sudo.Setup.CustomActions</RootNamespace>
+    <AssemblyName>Sudo.Setup.CustomActions</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,33 +29,21 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Installer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Installer.Designer.cs">
+      <DependentUpon>Installer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="XmlAuthorizationPlugin.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="XmlAuthorizationPluginSchema_v0.1.xsd">
-      <SubType>Designer</SubType>
-    </Content>
-    <None Include="XmlAuthorizationPluginSchema_v0.1.xsx">
-      <DependentUpon>XmlAuthorizationPluginSchema_v0.1.xsd</DependentUpon>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AuthorizationPlugins\AuthorizationPlugins.csproj">
-      <Project>{7937C406-0E88-4E48-AA1F-964E8FB8C1AD}</Project>
-      <Name>AuthorizationPlugins</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PublicLibrary\PublicLibrary.csproj">
-      <Project>{81E98C70-C681-4DD4-B6B1-154E12567B9C}</Project>
-      <Name>PublicLibrary</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="sudoers.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

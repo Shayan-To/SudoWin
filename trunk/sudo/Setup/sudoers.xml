@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <!--
 /*
@@ -43,15 +43,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<users>
 		<userGroup name="standard">
 			<users>
-				<user name="poppy\akutz" allowAllCommands ="true">
-					<commands>
-						<command path="c:\windows\system32\regedit.exe" />
-					</commands>
-				</user>
+				<user name="" />
 			</users>
-			<commands>
-				<command path="c:\windows\system32\notepad.exe" />
-			</commands>
 			<commandGroupRefs>
 				<commandGroupRef commandGroupName="standard"/>
 			</commandGroupRefs>
@@ -60,7 +53,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<commands>
 		<commandGroup name="standard">
 			<command path="c:\windows\system32\cmd.exe" />
-			<command path="C:\Program Files\Microsoft Visual Studio 8\Common7\ide\devenv.exe" />
+			<command path="C:\windows\notepad.exe" />
+			<command path="C:\windows\regedit.exe" />
 		</commandGroup>
 	</commands>
 </sudoers>
