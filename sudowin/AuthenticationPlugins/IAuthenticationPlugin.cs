@@ -30,11 +30,11 @@ using System;
 using System.Text;
 using System.Collections.Generic;
 
-namespace Sudo.AuthenticationPlugins
+namespace Sudowin.AuthenticationPlugins
 {
 	/// <summary>
 	///		IAuthenticationPlugin defines the interface for all classes that 
-	///		are designed to operate as an authentication plugin for sudo.
+	///		are designed to operate as an authentication plugin for Sudowin.
 	///		The sudo server uses authentication plugins to verify the 
 	///		credentials of a user.
 	/// </summary>

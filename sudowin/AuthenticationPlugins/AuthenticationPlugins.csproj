@@ -7,10 +7,10 @@
     <ProjectGuid>{5180BFF2-FADD-49CC-B0F3-E7EF1A7F9CCA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sudo.AuthenticationPlugins</RootNamespace>
-    <AssemblyName>Sudo.AuthenticationPlugins</AssemblyName>
+    <RootNamespace>Sudowin.AuthenticationPlugins</RootNamespace>
+    <AssemblyName>Sudowin.AuthenticationPlugins</AssemblyName>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>sudo.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>sudowin.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,7 +39,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="sudo.snk" />
+    <None Include="sudowin.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

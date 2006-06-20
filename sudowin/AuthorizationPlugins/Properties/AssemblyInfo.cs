@@ -33,11 +33,11 @@ using System.Runtime.CompilerServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle( "Sudo.AuthorizationPlugins" )]
+[assembly: AssemblyTitle( "Sudowin.AuthorizationPlugins" )]
 [assembly: AssemblyDescription( "For accessing and managing the different data stores that can contain sudoer information." )]
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "Lost Creations" )]
-[assembly: AssemblyProduct( "Sudo" )]
+[assembly: AssemblyProduct( "Sudowin" )]
 [assembly: AssemblyCopyright( "Copyright © Lost Creations 2005" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]

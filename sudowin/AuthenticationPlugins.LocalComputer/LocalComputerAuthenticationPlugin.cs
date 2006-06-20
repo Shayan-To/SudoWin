@@ -27,9 +27,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
-using Sudo.PublicLibrary;
+using Sudowin.PublicLibrary;
 
-namespace Sudo.AuthenticationPlugins.LocalComputer
+namespace Sudowin.AuthenticationPlugins.LocalComputer
 {
 	
 	public class LocalComputerAuthenticationPlugin : IAuthenticationPlugin

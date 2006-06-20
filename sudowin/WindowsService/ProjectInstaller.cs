@@ -31,7 +31,7 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Configuration.Install;
 
-namespace Sudo.WindowsService
+namespace Sudowin.WindowsService
 {
 	[RunInstaller( true )]
 	public partial class ProjectInstaller : Installer

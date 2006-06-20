@@ -7,8 +7,8 @@
     <ProjectGuid>{34C0CA52-574C-4421-B96C-C99A7715679B}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sudo.Clients.Gui</RootNamespace>
-    <AssemblyName>Sudo.Clients.Gui</AssemblyName>
+    <RootNamespace>Sudowin.Clients.Gui</RootNamespace>
+    <AssemblyName>Sudowin.Clients.Gui</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

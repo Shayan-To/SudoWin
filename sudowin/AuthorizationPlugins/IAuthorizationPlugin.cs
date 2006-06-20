@@ -27,13 +27,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
-using Sudo.PublicLibrary;
+using Sudowin.PublicLibrary;
 
-namespace Sudo.AuthorizationPlugins
+namespace Sudowin.AuthorizationPlugins
 {
 	/// <summary>
 	///		IAuthorizationPlugin defines the interface for all classes that 
-	///		are designed to operate as an authorization plugin for sudo.  
+	///		are designed to operate as an authorization plugin for Sudowin.  
 	///		The sudo server uses authorization plugins to verify that a user 
 	///		is allowed to execute a given command with elevated privileges.
 	/// </summary>
@@ -59,14 +59,14 @@ namespace Sudo.AuthorizationPlugins
 		void Close();
 
 		/// <summary>
-		///		Gets a Sudo.PublicLibrary.UserInfo structure
+		///		Gets a Sudowin.PublicLibrary.UserInfo structure
 		///		from the authorization source for the given user name.
 		/// </summary>
 		/// <param name="userName">
 		///		User name to get information for.
 		/// </param>
 		/// <param name="userInfo">
-		///		Sudo.PublicLibrary.UserInfo structure for
+		///		Sudowin.PublicLibrary.UserInfo structure for
 		///		the given user name.
 		/// </param>
 		/// <returns>
@@ -76,7 +76,7 @@ namespace Sudo.AuthorizationPlugins
 		bool GetUserInfo( string userName, ref UserInfo userInfo );
 
 		/// <summary>
-		///		Gets a Sudo.PublicLibrary.CommandInfo structure
+		///		Gets a Sudowin.PublicLibrary.CommandInfo structure
 		///		from the authorization source for the given user name,
 		///		command path, and command arguments.
 		/// </summary>
@@ -90,7 +90,7 @@ namespace Sudo.AuthorizationPlugins
 		///		Command arguments to get information for.
 		/// </param>
 		/// <param name="commandInfo">
-		///		Sudo.PublicLibrary.CommandInfo structure for
+		///		Sudowin.PublicLibrary.CommandInfo structure for
 		///		the given user name, command path, and command 
 		///		arguments.
 		/// </param>

@@ -28,10 +28,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 
-namespace Sudo.PublicLibrary
+namespace Sudowin.PublicLibrary
 {
 	/// <summary>
-	///		Result types of ISudoServer.Sudo.
+	///		Result types of ISudoServer.Sudowin.
 	/// </summary>
 	[Serializable]
 	public enum SudoResultTypes : int

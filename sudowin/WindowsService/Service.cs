@@ -30,7 +30,7 @@ using System.Text;
 using System.ServiceProcess;
 using System.Collections.Generic;
 
-namespace Sudo.WindowsService
+namespace Sudowin.WindowsService
 {
 	static class Service
 	{

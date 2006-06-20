@@ -29,14 +29,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.Security;
 using System.Threading;
-using Sudo.PublicLibrary;
+using Sudowin.PublicLibrary;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace Sudo.WindowsService
+namespace Sudowin.WindowsService
 {
 	/// <summary>
 	///		Class instantiated as a Singleton object used to 
@@ -47,26 +47,26 @@ namespace Sudo.WindowsService
 	{
 		/// <summary>
 		///		Trace source that can be defined in the 
-		///		config file for Sudo.WindowsService.
+		///		config file for Sudowin.WindowsService.
 		/// </summary>
 		private TraceSource m_ts = new TraceSource( "traceSrc" );
 
 		/// <summary>
 		///		Interface used to access the authorization data source.
 		/// </summary>
-		private Sudo.AuthorizationPlugins.IAuthorizationPlugin m_auth_ds;
+		private Sudowin.AuthorizationPlugins.IAuthorizationPlugin m_auth_ds;
 
 		/// <summary>
 		///		Collection of UserCache structures used
 		///		to track information about users when they
-		///		call sudo.
+		///		call Sudowin.
 		/// </summary>
 		private Dictionary<string, UserCache> m_ucs =
 			new Dictionary<string, UserCache>();
 
 		/// <summary>
 		///		Collection of SecureStrings used to persist
-		///		the passwords of the users who invoke sudo.
+		///		the passwords of the users who invoke Sudowin.
 		/// </summary>
 		private Dictionary<string, SecureString> m_passwords =
 			new Dictionary<string, SecureString>();
@@ -143,7 +143,7 @@ namespace Sudo.WindowsService
 			// load the authorization plugin
 			Assembly authz_plugin_assem = Assembly.Load( m_authz_plugin_uri.Groups[ "assembly" ].Value );
 			m_auth_ds = authz_plugin_assem.CreateInstance( m_authz_plugin_uri.Groups[ "type" ].Value )
-				as Sudo.AuthorizationPlugins.IAuthorizationPlugin;
+				as Sudowin.AuthorizationPlugins.IAuthorizationPlugin;
 			if ( m_auth_ds == null )
 			{
 				string msg = "there was an error in loading the specified " +
@@ -365,14 +365,14 @@ namespace Sudo.WindowsService
 		}
 
 		/// <summary>
-		///		Gets a Sudo.PublicLibrary.UserInfo structure
+		///		Gets a Sudowin.PublicLibrary.UserInfo structure
 		///		from the authorization plugin for the given user name.
 		/// </summary>
 		/// <param name="userName">
 		///		User name to get information for.
 		/// </param>
 		/// <param name="userInfo">
-		///		Sudo.PublicLibrary.UserInfo structure for
+		///		Sudowin.PublicLibrary.UserInfo structure for
 		///		the given user name.
 		/// </param>
 		/// <returns>
@@ -385,7 +385,7 @@ namespace Sudo.WindowsService
 		}
 
 		/// <summary>
-		///		Gets a Sudo.PublicLibrary.CommandInfo structure
+		///		Gets a Sudowin.PublicLibrary.CommandInfo structure
 		///		from the authorization plugin for the given user name,
 		///		command p, and command arguments.
 		/// </summary>
@@ -399,7 +399,7 @@ namespace Sudo.WindowsService
 		///		Command arguments to get information for.
 		/// </param>
 		/// <param name="commandInfo">
-		///		Sudo.PublicLibrary.CommandInfo structure for
+		///		Sudowin.PublicLibrary.CommandInfo structure for
 		///		the given user name, command p, and command 
 		///		arguments.
 		/// </param>

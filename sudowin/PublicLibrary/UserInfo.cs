@@ -28,7 +28,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 
-namespace Sudo.PublicLibrary
+namespace Sudowin.PublicLibrary
 {
 	/// <summary>
 	///		Information about user listed in the sudoers data store.
@@ -70,7 +70,7 @@ namespace Sudo.PublicLibrary
 		/// <summary>
 		///		Name of the group that possesses the
 		///		same privileges that the user will when
-		///		they use sudo.
+		///		they use Sudowin.
 		/// </summary>
 		public string PrivilegesGroup;
 

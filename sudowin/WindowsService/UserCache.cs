@@ -29,7 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.Runtime.InteropServices;
 
-namespace Sudo.WindowsService
+namespace Sudowin.WindowsService
 {
 	/// <summary>
 	///		Used to store persistent information about sa
@@ -62,7 +62,7 @@ namespace Sudo.WindowsService
 		///		This member represents the number of
 		///		times a user has exceeded their invalid
 		///		logon limit while attempting to execute
-		///		sudo.
+		///		Sudowin.
 		/// </summary>
 		public int TimesExceededInvalidLogonCount;
 	}

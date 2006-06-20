@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Diagnostics;
 using System.Globalization;
 
-namespace Sudo.PublicLibrary
+namespace Sudowin.PublicLibrary
 {
 	/// <summary>
 	///		Provides managed methods common to this .NET solution.

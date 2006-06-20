@@ -29,13 +29,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.Text;
 using System.Reflection;
-using Sudo.PublicLibrary;
+using Sudowin.PublicLibrary;
 using System.Diagnostics;
 using System.Runtime.Remoting;
 using System.Security.Principal;
 using System.Text.RegularExpressions;
 
-namespace Sudo.CallbackApplication
+namespace Sudowin.CallbackApplication
 {
 	class Program
 	{

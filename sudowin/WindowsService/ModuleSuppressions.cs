@@ -26,4 +26,4 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Performance", "CA1805:DoNotInitializeUnnecessarily", Scope = "member", Target = "Sudo.WindowsService.ProjectInstaller..ctor()" )]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Performance", "CA1805:DoNotInitializeUnnecessarily", Scope = "member", Target = "Sudowin.WindowsService.ProjectInstaller..ctor()" )]

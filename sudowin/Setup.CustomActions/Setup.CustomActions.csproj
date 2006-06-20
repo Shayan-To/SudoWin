@@ -7,8 +7,8 @@
     <ProjectGuid>{82E5CCD5-7C49-48FD-997C-DF045D6E6A21}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sudo.Setup.CustomActions</RootNamespace>
-    <AssemblyName>Sudo.Setup.CustomActions</AssemblyName>
+    <RootNamespace>Sudowin.Setup.CustomActions</RootNamespace>
+    <AssemblyName>Sudowin.Setup.CustomActions</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

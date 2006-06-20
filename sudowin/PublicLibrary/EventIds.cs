@@ -28,7 +28,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 
-namespace Sudo.PublicLibrary
+namespace Sudowin.PublicLibrary
 {
 	public enum EventIds : int
 	{

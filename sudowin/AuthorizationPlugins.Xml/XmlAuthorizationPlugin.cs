@@ -32,12 +32,12 @@ using System.Data;
 using System.Text;
 using System.Xml.Schema;
 using System.Diagnostics;
-using Sudo.PublicLibrary;
+using Sudowin.PublicLibrary;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Sudo.AuthorizationPlugins.Xml
+namespace Sudowin.AuthorizationPlugins.Xml
 {
 	/// <summary>
 	///		Used to access sudoer information stored in a xml
@@ -47,7 +47,7 @@ namespace Sudo.AuthorizationPlugins.Xml
 	{
 		/// <summary>
 		///		Trace source that can be defined in the 
-		///		config file for Sudo.WindowsService.
+		///		config file for Sudowin.WindowsService.
 		/// </summary>
 		private TraceSource m_ts = new TraceSource( "traceSrc" );
 
@@ -186,14 +186,14 @@ namespace Sudo.AuthorizationPlugins.Xml
 		}
 
 		/// <summary>
-		///		Gets a Sudo.PublicLibrary.UserInfo structure
+		///		Gets a Sudowin.PublicLibrary.UserInfo structure
 		///		from the xml file for the given user name.
 		/// </summary>
 		/// <param name="userName">
 		///		User name to get information for.
 		/// </param>
 		/// <param name="userInfo">
-		///		Sudo.PublicLibrary.UserInfo structure for
+		///		Sudowin.PublicLibrary.UserInfo structure for
 		///		the given user name.
 		/// </param>
 		/// <returns>
@@ -238,7 +238,7 @@ namespace Sudo.AuthorizationPlugins.Xml
 		}
 
 		/// <summary>
-		///		Gets a Sudo.PublicLibrary.CommandInfo structure
+		///		Gets a Sudowin.PublicLibrary.CommandInfo structure
 		///		from the xml file for the given user name,
 		///		command path, and command arguments.
 		/// </summary>
@@ -252,7 +252,7 @@ namespace Sudo.AuthorizationPlugins.Xml
 		///		Command arguments to get information for.
 		/// </param>
 		/// <param name="commandInfo">
-		///		Sudo.PublicLibrary.CommandInfo structure for
+		///		Sudowin.PublicLibrary.CommandInfo structure for
 		///		the given user name, command path, and command 
 		///		arguments.
 		/// </param>
@@ -305,11 +305,11 @@ namespace Sudo.AuthorizationPlugins.Xml
 
 		/// <summary>
 		///		Checks to see if the user has the right
-		///		to execute the given command with sudo.
+		///		to execute the given command with Sudowin.
 		/// </summary>
 		/// <param name="userNode">
 		///		User node that represents the user that
-		///		invoked sudo.
+		///		invoked Sudowin.
 		/// </param>
 		/// <param name="commandPath">
 		///		Fully qualified path of the command being executed.
@@ -408,15 +408,15 @@ namespace Sudo.AuthorizationPlugins.Xml
 		///		Examines the attributes of a command
 		///		node and determines whether or not
 		///		the user is allowed to execute the
-		///		given command with sudo.
+		///		given command with Sudowin.
 		/// </summary>
 		/// <param name="userNode">
 		///		User node that represents the user that
-		///		invoked sudo.
+		///		invoked Sudowin.
 		/// </param>
 		/// <param name="commandNode">
 		///		Command node that represents the command
-		///		the user is attempting to execute with sudo.
+		///		the user is attempting to execute with Sudowin.
 		///	</param>
 		/// <param name="commandArguments">
 		///		Arguments of the command being executed.
@@ -545,7 +545,7 @@ namespace Sudo.AuthorizationPlugins.Xml
 		///		Searches for a command node that has
 		///		a path attribute equal to the path of
 		///		of the command that the user is attempting
-		///		to execute with sudo.
+		///		to execute with Sudowin.
 		/// </summary>
 		/// <param name="commandNodeParent">
 		///		Node that has command nodes as children.
