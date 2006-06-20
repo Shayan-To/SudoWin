@@ -109,6 +109,14 @@ namespace Sudo.Clients.Console
 			string commandPath, 
 			string commandArguments )
 		{
+			System.ServiceProcess.ServiceController sc = new System.ServiceProcess.ServiceController( "Sudo" );
+			if ( sc.Status == System.ServiceProcess.ServiceControllerStatus.Stopped )
+			{
+				System.Console.WriteLine();
+				System.Console.WriteLine( "Sudo service is stopped" );
+				return;
+			}
+
 			#region configure remoting
 
 			// get path to the actual exe
@@ -144,8 +152,7 @@ namespace Sudo.Clients.Console
 			{
 				if ( iss.ExceededInvalidLogonLimit )
 				{
-					System.Console.WriteLine( "Multiple invalid logon limit exceeded -- " +
-						"Temporary lockout enforced" );
+					System.Console.WriteLine( "Locked out" );
 					srt = SudoResultTypes.LockedOut;
 				}
 				else
@@ -186,8 +193,7 @@ namespace Sudo.Clients.Console
 						}
 						case SudoResultTypes.LockedOut:
 						{
-							System.Console.WriteLine( "Multiple invalid logon limit exceeded -- " +
-								"Temporary lockout enforced" );
+							System.Console.WriteLine( "Locked out" );
 							break;
 						}
 					}

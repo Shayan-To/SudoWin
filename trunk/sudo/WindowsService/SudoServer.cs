@@ -328,6 +328,17 @@ namespace Sudo.WindowsService
 						SudoResultTypes.InvalidLogon ) );
 				}
 			}
+
+			// handle special cases in the arguments section
+
+			// msi file
+			if ( Regex.IsMatch( commandArguments, ".*/package .*\\.msi.*" ) )
+			{
+				commandArguments = Regex.Replace( commandArguments,
+					"(.*)/package (.*.msi)(.*)", "$1/package \"$2\"$3" );
+				m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+					"handle special commandArguments: {0}", commandArguments );
+			}
 			
 			// verify the command being sudoed
 			if ( !VerifyCommand( un, ref commandPath, commandArguments ) )
