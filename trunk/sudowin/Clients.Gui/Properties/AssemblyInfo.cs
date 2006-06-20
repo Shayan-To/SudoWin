@@ -33,11 +33,11 @@ using System.Runtime.CompilerServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle( "Sudo.Clients.Gui" )]
+[assembly: AssemblyTitle( "Sudowin.Clients.Gui" )]
 [assembly: AssemblyDescription( "" )]
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "l o s t c r e a t i o n s" )]
-[assembly: AssemblyProduct( "Sudo" )]
+[assembly: AssemblyProduct( "Sudowin" )]
 [assembly: AssemblyCopyright( "Copyright © l o s t c r e a t i o n s 2006" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]

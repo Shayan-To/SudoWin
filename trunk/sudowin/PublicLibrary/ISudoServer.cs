@@ -30,10 +30,10 @@ using System;
 using System.Security;
 using System.Security.Permissions;
 
-namespace Sudo.PublicLibrary
+namespace Sudowin.PublicLibrary
 {
 	/// <summary>
-	///		An interface stub for Sudo.Service.Server.
+	///		An interface stub for Sudowin.Service.Server.
 	/// </summary>
 	public interface ISudoServer
 	{
@@ -41,7 +41,7 @@ namespace Sudo.PublicLibrary
 		///		Invokes sudo on the given command path.
 		/// </summary>
 		/// <param name="password">
-		///		Password of user invoking sudo.
+		///		Password of user invoking Sudowin.
 		/// </param>
 		/// <param name="commandPath">
 		///		Fully qualified path of the command that

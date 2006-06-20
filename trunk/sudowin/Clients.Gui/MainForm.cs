@@ -31,7 +31,7 @@ using System.IO;
 using System.Text;
 using System.Drawing;
 using System.Reflection;
-using Sudo.PublicLibrary;
+using Sudowin.PublicLibrary;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Runtime.Remoting;
@@ -39,7 +39,7 @@ using System.Collections.Generic;
 using System.Security.Principal;
 using System.Text.RegularExpressions;
 
-namespace Sudo.Clients.Gui
+namespace Sudowin.Clients.Gui
 {
 	public partial class MainForm : Form
 	{

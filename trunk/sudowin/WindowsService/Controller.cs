@@ -27,7 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
-using Sudo.PublicLibrary;
+using Sudowin.PublicLibrary;
 using System.ComponentModel;
 using System.ServiceProcess;
 using System.Runtime.Remoting;
@@ -36,7 +36,7 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
 using System.Diagnostics;
 
-namespace Sudo.WindowsService
+namespace Sudowin.WindowsService
 {
 	/// <summary>
 	///		Service controller for the Sudo service.
@@ -45,7 +45,7 @@ namespace Sudo.WindowsService
 	{
 		/// <summary>
 		///		Trace source that can be defined in the 
-		///		config file for Sudo.WindowsService.
+		///		config file for Sudowin.WindowsService.
 		/// </summary>
 		private TraceSource m_ts = new TraceSource( "traceSrc" );
 

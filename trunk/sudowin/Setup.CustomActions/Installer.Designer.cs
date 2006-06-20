@@ -1,4 +1,4 @@
-namespace Sudo.Setup.CustomActions
+namespace Sudowin.Setup.CustomActions
 {
 	partial class Installer
 	{

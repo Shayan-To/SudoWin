@@ -33,13 +33,13 @@ using System.Text;
 using System.Security;
 using System.Threading;
 using System.Reflection;
-using Sudo.PublicLibrary;
+using Sudowin.PublicLibrary;
 using System.Diagnostics;
 using System.Configuration;
 using System.Globalization;
 using System.ComponentModel;
 using System.DirectoryServices;
-using Sudo.AuthorizationPlugins;
+using Sudowin.AuthorizationPlugins;
 using System.Security.Principal;
 using System.Collections.Generic;
 using System.Security.Permissions;
@@ -48,7 +48,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Contexts;
 using System.Runtime.Remoting.Messaging;
 
-namespace Sudo.WindowsService
+namespace Sudowin.WindowsService
 {
 	/// <summary>
 	///		This is the class that the Sudo Windows service hosts
@@ -56,13 +56,13 @@ namespace Sudo.WindowsService
 	/// </summary>
 	public class SudoServer :	MarshalByRefObject, 
 		
-								Sudo.PublicLibrary.ISudoServer, 
+								Sudowin.PublicLibrary.ISudoServer, 
 		
 								IDisposable
 	{
 		/// <summary>
 		///		Trace source that can be defined in the 
-		///		config file for Sudo.WindowsService.
+		///		config file for Sudowin.WindowsService.
 		/// </summary>
 		private TraceSource m_ts = new TraceSource( "traceSrc" );
 
@@ -203,7 +203,7 @@ namespace Sudo.WindowsService
 		/// <param name="privilegesGroup">
 		///		Name of the group that possesses the
 		///		same privileges that the user will when
-		///		they use sudo.
+		///		they use Sudowin.
 		/// </param>
 		/// <returns>
 		///		If this method was invoked with the which parameter
@@ -286,7 +286,7 @@ namespace Sudo.WindowsService
 		///		Invokes sudo on the given command p.
 		/// </summary>
 		/// <param name="password">
-		///		Password of user invoking sudo.
+		///		Password of user invoking Sudowin.
 		/// </param>
 		/// <param name="commandPath">
 		///		Fully qualified path of the command that
@@ -556,9 +556,9 @@ namespace Sudo.WindowsService
 
 			// load the authentication plugin
 			Assembly authn_plugin_assem = Assembly.Load( m_authn_plugin_uri.Groups[ "assembly" ].Value );
-			Sudo.AuthenticationPlugins.IAuthenticationPlugin authn_ds = 
+			Sudowin.AuthenticationPlugins.IAuthenticationPlugin authn_ds = 
 				authn_plugin_assem.CreateInstance( m_authn_plugin_uri.Groups[ "type" ].Value )
-				as Sudo.AuthenticationPlugins.IAuthenticationPlugin;
+				as Sudowin.AuthenticationPlugins.IAuthenticationPlugin;
 			if ( authn_ds == null )
 			{
 				string msg = "there was an error in loading the specified " +
@@ -679,7 +679,7 @@ namespace Sudo.WindowsService
 			si.Desktop = "WinSta0\\Default";
 			si.Size = Marshal.SizeOf( si );
 
-			// build a formatted command path to call the Sudo.ConsoleApplication with
+			// build a formatted command path to call the Sudowin.ConsoleApplication with
 			string fcp = string.Format(
 				CultureInfo.CurrentCulture,
 				
@@ -986,10 +986,10 @@ namespace Sudo.WindowsService
 			// declare this method's return value
 			bool isVerified = false;
 
-			// load the Sudo.ConsoleApplication assembly
+			// load the Sudowin.ConsoleApplication assembly
 			Assembly ca = Assembly.LoadFile( otherAssemblyFilePath );
 
-			// get a reference to the Sudo.WindowsService assembly
+			// get a reference to the Sudowin.WindowsService assembly
 			Assembly sa = Assembly.GetExecutingAssembly();
 
 			// declare 2 bools to hold the results of both the

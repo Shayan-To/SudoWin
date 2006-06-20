@@ -36,7 +36,7 @@ using System.Collections.Generic;
 using System.Configuration.Install;
 using System.Text.RegularExpressions;
 
-namespace Sudo.Setup.CustomActions
+namespace Sudowin.Setup.CustomActions
 {
 	[RunInstaller( true )]
 	public partial class Installer : System.Configuration.Install.Installer
@@ -76,13 +76,13 @@ namespace Sudo.Setup.CustomActions
 
 			// TODO: ask what users should be sudoers and add them to the group and sudoers.xml file
 
-			#region Edit the Sudo.WindowsService.exe.config file
+			#region Edit the Sudowin.WindowsService.exe.config file
 
 			const string XpathTranslateFormat =
 				"translate({0},'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')";
 
 			string target_dir = this.Context.Parameters[ "TargetDir" ];
-			string connectionString = string.Format( @"{0}Server\Sudo.WindowsService.exe.config",
+			string connectionString = string.Format( @"{0}Server\Sudowin.WindowsService.exe.config",
 				target_dir );
 
 			// throw an exception if the xml file is not found
@@ -157,7 +157,7 @@ namespace Sudo.Setup.CustomActions
 					XpathTranslateFormat, "'callbackApplicationPath'" ) );
 			node = xml_doc.SelectSingleNode( user_xpq, xml_ns_mgr );
 			if ( node != null )
-				node.Attributes[ "value" ].Value = string.Format( @"{0}Callback\Sudo.CallbackApplication.exe",
+				node.Attributes[ "value" ].Value = string.Format( @"{0}Callback\Sudowin.CallbackApplication.exe",
 					target_dir );
 
 			// <source name="traceSrc" switchValue="ActivityTracing, Verbose">

@@ -7,8 +7,8 @@
     <ProjectGuid>{5CA0F5B5-797A-4CA5-A644-31A7CEE42614}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sudo.Clients.Console</RootNamespace>
-    <AssemblyName>Sudo.Clients.Console</AssemblyName>
+    <RootNamespace>Sudowin.Clients.Console</RootNamespace>
+    <AssemblyName>Sudowin.Clients.Console</AssemblyName>
     <SignAssembly>false</SignAssembly>
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <PublishUrl>http://localhost/WinSudo.Exe/</PublishUrl>

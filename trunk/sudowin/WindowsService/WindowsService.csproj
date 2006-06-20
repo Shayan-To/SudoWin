@@ -7,13 +7,13 @@
     <ProjectGuid>{70E1FEE7-BC44-4C61-AD2B-39A2A77AA56C}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sudo.WindowsService</RootNamespace>
-    <AssemblyName>Sudo.WindowsService</AssemblyName>
+    <RootNamespace>Sudowin.WindowsService</RootNamespace>
+    <AssemblyName>Sudowin.WindowsService</AssemblyName>
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <TargetZone>LocalIntranet</TargetZone>
     <GenerateManifests>false</GenerateManifests>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>sudo.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>sudowin.snk</AssemblyOriginatorKeyFile>
     <PublishUrl>http://localhost/WinSudo.Service/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -105,7 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="sudo.snk" />
+    <None Include="sudowin.snk" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Controller.resx">

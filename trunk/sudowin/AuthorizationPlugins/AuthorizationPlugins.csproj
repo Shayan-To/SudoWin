@@ -7,10 +7,10 @@
     <ProjectGuid>{7937C406-0E88-4E48-AA1F-964E8FB8C1AD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sudo.AuthorizationPlugins</RootNamespace>
-    <AssemblyName>Sudo.AuthorizationPlugins</AssemblyName>
+    <RootNamespace>Sudowin.AuthorizationPlugins</RootNamespace>
+    <AssemblyName>Sudowin.AuthorizationPlugins</AssemblyName>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>sudo.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>sudowin.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -42,7 +42,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="sudo.snk" />
+    <None Include="sudowin.snk" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PublicLibrary\PublicLibrary.csproj">

@@ -28,7 +28,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 
-namespace Sudo.ConsoleApplication
+namespace Sudowin.ConsoleApplication
 {
 	public enum OutputMessageTypes : short
 	{

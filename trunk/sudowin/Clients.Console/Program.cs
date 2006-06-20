@@ -29,7 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.Text;
 using System.Reflection;
-using Sudo.PublicLibrary;
+using Sudowin.PublicLibrary;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Forms;
@@ -38,7 +38,7 @@ using System.Security.Principal;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
 
-namespace Sudo.Clients.Console
+namespace Sudowin.Clients.Console
 {
 	class Program
 	{

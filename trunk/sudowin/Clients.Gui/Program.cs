@@ -2,7 +2,7 @@ using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
 
-namespace Sudo.Clients.Gui
+namespace Sudowin.Clients.Gui
 {
 	static class Program
 	{
