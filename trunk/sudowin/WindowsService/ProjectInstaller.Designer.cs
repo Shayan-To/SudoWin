@@ -63,8 +63,8 @@ namespace Sudowin.WindowsService
 			// 
 			this.serviceInstaller1.Description = "Hosts the server that sudo clients communicate with in order to facilitate privil" +
 				"ege escalation.";
-			this.serviceInstaller1.DisplayName = "Sudo";
-			this.serviceInstaller1.ServiceName = "Sudo";
+			this.serviceInstaller1.DisplayName = "Sudowin";
+			this.serviceInstaller1.ServiceName = "Sudowin";
 			this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
 			// 
 			// serviceProcessInstaller1

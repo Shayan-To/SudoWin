@@ -45,7 +45,7 @@ namespace Sudowin.WindowsService
 		{
 			// start the service immediately before committing so that an error will
 			// cause a rollback
-			System.ServiceProcess.ServiceController sc = new System.ServiceProcess.ServiceController( "Sudo" );
+			System.ServiceProcess.ServiceController sc = new System.ServiceProcess.ServiceController( "Sudowin" );
 			sc.Start();
 
 			base.Commit( savedState );

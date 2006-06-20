@@ -109,11 +109,11 @@ namespace Sudowin.Clients.Console
 			string commandPath, 
 			string commandArguments )
 		{
-			System.ServiceProcess.ServiceController sc = new System.ServiceProcess.ServiceController( "Sudo" );
+			System.ServiceProcess.ServiceController sc = new System.ServiceProcess.ServiceController( "Sudowin" );
 			if ( sc.Status == System.ServiceProcess.ServiceControllerStatus.Stopped )
 			{
 				System.Console.WriteLine();
-				System.Console.WriteLine( "Sudo service is stopped" );
+				System.Console.WriteLine( "Sudowin service is stopped" );
 				return;
 			}
 
@@ -156,7 +156,7 @@ namespace Sudowin.Clients.Console
 
 			if ( !is_sudo_server_comm_link_open )
 			{
-				System.Console.WriteLine( "Sudo service is dead to you" );
+				System.Console.WriteLine( "Sudowin service is dead to you" );
 				return;
 			}
 
