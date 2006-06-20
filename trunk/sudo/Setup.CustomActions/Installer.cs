@@ -66,7 +66,8 @@ namespace Sudo.Setup.CustomActions
 			if ( grp == null )
 			{
 				grp = de.Children.Add( "Sudoers", "group" );
-				grp.Properties[ "description" ].Value = "Members in this group have sudo privileges";
+				grp.Properties[ "description" ].Value = "Members in this group have the required " +
+					"privileges to initiate secure communication channels with the sudo server.";
 				grp.CommitChanges();
 			}
 
