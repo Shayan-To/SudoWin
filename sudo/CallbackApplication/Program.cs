@@ -71,7 +71,24 @@ namespace Sudo.CallbackApplication
 			#endregion
 			*/
 
-			string cmd_args = args.Length == 2 ? string.Empty : string.Join( " ", args, 2, args.Length - 2 );
+			// enclose arguments with quotes that have spaces in them -- this bit
+			// 'o code was intended to fix the problem with msi files and passing
+			// unescaped paths -- i would have preferred a more elegant solution
+			// using Array.ForEach<T>, but alas, this method does not properly set
+			// the values back inside the array
+			string cmd_args = string.Empty;
+			if ( args.Length > 2 )
+			{
+				string[] arr_cmd_args = new string[ args.Length - 2 ];
+				Array.Copy( args, 2, arr_cmd_args, 0, args.Length - 2 );
+				for ( int x = 0; x < arr_cmd_args.Length; ++x )
+				{
+					if ( arr_cmd_args[ x ].Contains( " " ) && arr_cmd_args[ x ][ 0 ] != '"' )
+						arr_cmd_args[ x ] = string.Format( "\"{0}\"", arr_cmd_args[ x ] );
+				}
+				cmd_args = string.Join( " ", arr_cmd_args );
+			}
+
 			CreateProcessLoadProfile( args[ 0 ], args[ 1 ], cmd_args );
 		}
 

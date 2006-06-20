@@ -37,6 +37,7 @@ using System.ComponentModel;
 using System.Runtime.Remoting;
 using System.Collections.Generic;
 using System.Security.Principal;
+using System.Text.RegularExpressions;
 
 namespace Sudo.Clients.Gui
 {
@@ -110,25 +111,51 @@ namespace Sudo.Clients.Gui
 				}
 			}
 
-			// display the file being sudoed
+			// finding the executable -- special cases
 			string[] args = Environment.GetCommandLineArgs();
-			FileInfo sudoed_cmd = new FileInfo( args[ 1 ] );
-			m_lbl_sudoed_cmd.Text = sudoed_cmd.Name;
-			m_picbox_sudoed_cmd.Image = 
-				Icon.ExtractAssociatedIcon( sudoed_cmd.FullName ).ToBitmap();
+			if ( args.Length > 1 )
+			{
+				string env_args = string.Join( " ", args );
+				string sudoed_cmd_string = args[ 1 ];
 
-			// let the user know if they are locked out
-			if ( m_isudo_server.ExceededInvalidLogonLimit )
+				// msi files
+				Regex rx_msi = new Regex( @".*/package (?<sudoedCmd>.*\.msi).*" );
+				Match mt_msi = rx_msi.Match( env_args );
+				if ( mt_msi.Success )
+				{
+					sudoed_cmd_string = mt_msi.Groups[ "sudoedCmd" ].Value;
+				}
+
+				// display the file being sudoed
+				FileInfo sudoed_cmd = new FileInfo( sudoed_cmd_string );
+				m_lbl_sudoed_cmd.Text = sudoed_cmd.Name;
+				m_picbox_sudoed_cmd.Image =
+					Icon.ExtractAssociatedIcon( sudoed_cmd.FullName ).ToBitmap();
+			}
+
+			// check to see if the sudo service is stopped
+			System.ServiceProcess.ServiceController sc = new System.ServiceProcess.ServiceController( "Sudo" );
+			if ( sc.Status == System.ServiceProcess.ServiceControllerStatus.Stopped )
 			{
 				m_txtbox_password.Enabled = false;
 				m_btn_ok.Enabled = false;
-				m_lbl_warning.Text = "Locked out";
+				m_lbl_warning.Text = "Sudo service is stopped";
 			}
-
-			// go ahead if the credentials are cached
-			if ( m_isudo_server.AreCredentialsCached )
+			else
 			{
-				btnOk_Click( null, null );
+				// let the user know if they are locked out
+				if ( m_isudo_server.ExceededInvalidLogonLimit )
+				{
+					m_txtbox_password.Enabled = false;
+					m_btn_ok.Enabled = false;
+					m_lbl_warning.Text = "Locked out";
+				}
+
+				// go ahead if the credentials are cached
+				if ( m_isudo_server.AreCredentialsCached )
+				{
+					btnOk_Click( null, null );
+				}
 			}
 		}
 
