@@ -73,6 +73,20 @@ namespace Sudo.WindowsService
 		private DataServer m_data_server = null;
 
 		/// <summary>
+		///		This is a dummy property.  It enables
+		///		clients to trap an exception that will occur
+		///		if they do not have permissions to talk to
+		///		the server.
+		/// </summary>
+		public bool IsConnectionOpen
+		{
+			get
+			{
+				return ( true );
+			}
+		}
+
+		/// <summary>
 		///		True if the user has exceeded the
 		///		number of invalid logon attempts,
 		///		false if otherwise.

@@ -83,6 +83,15 @@ namespace Sudo.Clients.Gui
 					wkts[ x ].ObjectUrl ) as ISudoServer;
 			}
 
+			bool is_sudo_server_comm_link_open = false;
+			try
+			{
+				is_sudo_server_comm_link_open = m_isudo_server.IsConnectionOpen;
+			}
+			catch
+			{
+			}
+
 			#endregion
 
 			// get the current user's account icon if they have one
@@ -140,6 +149,12 @@ namespace Sudo.Clients.Gui
 				m_txtbox_password.Enabled = false;
 				m_btn_ok.Enabled = false;
 				m_lbl_warning.Text = "Sudo service is stopped";
+			}
+			else if ( !is_sudo_server_comm_link_open )
+			{
+				m_txtbox_password.Enabled = false;
+				m_btn_ok.Enabled = false;
+				m_lbl_warning.Text = "Sudo service is dead to you";
 			}
 			else
 			{

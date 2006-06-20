@@ -94,5 +94,16 @@ namespace Sudo.PublicLibrary
 		{
 			get;
 		}
+
+		/// <summary>
+		///		This is a dummy property.  It enables
+		///		clients to trap an exception that will occur
+		///		if they do not have permissions to talk to
+		///		the server.
+		/// </summary>
+		bool IsConnectionOpen
+		{
+			get;
+		}
 	}
 }
