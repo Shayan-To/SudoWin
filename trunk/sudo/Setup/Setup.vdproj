@@ -46,7 +46,7 @@
         "Entry"
         {
         "MsmKey" = "8:_5DE423986F0EE38E9B61EDF2071EB51A"
-        "OwnerKey" = "8:_19B04F9D647D416CB54032A859D84643"
+        "OwnerKey" = "8:_FDA5EAD60852412C8A046951BDC5396F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -64,19 +64,19 @@
         "Entry"
         {
         "MsmKey" = "8:_5DE423986F0EE38E9B61EDF2071EB51A"
-        "OwnerKey" = "8:_C28AB338C4229192F8FC62A92D4A5A09"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_5DE423986F0EE38E9B61EDF2071EB51A"
         "OwnerKey" = "8:_6400FA4A59D14C17BF864C43809D9985"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_5DE423986F0EE38E9B61EDF2071EB51A"
-        "OwnerKey" = "8:_FDA5EAD60852412C8A046951BDC5396F"
+        "OwnerKey" = "8:_19B04F9D647D416CB54032A859D84643"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5DE423986F0EE38E9B61EDF2071EB51A"
+        "OwnerKey" = "8:_C28AB338C4229192F8FC62A92D4A5A09"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -111,6 +111,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_B637E0B06F064C4EA964C519695C4B71"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_B7E9A14375274729BB8D84FF5610941B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -124,19 +130,31 @@
         "Entry"
         {
         "MsmKey" = "8:_C28AB338C4229192F8FC62A92D4A5A09"
-        "OwnerKey" = "8:_80C7CC052E7F48468EA8973014EFD061"
+        "OwnerKey" = "8:_19B04F9D647D416CB54032A859D84643"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_C28AB338C4229192F8FC62A92D4A5A09"
-        "OwnerKey" = "8:_19B04F9D647D416CB54032A859D84643"
+        "OwnerKey" = "8:_80C7CC052E7F48468EA8973014EFD061"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D4B7B09704C24CCA91F1C9D1EFA2E338"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_EDFF21D5221839F55FDADBA661C5FF85"
         "OwnerKey" = "8:_80C7CC052E7F48468EA8973014EFD061"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_EF68941353B0479BA02601254FBDFD93"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -160,19 +178,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_611CA151227F4EA1A5A42A6164D6BB4F"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_B5F5D4A4C5B447CAB9CBC6765747E6F3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_B7E9A14375274729BB8D84FF5610941B"
+        "OwnerKey" = "8:_FDA5EAD60852412C8A046951BDC5396F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -184,7 +190,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_19B04F9D647D416CB54032A859D84643"
+        "OwnerKey" = "8:_B7E9A14375274729BB8D84FF5610941B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_B5F5D4A4C5B447CAB9CBC6765747E6F3"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -208,31 +220,37 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C28AB338C4229192F8FC62A92D4A5A09"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_082F8CA4CF8743FCD5E86B8FBB67207B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_5DE423986F0EE38E9B61EDF2071EB51A"
+        "OwnerKey" = "8:_611CA151227F4EA1A5A42A6164D6BB4F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_FDA5EAD60852412C8A046951BDC5396F"
+        "OwnerKey" = "8:_19B04F9D647D416CB54032A859D84643"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_C28AB338C4229192F8FC62A92D4A5A09"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_0531D01F8E414B5D9C4AD9FF615A6E34"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_5DE423986F0EE38E9B61EDF2071EB51A"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -432,7 +450,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Sudo.AuthenticationPlugins, Version=0.0.2362.1531, Culture=neutral, PublicKeyToken=0f2b6a54484742df, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Sudo.AuthenticationPlugins, Version=0.0.2362.2511, Culture=neutral, PublicKeyToken=0f2b6a54484742df, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_082F8CA4CF8743FCD5E86B8FBB67207B"
@@ -463,7 +481,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Sudo.PublicLibrary, Version=0.0.2362.1531, Culture=neutral, PublicKeyToken=0f2b6a54484742df, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Sudo.PublicLibrary, Version=0.0.2362.2511, Culture=neutral, PublicKeyToken=0f2b6a54484742df, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_5DE423986F0EE38E9B61EDF2071EB51A"
@@ -490,6 +508,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B637E0B06F064C4EA964C519695C4B71"
+            {
+            "SourcePath" = "8:..\\CHANGELOG.txt"
+            "TargetName" = "8:CHANGELOG.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_CC70C6EC5C61467082B822453007ADEF"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BCCC01F5CB98414091B5518F79AFDE00"
             {
             "SourcePath" = "8:sudoers.xml"
@@ -514,7 +552,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Sudo.AuthorizationPlugins, Version=0.0.2362.1532, Culture=neutral, PublicKeyToken=0f2b6a54484742df, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Sudo.AuthorizationPlugins, Version=0.0.2362.2511, Culture=neutral, PublicKeyToken=0f2b6a54484742df, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_C28AB338C4229192F8FC62A92D4A5A09"
@@ -539,6 +577,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D4B7B09704C24CCA91F1C9D1EFA2E338"
+            {
+            "SourcePath" = "8:..\\README.txt"
+            "TargetName" = "8:README.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_CC70C6EC5C61467082B822453007ADEF"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_EDFF21D5221839F55FDADBA661C5FF85"
@@ -570,6 +628,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EF68941353B0479BA02601254FBDFD93"
+            {
+            "SourcePath" = "8:..\\LICENSE.txt"
+            "TargetName" = "8:LICENSE.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_CC70C6EC5C61467082B822453007ADEF"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
         }
@@ -705,7 +783,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Sudo for Windows"
         "ProductCode" = "8:{8F4AE845-052D-47E3-BD84-7A40A7FDDD4F}"
-        "PackageCode" = "8:{0A9139AA-737E-40BE-8BE5-7B558B5954B1}"
+        "PackageCode" = "8:{E812654C-2D61-4C3D-8669-13DCAD952DCA}"
         "UpgradeCode" = "8:{3B0AA51B-8E14-49F5-B299-22C35C55088B}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
@@ -876,6 +954,78 @@
                         {
                         }
                     }
+                    "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_97BC73F9C217471DB0587FA2CCC87284"
+                    {
+                    "Name" = "8:cmdfile"
+                    "Condition" = "8:"
+                    "AlwaysCreate" = "11:FALSE"
+                    "DeleteAtUninstall" = "11:FALSE"
+                    "Transitive" = "11:FALSE"
+                        "Keys"
+                        {
+                            "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_B5965A50FACE40F9AB641FC8AAE5B035"
+                            {
+                            "Name" = "8:shell"
+                            "Condition" = "8:"
+                            "AlwaysCreate" = "11:FALSE"
+                            "DeleteAtUninstall" = "11:FALSE"
+                            "Transitive" = "11:FALSE"
+                                "Keys"
+                                {
+                                    "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_8EA108BA3A414DE88B8DCD5BC7B6D4DD"
+                                    {
+                                    "Name" = "8:sudo"
+                                    "Condition" = "8:"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "DeleteAtUninstall" = "11:FALSE"
+                                    "Transitive" = "11:FALSE"
+                                        "Keys"
+                                        {
+                                            "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_C6FB91A64DC249B3A75F93027B313B13"
+                                            {
+                                            "Name" = "8:command"
+                                            "Condition" = "8:"
+                                            "AlwaysCreate" = "11:FALSE"
+                                            "DeleteAtUninstall" = "11:FALSE"
+                                            "Transitive" = "11:FALSE"
+                                                "Keys"
+                                                {
+                                                }
+                                                "Values"
+                                                {
+                                                    "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_A5838CF93C464543A4A355DF8295ED15"
+                                                    {
+                                                    "Name" = "8:"
+                                                    "Condition" = "8:"
+                                                    "Transitive" = "11:FALSE"
+                                                    "ValueTypes" = "3:1"
+                                                    "Value" = "8:\"[TARGETDIR]Clients\\Gui\\Sudo.Clients.Gui.exe\" \"%1\" %*"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        "Values"
+                                        {
+                                            "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_BF2662C02EF144DAAAA0ACFF57A0EEC6"
+                                            {
+                                            "Name" = "8:"
+                                            "Condition" = "8:"
+                                            "Transitive" = "11:FALSE"
+                                            "ValueTypes" = "3:1"
+                                            "Value" = "8:Sudo..."
+                                            }
+                                        }
+                                    }
+                                }
+                                "Values"
+                                {
+                                }
+                            }
+                        }
+                        "Values"
+                        {
+                        }
+                    }
                     "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_D168D2D0778B46258AA223E8AD421537"
                     {
                     "Name" = "8:Msi.Package"
@@ -948,6 +1098,78 @@
                         {
                         }
                     }
+                    "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_E2791A03B33D4B99A536F79556A8AE76"
+                    {
+                    "Name" = "8:Folder"
+                    "Condition" = "8:"
+                    "AlwaysCreate" = "11:FALSE"
+                    "DeleteAtUninstall" = "11:FALSE"
+                    "Transitive" = "11:FALSE"
+                        "Keys"
+                        {
+                            "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_50FB657F05D74C0C83AF26464D4359B1"
+                            {
+                            "Name" = "8:shell"
+                            "Condition" = "8:"
+                            "AlwaysCreate" = "11:FALSE"
+                            "DeleteAtUninstall" = "11:FALSE"
+                            "Transitive" = "11:FALSE"
+                                "Keys"
+                                {
+                                    "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_AE266D7C5309499893E248A566632E4C"
+                                    {
+                                    "Name" = "8:sudo"
+                                    "Condition" = "8:"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "DeleteAtUninstall" = "11:FALSE"
+                                    "Transitive" = "11:FALSE"
+                                        "Keys"
+                                        {
+                                            "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_1EB0A864BCD44925B70076D428E1F365"
+                                            {
+                                            "Name" = "8:command"
+                                            "Condition" = "8:"
+                                            "AlwaysCreate" = "11:FALSE"
+                                            "DeleteAtUninstall" = "11:FALSE"
+                                            "Transitive" = "11:FALSE"
+                                                "Keys"
+                                                {
+                                                }
+                                                "Values"
+                                                {
+                                                    "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_9773B23A89314A169220AAF6D621A828"
+                                                    {
+                                                    "Name" = "8:"
+                                                    "Condition" = "8:"
+                                                    "Transitive" = "11:FALSE"
+                                                    "ValueTypes" = "3:2"
+                                                    "Value" = "8:\"[TARGETDIR]Clients\\Gui\\Sudo.Clients.Gui.exe\" %SystemRoot%\\Explorer.exe /e,/idlist,%I,%L"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        "Values"
+                                        {
+                                            "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_8B6FD7BD55DA444785F2148D9E668A87"
+                                            {
+                                            "Name" = "8:"
+                                            "Condition" = "8:"
+                                            "Transitive" = "11:FALSE"
+                                            "ValueTypes" = "3:1"
+                                            "Value" = "8:Sudo..."
+                                            }
+                                        }
+                                    }
+                                }
+                                "Values"
+                                {
+                                }
+                            }
+                        }
+                        "Values"
+                        {
+                        }
+                    }
                     "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_EF464C7CD37A4487930C0D469958A4B2"
                     {
                     "Name" = "8:batfile"
@@ -957,48 +1179,62 @@
                     "Transitive" = "11:FALSE"
                         "Keys"
                         {
-                            "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_4F37246D189D4B9D8A36742CAA1D68BB"
+                            "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_7526CB0621984DE1BB70EDB2190BC02F"
                             {
-                            "Name" = "8:sudo"
+                            "Name" = "8:shell"
                             "Condition" = "8:"
                             "AlwaysCreate" = "11:FALSE"
-                            "DeleteAtUninstall" = "11:TRUE"
+                            "DeleteAtUninstall" = "11:FALSE"
                             "Transitive" = "11:FALSE"
                                 "Keys"
                                 {
-                                    "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_B7AA97FDE2A64D3698E4C1F9D08A8215"
+                                    "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_6CF946CC5183484DA7806D1EFD66F8C1"
                                     {
-                                    "Name" = "8:command"
+                                    "Name" = "8:sudo"
                                     "Condition" = "8:"
                                     "AlwaysCreate" = "11:FALSE"
-                                    "DeleteAtUninstall" = "11:FALSE"
+                                    "DeleteAtUninstall" = "11:TRUE"
                                     "Transitive" = "11:FALSE"
                                         "Keys"
                                         {
+                                            "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_B7AA97FDE2A64D3698E4C1F9D08A8215"
+                                            {
+                                            "Name" = "8:command"
+                                            "Condition" = "8:"
+                                            "AlwaysCreate" = "11:FALSE"
+                                            "DeleteAtUninstall" = "11:FALSE"
+                                            "Transitive" = "11:FALSE"
+                                                "Keys"
+                                                {
+                                                }
+                                                "Values"
+                                                {
+                                                    "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_F044A5B0542040FAACF06FF392A52315"
+                                                    {
+                                                    "Name" = "8:"
+                                                    "Condition" = "8:"
+                                                    "Transitive" = "11:FALSE"
+                                                    "ValueTypes" = "3:1"
+                                                    "Value" = "8:\"[TARGETDIR]Clients\\Gui\\Sudo.Clients.Gui.exe\" \"%1\" %*"
+                                                    }
+                                                }
+                                            }
                                         }
                                         "Values"
                                         {
-                                            "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_F044A5B0542040FAACF06FF392A52315"
+                                            "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_2BBC96C697F14170AAD5661538FB8714"
                                             {
                                             "Name" = "8:"
                                             "Condition" = "8:"
                                             "Transitive" = "11:FALSE"
                                             "ValueTypes" = "3:1"
-                                            "Value" = "8:\"[TARGETDIR]Clients\\Gui\\Sudo.Clients.Gui.exe\" \"%1\" %*"
+                                            "Value" = "8:Sudo..."
                                             }
                                         }
                                     }
                                 }
                                 "Values"
                                 {
-                                    "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_2BBC96C697F14170AAD5661538FB8714"
-                                    {
-                                    "Name" = "8:"
-                                    "Condition" = "8:"
-                                    "Transitive" = "11:FALSE"
-                                    "ValueTypes" = "3:1"
-                                    "Value" = "8:Sudo..."
-                                    }
                                 }
                             }
                         }
@@ -1193,9 +1429,9 @@
             "Attributes" = "3:3"
                 "Dialogs"
                 {
-                    "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_8AB19AB08E384A42999CA493A27342B5"
+                    "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_2E06238582A3441A83F76C713552B47A"
                     {
-                    "Sequence" = "3:100"
+                    "Sequence" = "3:210"
                     "DisplayName" = "8:Finished"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
@@ -1224,6 +1460,53 @@
                             "Setting" = "3:1"
                             "Value" = "8:#1258"
                             "DefaultValue" = "8:#1258"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                        }
+                    }
+                    "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_F113C37A22DD43E8BCC02065B9F4A8B7"
+                    {
+                    "Sequence" = "3:200"
+                    "DisplayName" = "8:Read Me"
+                    "UseDynamicProperties" = "11:TRUE"
+                    "IsDependency" = "11:FALSE"
+                    "SourcePath" = "8:<VsdDialogDir>\\VsdReadmeDlg.wid"
+                        "Properties"
+                        {
+                            "BannerBitmap"
+                            {
+                            "Name" = "8:BannerBitmap"
+                            "DisplayName" = "8:#1001"
+                            "Description" = "8:#1101"
+                            "Type" = "3:8"
+                            "ContextData" = "8:Bitmap"
+                            "Attributes" = "3:4"
+                            "Setting" = "3:1"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "ReadmeText"
+                            {
+                            "Name" = "8:ReadmeText"
+                            "DisplayName" = "8:#1010"
+                            "Description" = "8:#1110"
+                            "Type" = "3:6"
+                            "ContextData" = "8:"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:2"
+                            "Value" = "8:_D4B7B09704C24CCA91F1C9D1EFA2E338"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "Sunken"
+                            {
+                            "Name" = "8:Sunken"
+                            "DisplayName" = "8:#1007"
+                            "Description" = "8:#1107"
+                            "Type" = "3:5"
+                            "ContextData" = "8:4;True=4;False=0"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:0"
+                            "Value" = "3:4"
+                            "DefaultValue" = "3:4"
                             "UsePlugInResources" = "11:TRUE"
                             }
                         }

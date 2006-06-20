@@ -353,7 +353,7 @@ namespace Sudo.WindowsService
 				m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
 					"handle special commandArguments: {0}", commandArguments );
 			}
-			
+
 			// verify the command being sudoed
 			if ( !VerifyCommand( un, ref commandPath, commandArguments ) )
 			{
