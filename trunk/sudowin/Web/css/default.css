@@ -1,0 +1,103 @@
+﻿*
+{
+	font-family:		Verdana, Tahoma;
+}
+
+body
+{
+	font-size:			12px;
+	background-color:	gray;
+	margin:				20px;
+}
+
+a
+{
+	font-weight:		bold;
+	color:				blue;
+	text-decoration:	none;
+}
+
+a:hover
+{
+	text-decoration:	underline;
+}
+
+span.spanSectionHeader
+{
+	font-size:			18px;
+	font-weight:		bolder;
+}
+
+p.pSectionText
+{
+	text-align:			justify;
+}
+
+div#divBody
+{
+	width:				700px;
+	position:			absolute;
+	background-color:	white;
+	border:				2px solid black;
+	padding:			15px;
+}
+
+div#divSudoForWindowsLogo
+{
+	font-size:			22px;
+	font-weight:		bolder;
+	float:				left;
+}
+
+div#divSudoForWindowsSubLogo
+{
+	margin-bottom:		10px;
+	float:				left;
+	clear:				left;
+}
+
+div#divSourceForgeImage
+{
+	float:				right;
+}
+
+div#divLinksHeader
+{
+	position:			relative;
+	top:				5px;
+	left:				275px;
+	margin-bottom:		20px;
+}
+
+div#divDownload
+{
+	position:			relative;
+	top:				5px;
+	left:				260px;
+	margin-bottom:		25px;
+}
+
+div#divImages
+{
+	margin-bottom:		2px;
+}
+
+div#divImages img
+{
+	border:				1px solid black;
+}
+
+div#divImages .imgFirst
+{
+	margin-left:		30px;
+}
+
+div#divImages .imgLatter
+{
+	margin-left:		15px;
+}
+
+div#divImagesCaptions
+{
+	margin-bottom:		25px;
+}
