@@ -30,6 +30,60 @@
 			
 			<div class="divSection">
 				<span class="spanSectionHeader">
+					Callback application
+				</span>
+				<p class="pSectionText">
+					Before we look at the sudowin process, the callback application needs to be 
+					explained.  The callback application is necessary on Windows 2000 and Windows XP 
+					operating systems because these operating systems do not support the win32 API 
+					function 
+					<a href="http://msdn.microsoft.com/library/en-us/dllproc/base/createprocesswithtokenw.asp">CreateProcessWithTokenW</a>.	
+				</p>
+				<p class="pSectionText">
+					The sudo server is hosted by a Windows service that is running under the SYSTEM 
+					account in order to launch processes on behalf of other users.  However, the 
+					process must be launched with ther user's logon token so that the process is 
+					launched in the user's desktop context (so the user can see it).  Equally important 
+					is loading the user's profile when the process is launched so the process respects 
+					the user's new group membership.  Windows 2000 and Windowx XP support launching a 
+					process with a logon token with the win32 API function 
+					<a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dllproc/base/createprocessasuser.asp">CreateProcessAsUser</a>, 
+					but unfortunately this function does not allow you to load the user's profile, meaning 
+					that the users new group membership will not be respected.
+				</p>
+				<p class="pSectionText">
+					Enter the callback application.  On Windows 2000 and Windows XP operating systems 
+					the sudo server launches the callback application using CreateProcessAsUser so that 
+					it will be launched in the user's desktop context.  The callback application then 
+					launches the intended command using the .NET Process class, loading the user's 
+					profile in the process, allowing the user's new group membership to be respected.
+				</p>
+				<p class="pSectionText">
+					The callback application is not desirable, which is one reason to migrate 
+					your desktop to Windows Vista when possible.  Windows Vista and Windows Server 2003  
+					support the win32 API function CreateProcessWithTokenW.  This function allows you to 
+					launch a process with a logon token and at the same time to load the users's profile.
+				</p>
+				<p class="pSectionText">
+					Under normal circumstances this type of design would be a security hole.  However, 
+					Sudo for Windows circumvents this by digitally signing both the sudo server binary and 
+					the callback application binary with the same strong name key.  The sudo server 
+					verifies with every invocation of a sudo client that the callback application has 
+					the same signature as itself and has not been altered in any way.
+				</p>
+				<p class="pSectionText">
+					For this reason the strong name key that was used to sign the shipping versions of 
+					the sudo server and callback application binaries is not included with the shipping 
+					versions of Sudo for Windows.  Earlier revisions in the source control repository 
+					includes a strong name key, but it has since been regenerated and used to resign the 
+					binaries.  You are in fact strongly encouraged to generate your own strong name key 
+					and use that to resign the binaries, but since most users will probably not take this 
+					step the development strong name key will not be made public.
+				</p>
+			</div>
+			
+			<div class="divSection">
+				<span class="spanSectionHeader">
 					Step-by-step
 				</span>
 				<ol>
