@@ -1,6 +1,6 @@
 ﻿var m_width = 700;
 
-function writeTopPart()
+function writerHeader()
 {
 	document.write(
 		'<div id="divSudoForWindowsLogo">' +
@@ -27,6 +27,16 @@ function writeTopPart()
 		'<div id="divDownload">' +
 			'-~= download <a href="http://sourceforge.net/project/showfiles.php?group_id=143653&package_id=157780&release_id=426244">0.1.0-r76</a> =~-' +
 		'</div>' );
+}
+
+function writeFooter()
+{
+	document.write( 
+		'<hr />' +
+		'<a href="http://validator.w3.org/check?uri=referer">' +
+		'<img src="http://www.w3.org/Icons/valid-xhtml10" ' +
+		'alt="Valid XHTML 1.0 Strict" style="width:88px; height: 31px; border:none; float:right;" />' +
+		'</a>' );
 }
 
 function writeDownloadLink()

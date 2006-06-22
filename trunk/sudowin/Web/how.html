@@ -10,7 +10,7 @@
 		<div id="divBody">
 			
 			<script type="text/javascript">
-				writeTopPart();
+				writerHeader();
 			</script>
 			
 			<div class="divSection">
@@ -165,21 +165,8 @@
 						<br /><br />
 						The server then uses the win32 API function 
 						<a href="http://msdn.microsoft.com/library/en-us/dllproc/base/createprocesswithtokenw.asp">CreateProcessWithTokenW</a>
-						to start the invoked command.
-						<!--
-						the callback application is necessary because the server must be able to run applications in the 
-						desktop context (winstation) of the user who invoked the client.  otherwise i would have simply used the 
-						win32 function <a href="http://msdn.microsoft.com/library/en-us/dllproc/base/createprocesswithlogonw.asp">CreateProcessWithLogonW</a>, 
-						but this function does not take the user's logon token, which is what causes the process to be run in the 
-						desktop context of the user.  there is a win32 function in windows vista that is the effective sweet spot,  
-						<a href="http://msdn.microsoft.com/library/en-us/dllproc/base/createprocesswithtokenw.asp">CreateProcessWithTokenW</a>, 
-						that takes logon token of the user and has the option of loading the user's profile.  loading the profile is important 
-						because it causes the user's new group membership in the privileged group to be respected by the system.  
-						since i want to retain windows xp compatibility (for now), i will continue to use the callback application.
-						<br /><br />
-						when windows vista is the windows desktop standard i will modify sudo for windows to use the win32 function 
-						CreateProcessWithTokenW and eliminate the callback application altogether
-						-->
+						to start the invoked command.  Once the process is launched with elevated 
+						privileges the server removes Mandy from the privileges group.
 					</li>
 					<li>
 						<span style="font-weight:bold;">Windows 2000 and Windows XP</span>
@@ -200,6 +187,9 @@
 					</li>
 				</ol>
 			</div>
+			<script type="text/javascript">
+				writeFooter();
+			</script>
 		</div>
 	</body>
 </html>
