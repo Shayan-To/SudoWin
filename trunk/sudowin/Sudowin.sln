@@ -26,7 +26,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clients.Gui", "Clients.Gui\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthenticationPlugins", "AuthenticationPlugins\AuthenticationPlugins.csproj", "{5180BFF2-FADD-49CC-B0F3-E7EF1A7F9CCA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthenticationPlugins.LocalComputer", "AuthenticationPlugins.LocalComputer\AuthenticationPlugins.LocalComputer.csproj", "{A92EF75C-1853-4500-AEBC-2770DA2478CA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthenticationPlugins.NT", "AuthenticationPlugins.NT\AuthenticationPlugins.NT.csproj", "{A92EF75C-1853-4500-AEBC-2770DA2478CA}"
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{7C1D08BA-1FD6-4E4D-A599-958182518F40}"
 EndProject
