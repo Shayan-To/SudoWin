@@ -9,31 +9,9 @@
 	<body onload="onPageLoad();">
 		<div id="divBody">
 			
-			<div id="divSudoForWindowsLogo">
-				Sudo for Windows
-			</div>
-			<div id="divSourceForgeImage">
-				<a href="http://sourceforge.net"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=143653&amp;type=1" style="width: 88px; height: 31px; border: none;" alt="SourceForge.net Logo" /></a>
-			</div>
-			<div id="divSudoForWindowsSubLogo">
-				<a href="http://sourceforge.net/projects/sudowin">project sudowin</a> - 
-				<a href="http://www.opensource.org/licenses/bsd-license.php">new bsd license</a>
-			</div>
-			
-			<hr style="clear:both;"/>
-			
-			<div id="divLinksHeader">
-				<a href="index.html">intro</a> . 
-				<a href="how.html">how</a> . 
-				<a href="http://sourceforge.net/pm/task.php?group_project_id=48101&group_id=143653&func=browse">todo</a> . 
-				<a href="who.html">who</a>
-			</div>
-			
-			<div id="divDownload">
-				<script type="text/javascript">
-					writeDownloadLink();
-				</script>
-			</div>
+			<script type="text/javascript">
+				writeTopPart();
+			</script>
 			
 			<div class="divSection">
 				<span class="spanSectionHeader">
@@ -46,28 +24,7 @@
 				</p>
 				<p class="pSectionText">
 					This is obviously a great simplification of how Sudo for Windows works.  To better 
-					understand Sudo for Windows we must first examine its two basic components.
-				</p>
-			</div>
-			
-			<div class="divSection">
-				<span class="spanSectionHeader">
-					Server
-				</span>
-				<p class="pSectionText">
-					The sudo server is hosted in a Windows service running under the System context.  It is 
-					this service that sudo clients communicate with in order to facilitate privilege 
-					escalation.
-				</p>
-			</div>
-			
-			<div class="divSection">
-				<span class="spanSectionHeader">
-					Client
-				</span>
-				<p class="pSectionText">
-					Sudo for Windows comes with two clients -- a GUI client and a console client.  The client 
-					is what the end-user invokes in order to start a process with elevated privileges.
+					understand Sudo for Windows we will walk through a step-by-step invocation of sudowin.
 				</p>
 			</div>
 			
@@ -77,90 +34,85 @@
 				</span>
 				<ol>
 					<li>
-						the user invokes a sudo client
+						Mandy invokes a sudowin client.
 					</li>
 
 					<li>
-						the client tries to open a secure ipc channel to the server.  if the user that invoked
-						the client is not a member of the sudoers group then the client cannot open a secure
-						ipc channel to the server and the user is not allowed to continue
+						The client tries to open a secure IPC channel to the server.  If Mandy is not a 
+						a member of the configured sudoers group then the client canno open a 
+						secure IPC channel to the server and Mandy is not allowed to continue
 						<br /><br />
-						if the user a member of the sudoers group then the process continues
+						If the user a member of the configured sudoers group then the process continues.
 					</li>
 					<li>
-						if the secure channel has been established then the server checks to see if the user 
-						who invoked the sudo client has cached credentials.  if the user has cached credentials 
-						then the the process skips to step 6
+						If the secure IPC channel has been established then the server checks to see if Mandy 
+						has cached credentials.  If Mandy has cached credentials then the process skips to Step 6.
 						<br /><br />
-						if the user does not have cached credentials then the appropriate response code is returned 
+						If Mandy does not have cached credentials then the appropriate response code is returned 
 						to the client.
+					</li>
 					<li>
-						the client prompts the user to enter their password.  the client sends the user's username, 
-						password, and the invoked command to the server.  the password is sent in plain text, but since 
-						it is sent over a secure channel, this is ok
+						The client prompts Mandy to enter her passphrase.  The client sends the Mandy's username, 
+						passphrase, and the invoked command to the server.  The passphrase is sent in plain text, but since 
+						it is sent over a secure IPC channel, this is ok.
 					</li>
 
 					<li>
-						the server tries to verify the user's password using the IAuthenticationModule interface.  the
-						authentication module the server uses to do this is configured in the server's application 
-						configuration file, meaning that anyone can write their own authentication module, making this a 
-						very extensible architecture.
+						The server attempts to verify Mandy's passphrase using, in order, the configured authentication
+						plugins.
 						<br /><br />
-						the server does not care how the module authenticates the user, whether the module authenticates 
-						using active directory, the local computer, an oracle database, or even a text file.  sudo for 
-						windows ships with an IAuthenticationModule module that verifies user credentials against the 
-						local computer account database.  a future version will ship with an active directory module.
+						If server fails to authenticate Mandy then the server responds to the client with the appropriate 
+						response code.  If a Mandy fails to authenticate several times in a row she will be locked out for 
+						a given amount of time.
 						<br /><br />
-						if the authentication process fails then the server responds to the client with the appropriate 
-						response code.  if a user fails to authenticate several times in a row they are locked out for a 
-						given amount of time.  the allowed retry count, retry window, and lockout length are all 
-						configuration options maintained by the server
+						The allowed retry count, retry window, and lockout length are all configuration options 
+						for the server process.
 						<br /><br/>
-						if the server successfully authenticates the user's password then the user's credentials
+						If the server successfully authenticates Mandy then her credentials 
 						are securely cached in memory for a configurable amount of time and the process continues
 					</li>
 					<li>
-						the server tries to verify the invoked command using the IAuthorizationModule interface.  the 
-						authorization module operates in the same fashion as the IAuthenticationModule.  Again, this 
-						type of modular or plug-in architecture makes sudo for windows very extensible.  sudo for windows 
-						ships with an implementation of the IAuthorizationModule that utilizes xml files as a backing store.  
-						a future version will ship with a sql module.
-					</li>
-
-					<li>
-						if verification process fails then the the user is not allowed to execute the given command and 
-						the appropriate response code is returned to the client and the user is not allowed to continue
+						The server attempts to authorize the invoked command using, in order, the configured 
+						authorization plugins.
 						<br /><br />
-						if the command is successfully authorized then the process continues
-					</li>
-					<li>
-						the server then verifies that the client is signed by the same strong name key (and in future 
-						versions also a x509 code signing certificate).  if this verification fails the appropriate 
-						response code is returned to the client and the user is not allowed to continue.  if the 
-						verification is successful then the process continues.
+						If the server fails to authorize the command then Mandy the appropriate response code is 
+						returned to the client and Mandy is not allowed to continue.
 						<br /><br />
-						this step is necessary because it prevents man-in-the-middle attacks.  you will see what i mean 
-						in just a few steps
+						If the command is successfully authorized then the process continue.
 					</li>
 					<li>
-
-						the server then uses the .net port of the windows terminal server api 
+						<span style="color:black; font-weight:bold;">Windows 2000 and Windows XP</span>
+						<br /><br />
+						The server verifies that the server assembly and the callback assembly are signed 
+						with the same strong name key.  If this verification fails then the appropriate 
+						response code is returned to the client and Mandy is not allowed to continue.
+						<br /><br />
+						If the verification is successful then the process continues.
+					</li>
+					<li>
+						The server then uses the .NET port of the Microsoft Windows Terminal Server API 
 						(<a href="https://sourceforge.net/projects/wtsapi32net">wtsapi32.net</a>) to enumerate the users 
-						logged onto the machine.  once the correct user is found the server grabs a reference to the
-						user's logon token.
+						logged onto the machine.  Once Mandy is found the server creates a reference to her
+						logon token.
 					</li>
 					<li>
-						the server then adds the user account to the configured privilege escalation group.  although most 
-						people will configure this to be the administrators group, it does not have to be.
+						The server then adds Mandy to the configured privilege escalation group.
 					</li>
 					<li>
-						the server then uses the win32 function 
-						<a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dllproc/base/createprocessasuser.asp">CreateProcessAsUser</a> 
-						to invoke the callback application in the security context of the user that invoked the sudo client.  the server 
-						sends the callback application the user's username, password, and the invoked command over the secure 
-						channel and waits for the callback application process to complete before continuing
+						<span style="font-weight:bold;">Windows 2000 and Windows XP</span>
 						<br /><br />
-
+						The server then uses the win32 API function 
+						<a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dllproc/base/createprocessasuser.asp">CreateProcessAsUser</a> 
+						to invoke the callback application in the security context of Mandy.  The server 
+						sends the callback application the Mandy's passphrase and the invoked command and 
+						waits for the callback application process to complete before continuing.
+						<br /><br />
+						<span style="font-weight:bold;">Windows Server 2003 and Windows Vista Beta 2</span>
+						<br /><br />
+						The server then uses the win32 API function 
+						<a href="http://msdn.microsoft.com/library/en-us/dllproc/base/createprocesswithtokenw.asp">CreateProcessWithTokenW</a>
+						to start the invoked command.
+						<!--
 						the callback application is necessary because the server must be able to run applications in the 
 						desktop context (winstation) of the user who invoked the client.  otherwise i would have simply used the 
 						win32 function <a href="http://msdn.microsoft.com/library/en-us/dllproc/base/createprocesswithlogonw.asp">CreateProcessWithLogonW</a>, 
@@ -172,11 +124,11 @@
 						since i want to retain windows xp compatibility (for now), i will continue to use the callback application.
 						<br /><br />
 						when windows vista is the windows desktop standard i will modify sudo for windows to use the win32 function 
-						CreateProcessWithTokenW and eliminate the callback application altogether
+						CreateProcessWithTokenW and eliminate the callback application altogether-->
 					</li>
 					<li>
 						the callback application starts a new process with the command the user invoked sudo on with the 
-						user's username and password.  the callback application specifies that the user's profile should be 
+						user's username and passphrase.  the callback application specifies that the user's profile should be 
 						loaded causing the user's new group membership in the privileged group to be respected.
 						<br /><br />
 						currently the console client application that sudo for windows ships with also doubles as the callback 

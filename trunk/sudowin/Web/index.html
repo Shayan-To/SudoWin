@@ -9,31 +9,9 @@
 	<body onload="onPageLoad();">
 		<div id="divBody">
 			
-			<div id="divSudoForWindowsLogo">
-				Sudo for Windows
-			</div>
-			<div id="divSourceForgeImage">
-				<a href="http://sourceforge.net"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=143653&amp;type=1" style="width: 88px; height: 31px; border: none;" alt="SourceForge.net Logo" /></a>
-			</div>
-			<div id="divSudoForWindowsSubLogo">
-				<a href="http://sourceforge.net/projects/sudowin">project sudowin</a> - 
-				<a href="http://www.opensource.org/licenses/bsd-license.php">new bsd license</a>
-			</div>
-			
-			<hr style="clear:both;"/>
-			
-			<div id="divLinksHeader">
-				<a href="index.html">intro</a> . 
-				<a href="how.html">how</a> . 
-				<a href="http://sourceforge.net/pm/task.php?group_project_id=48101&group_id=143653&func=browse">todo</a> . 
-				<a href="who.html">who</a>
-			</div>
-			
-			<div id="divDownload">
-				<script type="text/javascript">
-					writeDownloadLink();
-				</script>
-			</div>
+			<script type="text/javascript">
+				writeTopPart();
+			</script>
 			
 			<div id="divImages">
 				<img src="img/sudo_folder.png" class="imgFirst" alt="Right-clicking on a folder" />
@@ -62,17 +40,15 @@
 				<span class="spanSectionHeader">
 					Technical requirements
 				</span>
-				<p class="pSectionText">
-					<ul>
-						<li>
-							Microsoft .NET 2.0 Framework
-						</li>
-						<li>
-							Microsoft Windows XP, Microsoft Windows Server 2003, Microsoft Windows 
-							Vista Beta 2
-						</li>
-					</ul>
-				</p>
+				<ul>
+					<li>
+						Microsoft .NET 2.0 Framework
+					</li>
+					<li>
+						Microsoft Windows 2000, Microsoft Windows XP, Microsoft Windows Server 2003, 
+						Microsoft Windows Vista Beta 2
+					</li>
+				</ul>
 			</div>
 			
 			<div class="divSection">
@@ -86,6 +62,31 @@
 					account, if she knows the passphrase of that account.  For this reason 
 					the runas command should be thought of as an equivalent to the UNIX/Linux 
 					command, su.
+				</p>
+			</div>
+			
+			<div class="divSection">
+				<span class="spanSectionHeader">
+					The sudowin difference
+				</span>
+				<p class="pSectionText">
+					There are other tools available that provide similuar functionality, but 
+					they are all lacking in some respect.  Either they are not configurable, 
+					they are not extensible, or worse yet, they actually create 
+					security holes because they are subject to man-in-the-middle attacks.
+				</p>
+				<p class="pSectionText">
+					Sudo for Windows is out-of-the-box configurable.  There is not one setting 
+					that you cannot change simply by editing a text file.  And because of its 
+					plugin architecture, anyone with some programming experience can develop 
+					custom authentication and authorization plugins, extending its 
+					capabilities even further.
+				</p>
+				<p class="pSectionText">
+					Most importantly, Sudo for Windows does not decrease security by creating 
+					man-in-the-middle-attacks for malicious users and disgruntled administrators 
+					to exploit.  Sudo for Windows increases overall security by enabling your 
+					entire enterprise to run in lease user access (LUA) mode.
 				</p>
 			</div>
 			

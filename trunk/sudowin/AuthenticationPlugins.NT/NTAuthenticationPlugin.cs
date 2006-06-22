@@ -29,10 +29,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using Sudowin.PublicLibrary;
 
-namespace Sudowin.AuthenticationPlugins.LocalComputer
+namespace Sudowin.AuthenticationPlugins.NT
 {
 	
-	public class LocalComputerAuthenticationPlugin : IAuthenticationPlugin
+	public class NTAuthenticationPlugin : IAuthenticationPlugin
 	{
 		/// <summary>
 		///		Verifies the credentials of a user with a password.

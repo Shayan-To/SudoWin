@@ -65,7 +65,7 @@ div#divLinksHeader
 {
 	position:			relative;
 	top:				5px;
-	left:				275px;
+	left:				248px;
 	margin-bottom:		20px;
 }
 
@@ -100,4 +100,9 @@ div#divImages .imgLatter
 div#divImagesCaptions
 {
 	margin-bottom:		25px;
+}
+
+ol li
+{
+	margin-bottom:		10px;
 }
