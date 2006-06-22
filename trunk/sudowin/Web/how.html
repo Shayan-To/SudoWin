@@ -124,31 +124,25 @@
 						since i want to retain windows xp compatibility (for now), i will continue to use the callback application.
 						<br /><br />
 						when windows vista is the windows desktop standard i will modify sudo for windows to use the win32 function 
-						CreateProcessWithTokenW and eliminate the callback application altogether-->
+						CreateProcessWithTokenW and eliminate the callback application altogether
+						-->
 					</li>
 					<li>
-						the callback application starts a new process with the command the user invoked sudo on with the 
-						user's username and passphrase.  the callback application specifies that the user's profile should be 
-						loaded causing the user's new group membership in the privileged group to be respected.
+						<span style="font-weight:bold;">Windows 2000 and Windows XP</span>
 						<br /><br />
-						currently the console client application that sudo for windows ships with also doubles as the callback 
-						application.  although there is nothing at all unsafe or wrong with this, for the sake of satiating my 
-						obsessive-compulsive tendencies to want things as clean as possible, these two applications will be 
-						separate in future versions of sudo for windows
+						The callback application starts a new process with the command Mandy invoked sudo on using Mandy's
+						passphrase.  The callback application specifies that the Mandy's profile should be 
+						loaded causing Mandy's new group membership in the privileged group to be respected.
 					</li>
 
 					<li>
-						the server detects that the callback application has completed and promptly removes the user from 
-						the privileged group.
+						<span style="font-weight:bold;">Windows 2000 and Windows XP</span>
 						<br /><br />
-						this is why it is so important that the server and the callback application be signed with the same 
-						strong name key or x509 certificate.  if this was not the case then some local administrator could 
-						replace the callback application and stop the server from removing them from the privileged group.  
-						this is one of the reasons that i am anxious for the day that vista is the de facto standard because 
-						it will allow for the elimination of the callback application altogether
+						The server detects that the callback application has completed and promptly removes Mandy from 
+						the privileged group.
 					</li>
 					<li>
-						that is sudo for windows in 3 easy steps!
+						That is Sudo for Windows in 3 easy steps!
 					</li>
 				</ol>
 			</div>
