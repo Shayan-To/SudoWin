@@ -286,7 +286,7 @@ namespace Sudowin.WindowsService
 		///		Invokes sudo on the given command p.
 		/// </summary>
 		/// <param name="passphrase">
-		///		Password of user invoking Sudowin.
+		///		passphrase of user invoking Sudowin.
 		/// </param>
 		/// <param name="commandPath">
 		///		Fully qualified path of the command that
@@ -300,7 +300,7 @@ namespace Sudowin.WindowsService
 		///		A SudoResultTypes value.
 		/// </returns>
 		public SudoResultTypes Sudo(
-			string password,
+			string passphrase,
 			string commandPath,
 			string commandArguments )
 		{
@@ -333,10 +333,10 @@ namespace Sudowin.WindowsService
 			}
 
 			// check to see if the user has a cached passphrase
-			if ( !m_data_server.GetUserCache( un, ref password ) )
+			if ( !m_data_server.GetUserCache( un, ref passphrase ) )
 			{
 				// validate the users logon credentials
-				if ( !LogonUser( un, password, ref ui, ref uc ) )
+				if ( !LogonUser( un, passphrase, ref ui, ref uc ) )
 				{
 					return ( LogResult( un, ui.LoggingLevel,
 						SudoResultTypes.InvalidLogon ) );
@@ -371,7 +371,7 @@ namespace Sudowin.WindowsService
 			}
 
 			// sudo the command for the user
-			Sudo( un, password, ui.PrivilegesGroup, commandPath, commandArguments );
+			Sudo( un, passphrase, ui.PrivilegesGroup, commandPath, commandArguments );
 
 			m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitMethod,
 				"exiting Sudo( string, string, string )" );
@@ -382,7 +382,7 @@ namespace Sudowin.WindowsService
 
 		private void Sudo(
 			string userName, 
-			string password, 
+			string passphrase, 
 			string privilegesGroup,
 			string commandPath, 
 			string commandArguments )
@@ -404,7 +404,7 @@ namespace Sudowin.WindowsService
 			// create the callback process and wait for it to exit so the user is
 			// not removed from the privileges group before the indended process starts
 			Process p = null;
-			if ( CreateProcessAsUser( hUser, password, commandPath, commandArguments, ref p ) )
+			if ( CreateProcessAsUser( hUser, passphrase, commandPath, commandArguments, ref p ) )
 			{
 				p.WaitForExit();
 			}
@@ -465,7 +465,7 @@ namespace Sudowin.WindowsService
 					}
 				}
 
-				EventLog.WriteEntry( "Sudo",
+				EventLog.WriteEntry( "Sudowin",
 					string.Format( CultureInfo.CurrentCulture,
 						"{0} - {1}", userName, sudoResultType ),
 					elet,
@@ -519,7 +519,7 @@ namespace Sudowin.WindowsService
 
 		private bool LogonUser( 
 			string userName,
-			string password, 
+			string passphrase, 
 			ref UserInfo userInfo,
 			ref UserCache userCache )
 		{
@@ -568,12 +568,12 @@ namespace Sudowin.WindowsService
 			}
 
 			// verify the user's credentials
-			bool logonSuccessful = authn_ds.VerifyCredentials( dn_part, un_part, password );
+			bool logonSuccessful = authn_ds.VerifyCredentials( dn_part, un_part, passphrase );
 
 			if ( logonSuccessful )
 			{
 				// cache the user's passphrase and set it's expiration date
-				m_data_server.SetUserCache( userName, password );
+				m_data_server.SetUserCache( userName, passphrase );
 				m_data_server.ExpireUserCache( userName, userInfo.LogonTimeout );
 			}
 			else
@@ -657,7 +657,7 @@ namespace Sudowin.WindowsService
 
 		private bool CreateProcessAsUser( 
 			IntPtr userToken,
-			string password,
+			string passphrase,
 			string commandPath, 
 			string commandArguments,
 			ref Process newProcess )
@@ -690,7 +690,7 @@ namespace Sudowin.WindowsService
 				
 				"\"{0}\"  \"{1}\" \"{2}\" {3}",
 				ConfigurationManager.AppSettings[ "callbackApplicationPath" ],
-				 password,
+				 passphrase,
 				commandPath, commandArguments );
 
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,

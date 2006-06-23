@@ -67,6 +67,37 @@
 			
 			<div class="divSection">
 				<span class="spanSectionHeader">
+					Windows Vista and User Account Control (UAC)
+				</span>
+				<p class="pSectionText">
+					A lot of people ask why there is still a need for a separate sudo for 
+					windows project when Windows Vista includes includes sudo-like 
+					functionality.  The rub is <span style="font-weight:bold;">there 
+					is no sudo in Windows Vista</span>.
+				</p>
+				<p class="pSectionText">
+					Windows Vista implements a feature called 
+					<a href="http://www.microsoft.com/technet/windowsvista/security/uacppr.mspx">
+					User Account Control (UAC)</a>.  UAC includes support for Over-the-Shoulder 
+					(OTS) Credentials -- that is a user is prompted for an administrative passphrase 
+					when an adminstrative task needs to be accomplished.  If the user does not know 
+					the passphrase then they are not allowed to perform the task.  This is obviously 
+					not sudo because the user must know a passphrase that is not her own to 
+					accomplish a task.
+				</p>
+				<p class="pSectionText">
+					UAC also introduces Admin Approval Mode.  This is what is confused for sudo.  
+					Essentially, administrators are prompted for their credentials or their consent 
+					whenever they need to perform a sensitive task.  Because the administrators are 
+					being prompted for their own passphrase this may seem a lot like sudo, but there 
+					is one very important thing to remember -- the administrator is not being granted 
+					any priviliges that she does not already have.  There is no privilege escalation 
+					occurring.
+				</p>
+			</div>
+			
+			<div class="divSection">
+				<span class="spanSectionHeader">
 					The sudowin difference
 				</span>
 				<p class="pSectionText">

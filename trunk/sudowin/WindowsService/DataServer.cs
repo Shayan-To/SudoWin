@@ -66,9 +66,9 @@ namespace Sudowin.WindowsService
 
 		/// <summary>
 		///		Collection of SecureStrings used to persist
-		///		the passwords of the users who invoke Sudowin.
+		///		the passphrases of the users who invoke Sudowin.
 		/// </summary>
-		private Dictionary<string, SecureString> m_passwords =
+		private Dictionary<string, SecureString> m_passphrases =
 			new Dictionary<string, SecureString>();
 
 		/// <summary>
@@ -80,7 +80,7 @@ namespace Sudowin.WindowsService
 
 		/// <summary>
 		///		This mutex is used to synchronize access
-		///		to the m_ucs, m_passwords, and m_tmrs collections.
+		///		to the m_ucs, m_passphrases, and m_tmrs collections.
 		/// </summary>
 		private Mutex m_coll_mtx = new Mutex( false );
 
@@ -199,7 +199,7 @@ namespace Sudowin.WindowsService
 		}
 
 		[DebuggerHidden]
-		public bool GetUserCache( string userName, ref string password )
+		public bool GetUserCache( string userName, ref string passphrase )
 		{
 			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
 				"entering GetUserCache( string, ref string )" );
@@ -207,22 +207,22 @@ namespace Sudowin.WindowsService
 				"userName={0},passphrase=", userName );
 			
 			m_coll_mtx.WaitOne();
-			bool isPasswordCached;
-			if ( isPasswordCached = m_passwords.ContainsKey( userName ) )
+			bool ispassphraseCached;
+			if ( ispassphraseCached = m_passphrases.ContainsKey( userName ) )
 			{
-				SecureString ss = m_passwords[ userName ];
+				SecureString ss = m_passphrases[ userName ];
 				IntPtr ps = Marshal.SecureStringToBSTR( ss );
-				password = Marshal.PtrToStringBSTR( ps );
+				passphrase = Marshal.PtrToStringBSTR( ps );
 				Marshal.FreeBSTR( ps );
 			}
 			m_coll_mtx.ReleaseMutex();
 
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
-				"{0}, isPasswordCached={1}", userName, isPasswordCached );
+				"{0}, ispassphraseCached={1}", userName, ispassphraseCached );
 			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.ExitMethod,
 				"exiting GetUserCache( string, ref string )" );
 
-			return ( isPasswordCached );
+			return ( ispassphraseCached );
 		}
 
 		/// <summary>
@@ -295,10 +295,10 @@ namespace Sudowin.WindowsService
 
 		/// <summary>
 		///		Callback method that removes a UserCache structure
-		///		from m_ucs and a SecureString from m_passwords.
+		///		from m_ucs and a SecureString from m_passphrases.
 		/// </summary>
 		/// <param name="state">
-		///		User name that is the key to the m_passwords and m_ucs
+		///		User name that is the key to the m_passphrases and m_ucs
 		///		collections with the objects that are to be removed.
 		/// </param>
 		private void ExpireUserCacheCallback( object state )
@@ -316,10 +316,10 @@ namespace Sudowin.WindowsService
 
 			// if the user has a persisted passphrase clear
 			// it and then remove it from the collection
-			if ( m_passwords.ContainsKey( un ) )
+			if ( m_passphrases.ContainsKey( un ) )
 			{
-				m_passwords[ un ].Clear();
-				m_passwords.Remove( un );
+				m_passphrases[ un ].Clear();
+				m_passphrases.Remove( un );
 			}
 
 			// dispose of the timer that caused this
@@ -332,33 +332,33 @@ namespace Sudowin.WindowsService
 
 		/// <summary>
 		///		Creates a SecureString version of the given
-		///		plain-text passphrase in the m_passwords collection
+		///		plain-text passphrase in the m_passphrases collection
 		///		for the given userName.
 		/// </summary>
 		/// <param name="userName">
 		///		User name to create SecureString passphrase for
-		///		and to use as the key for the m_passwords collection.
+		///		and to use as the key for the m_passphrases collection.
 		/// </param>
 		/// <param name="passphrase">
 		///		Plain-text passphrase to convert into a SecureString.
 		/// </param>
-		public void SetUserCache( string userName, string password )
+		public void SetUserCache( string userName, string passphrase )
 		{
 			m_coll_mtx.WaitOne();
 
 			SecureString ss = new SecureString();
 
-			for ( int x = 0; x < password.Length; ++x )
-					ss.AppendChar( password[ x ] );
+			for ( int x = 0; x < passphrase.Length; ++x )
+					ss.AppendChar( passphrase[ x ] );
 
-			if ( m_passwords.ContainsKey( userName ) )
+			if ( m_passphrases.ContainsKey( userName ) )
 			{
-				m_passwords[ userName ].Clear();
-				m_passwords[ userName ] = ss;
+				m_passphrases[ userName ].Clear();
+				m_passphrases[ userName ] = ss;
 			}
 			else
 			{
-				m_passwords.Add( userName, ss );
+				m_passphrases.Add( userName, ss );
 			}
 
 			m_coll_mtx.ReleaseMutex();

@@ -111,12 +111,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_BCCC01F5CB98414091B5518F79AFDE00"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_C67E17FA0AACFD7C9953D1EA4D791489"
         "OwnerKey" = "8:_0531D01F8E414B5D9C4AD9FF615A6E34"
         "MsmSig" = "8:_UNDEFINED"
@@ -124,25 +118,7 @@
         "Entry"
         {
         "MsmKey" = "8:_C67E17FA0AACFD7C9953D1EA4D791489"
-        "OwnerKey" = "8:_FDA5EAD60852412C8A046951BDC5396F"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C67E17FA0AACFD7C9953D1EA4D791489"
-        "OwnerKey" = "8:_B2D58AB4021B4AACB21C0DB976863040"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C67E17FA0AACFD7C9953D1EA4D791489"
-        "OwnerKey" = "8:_80C7CC052E7F48468EA8973014EFD061"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C67E17FA0AACFD7C9953D1EA4D791489"
-        "OwnerKey" = "8:_6400FA4A59D14C17BF864C43809D9985"
+        "OwnerKey" = "8:_4E5FD4A3ABDF5B549C821694E3D478E6"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -154,7 +130,25 @@
         "Entry"
         {
         "MsmKey" = "8:_C67E17FA0AACFD7C9953D1EA4D791489"
-        "OwnerKey" = "8:_4E5FD4A3ABDF5B549C821694E3D478E6"
+        "OwnerKey" = "8:_6400FA4A59D14C17BF864C43809D9985"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C67E17FA0AACFD7C9953D1EA4D791489"
+        "OwnerKey" = "8:_80C7CC052E7F48468EA8973014EFD061"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C67E17FA0AACFD7C9953D1EA4D791489"
+        "OwnerKey" = "8:_B2D58AB4021B4AACB21C0DB976863040"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C67E17FA0AACFD7C9953D1EA4D791489"
+        "OwnerKey" = "8:_FDA5EAD60852412C8A046951BDC5396F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -185,24 +179,6 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_6400FA4A59D14C17BF864C43809D9985"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_5830F193B4D7A8506A242824868D4CDC"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_4E5FD4A3ABDF5B549C821694E3D478E6"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C67E17FA0AACFD7C9953D1EA4D791489"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -250,6 +226,12 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_5830F193B4D7A8506A242824868D4CDC"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_611CA151227F4EA1A5A42A6164D6BB4F"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -262,7 +244,19 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_4E5FD4A3ABDF5B549C821694E3D478E6"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_0531D01F8E414B5D9C4AD9FF615A6E34"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_C67E17FA0AACFD7C9953D1EA4D791489"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -503,7 +497,7 @@
             "SourcePath" = "8:..\\Sudo for Windows.url"
             "TargetName" = "8:Sudo for Windows.url"
             "Tag" = "8:"
-            "Folder" = "8:_EB82C2708D7A48DFA6E5EFFCAD1C99F2"
+            "Folder" = "8:_0CFAA24EFEEE463E81C12C41D9E3D7DC"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -522,7 +516,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Sudowin.AuthorizationPlugins, Version=0.0.2362.16006, Culture=neutral, PublicKeyToken=55aeb4cbba10e8c9, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Sudowin.AuthorizationPlugins, Version=0.0.2365.25535, Culture=neutral, PublicKeyToken=55aeb4cbba10e8c9, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_4E5FD4A3ABDF5B549C821694E3D478E6"
@@ -553,7 +547,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Sudowin.AuthenticationPlugins, Version=0.0.2362.16006, Culture=neutral, PublicKeyToken=55aeb4cbba10e8c9, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Sudowin.AuthenticationPlugins, Version=0.0.2365.25535, Culture=neutral, PublicKeyToken=55aeb4cbba10e8c9, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_5830F193B4D7A8506A242824868D4CDC"
@@ -600,31 +594,11 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BCCC01F5CB98414091B5518F79AFDE00"
-            {
-            "SourcePath" = "8:sudoers.xml"
-            "TargetName" = "8:sudoers.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_0EEBD34F6985487A9B2AE96B2825B864"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C67E17FA0AACFD7C9953D1EA4D791489"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Sudowin.PublicLibrary, Version=0.0.2362.16006, Culture=neutral, PublicKeyToken=55aeb4cbba10e8c9, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Sudowin.PublicLibrary, Version=0.0.2365.25535, Culture=neutral, PublicKeyToken=55aeb4cbba10e8c9, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_C67E17FA0AACFD7C9953D1EA4D791489"
@@ -717,7 +691,7 @@
             "Property" = "8:ProgramMenuFolder"
                 "Folders"
                 {
-                    "{9EF0B969-E518-4E46-987F-47570745A589}:_EB82C2708D7A48DFA6E5EFFCAD1C99F2"
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_0CFAA24EFEEE463E81C12C41D9E3D7DC"
                     {
                     "Name" = "8:Sudo for Windows"
                     "AlwaysCreate" = "11:FALSE"
@@ -853,7 +827,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Sudo for Windows"
         "ProductCode" = "8:{C3BF6345-C804-4AA0-A855-7A46786B8630}"
-        "PackageCode" = "8:{7AEEBA13-C23B-4D8E-AC78-68135D5481EF}"
+        "PackageCode" = "8:{A160F4C9-9BDA-4247-BCCA-1A13BEECB4F2}"
         "UpgradeCode" = "8:{3B0AA51B-8E14-49F5-B299-22C35C55088B}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
@@ -1342,28 +1316,6 @@
             "Attributes" = "3:1"
                 "Dialogs"
                 {
-                    "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_1A983AFE6B61459C88E107E0A98EC1B2"
-                    {
-                    "Sequence" = "3:300"
-                    "DisplayName" = "8:Confirm Installation"
-                    "UseDynamicProperties" = "11:TRUE"
-                    "IsDependency" = "11:FALSE"
-                    "SourcePath" = "8:<VsdDialogDir>\\VsdConfirmDlg.wid"
-                        "Properties"
-                        {
-                            "BannerBitmap"
-                            {
-                            "Name" = "8:BannerBitmap"
-                            "DisplayName" = "8:#1001"
-                            "Description" = "8:#1101"
-                            "Type" = "3:8"
-                            "ContextData" = "8:Bitmap"
-                            "Attributes" = "3:4"
-                            "Setting" = "3:1"
-                            "UsePlugInResources" = "11:TRUE"
-                            }
-                        }
-                    }
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_56E8D6CDA64946E7A6BA2246A62C8B3E"
                     {
                     "Sequence" = "3:100"
@@ -1408,6 +1360,28 @@
                             "Setting" = "3:1"
                             "Value" = "8:#1203"
                             "DefaultValue" = "8:#1203"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                        }
+                    }
+                    "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_8A93E016785C457DAA25C0571CF4A887"
+                    {
+                    "Sequence" = "3:320"
+                    "DisplayName" = "8:Confirm Installation"
+                    "UseDynamicProperties" = "11:TRUE"
+                    "IsDependency" = "11:FALSE"
+                    "SourcePath" = "8:<VsdDialogDir>\\VsdConfirmDlg.wid"
+                        "Properties"
+                        {
+                            "BannerBitmap"
+                            {
+                            "Name" = "8:BannerBitmap"
+                            "DisplayName" = "8:#1001"
+                            "Description" = "8:#1101"
+                            "Type" = "3:8"
+                            "ContextData" = "8:Bitmap"
+                            "Attributes" = "3:4"
+                            "Setting" = "3:1"
                             "UsePlugInResources" = "11:TRUE"
                             }
                         }
@@ -1948,7 +1922,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_B2D58AB4021B4AACB21C0DB976863040"
             {
-            "SourcePath" = "8:..\\AuthenticationPlugins.LocalComputer\\obj\\Release\\Sudowin.AuthenticationPlugins.LocalComputer.dll"
+            "SourcePath" = "8:..\\AuthenticationPlugins.NT\\obj\\Release\\Sudowin.AuthenticationPlugins.NT.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_0EEBD34F6985487A9B2AE96B2825B864"
