@@ -204,7 +204,7 @@ namespace Sudowin.WindowsService
 			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
 				"entering GetUserCache( string, ref string )" );
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
-				"userName={0},password=", userName );
+				"userName={0},passphrase=", userName );
 			
 			m_coll_mtx.WaitOne();
 			bool isPasswordCached;
@@ -314,7 +314,7 @@ namespace Sudowin.WindowsService
 			if ( m_ucs.ContainsKey( un ) )
 				m_ucs.Remove( un );
 
-			// if the user has a persisted password clear
+			// if the user has a persisted passphrase clear
 			// it and then remove it from the collection
 			if ( m_passwords.ContainsKey( un ) )
 			{
@@ -332,15 +332,15 @@ namespace Sudowin.WindowsService
 
 		/// <summary>
 		///		Creates a SecureString version of the given
-		///		plain-text password in the m_passwords collection
+		///		plain-text passphrase in the m_passwords collection
 		///		for the given userName.
 		/// </summary>
 		/// <param name="userName">
-		///		User name to create SecureString password for
+		///		User name to create SecureString passphrase for
 		///		and to use as the key for the m_passwords collection.
 		/// </param>
-		/// <param name="password">
-		///		Plain-text password to convert into a SecureString.
+		/// <param name="passphrase">
+		///		Plain-text passphrase to convert into a SecureString.
 		/// </param>
 		public void SetUserCache( string userName, string password )
 		{

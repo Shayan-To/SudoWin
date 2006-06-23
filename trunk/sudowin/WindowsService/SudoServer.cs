@@ -143,7 +143,7 @@ namespace Sudowin.WindowsService
 		///		the server will return an immediate 
 		///		invalid logon if the client assumes the 
 		///		users credentials are cached when they 
-		///		are not and passes a null password to 
+		///		are not and passes a null passphrase to 
 		///		the Sudo method.
 		/// </remmarks>
 		public bool AreCredentialsCached
@@ -285,7 +285,7 @@ namespace Sudowin.WindowsService
 		/// <summary>
 		///		Invokes sudo on the given command p.
 		/// </summary>
-		/// <param name="password">
+		/// <param name="passphrase">
 		///		Password of user invoking Sudowin.
 		/// </param>
 		/// <param name="commandPath">
@@ -307,7 +307,7 @@ namespace Sudowin.WindowsService
 			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
 				"entering Sudo( string, string, string )" );
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
-				"password=,commandPath={0},commandArguments={1}",
+				"passphrase=,commandPath={0},commandArguments={1}",
 				commandPath, commandArguments );
 
 			string un = Thread.CurrentPrincipal.Identity.Name;
@@ -332,7 +332,7 @@ namespace Sudowin.WindowsService
 					GetLimitDetails( un, ref ui, ref uc ) ) );
 			}
 
-			// check to see if the user has a cached password
+			// check to see if the user has a cached passphrase
 			if ( !m_data_server.GetUserCache( un, ref password ) )
 			{
 				// validate the users logon credentials
@@ -390,7 +390,7 @@ namespace Sudowin.WindowsService
 			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
 				"entering Sudo( string, string, string, string, string )" );
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
-				"userName={0},password=,privilegesGroup={1},commandPath={2},commandArguments={3}",
+				"userName={0},passphrase=,privilegesGroup={1},commandPath={2},commandArguments={3}",
 				userName, privilegesGroup, commandPath, commandArguments );
 
 			// get the user's logon token
@@ -526,7 +526,7 @@ namespace Sudowin.WindowsService
 			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
 				"entering LogonUser( string, string, ref UserInfo, ref UserCache )" );
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
-				"userName={0},password=,userInfo=,userCache=", userName);
+				"userName={0},passphrase=,userInfo=,userCache=", userName);
 
 			// get the domain and user name parts of the userName
 			Match m = Regex.Match( userName, @"^([^\\]+)\\(.+)$" );
@@ -572,7 +572,7 @@ namespace Sudowin.WindowsService
 
 			if ( logonSuccessful )
 			{
-				// cache the user's password and set it's expiration date
+				// cache the user's passphrase and set it's expiration date
 				m_data_server.SetUserCache( userName, password );
 				m_data_server.ExpireUserCache( userName, userInfo.LogonTimeout );
 			}
@@ -665,7 +665,7 @@ namespace Sudowin.WindowsService
 			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
 				"entering CreateProcessAsUser( IntPtr, string, string, string )" );
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
-				"userToken=,password=,commandPath={0},commandArguments={1}", 
+				"userToken=,passphrase=,commandPath={0},commandArguments={1}", 
 				commandPath, commandArguments );
 
 			// needed to create a new process

@@ -23,18 +23,123 @@
 					complies or refuses.
 				</p>
 				<p class="pSectionText">
-					This is obviously a great simplification of how Sudo for Windows works.  To better 
-					understand Sudo for Windows we will walk through a step-by-step invocation of sudowin.
+					This is obviously a great simplification of how Sudo for Windows works.  Below is a 
+					description of the different components that make up Sudo for Windows as well as 
+					step-by-step walkthrough of the sudo invocation process.
 				</p>
 			</div>
-			
+			<div class="divSection">
+				<span class="spanSectionHeader">
+					Server
+				</span>
+				<p class="pSectionText">
+					The sudo server is hosted inside of a Windows service.  It is the mechanism that 
+					escalates privileges and caches credentials.  The server does not actually 
+					authenticate users or authorize sudo requests, that is left to the 
+					<a href="plugins.html">authentication and authorization plugins</a>.
+				</p>
+				<p class="pSectionText">
+					The sudo server uses a standard .NET application configuration file.
+				</p>
+				<div class="divSubSection">
+					<span class="spanSubSectionHeader">
+						Sudo.WindowsService.Server.exe.config
+					</span>
+					(<a href="https://svn.sourceforge.net/svnroot/sudowin/trunk/sudowin/WindowsService/App.config">link</a>)
+					<p class="pSectionText" style="text-align:center; font-weight:bold;">
+						Configuration Options
+					</p>
+					<table class="tablePretty">
+						<tr>
+							<td class="tdLabel">authorization<br />PluginAssembly</td>
+							<td class="tdBuffer"/>
+							<td class="tdDescription">
+								The class and assembly name for the authorization plugin assembly.
+							</td>
+						</tr>
+						<tr>
+							<td class="tdLabel">authorizationPlugin<br />ConnectionString</td>
+							<td class="tdBuffer"/>
+							<td class="tdDescription">
+								The connection string used to connect to the authorization data 
+								source.
+							</td>
+						</tr>
+						<tr>
+							<td class="tdLabel">authorizationPlugin<br />SchemaFileUri</td>
+							<td class="tdBuffer"/>
+							<td class="tdDescription">
+								The uri to the schema file that an authorization should use 
+								to validate its data source.
+							</td>
+						</tr>
+						<tr>
+							<td class="tdLabel">authentication<br />PluginAssembly</td>
+							<td class="tdBuffer"/>
+							<td class="tdDescription">
+								The class and assembly name for the authentication plugin assembly.
+							</td>
+						</tr>
+						<tr>
+							<td class="tdLabel">callback<br />ApplicationPath</td>
+							<td class="tdBuffer"/>
+							<td class="tdDescription">
+								The fully qualified path to the sudo callback application.
+							</td>
+						</tr>
+					</table>
+				</div>
+				<p class="pSectionText">
+					The configuration file also defines a trace switch called traceSrc.  It contains 
+					two configuration options that you may want to edit depending on how much logging 
+					you desire and where you want the log file to be located.  The following options
+					do not affect client auditing.  Auditing is left up to the authorization plugin.
+				</p>
+				<div class="divSubSection">
+					<p class="pSectionText" style="text-align:center; font-weight:bold;">
+						Trace Options
+					</p>
+					<table class="tablePretty">
+						<tr>
+							<td class="tdLabel" style="width: 130px;">switchValue</td>
+							<td class="tdBuffer"/>
+							<td class="tdDescription">
+								The verbosity of the the log file.  More information 
+								<a href="http://windowssdk.msdn.microsoft.com/en-us/library/ms733025.aspx">here</a>.
+							</td>
+						</tr>
+						<tr>
+							<td class="tdLabel" style="width: 130px;">initalizeData</td>
+							<td class="tdBuffer"/>
+							<td class="tdDescription">
+								The location of the log file.  More information 
+								<a href="http://windowssdk.msdn.microsoft.com/en-us/library/ms733025.aspx">here</a>.
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="divSection">
+				<span class="spanSectionHeader">
+					Client
+				</span>
+				<p class="pSectionText">
+					The sudo client is the piece that users interact with.  Users invoke a sudo 
+					client on a command and the client communicates with the server in order to 
+					fulfill the request.
+				</p>
+				<p class="pSectionText">
+					Sudo for Windows currently ships with a graphical client that is used when 
+					right-clicking on an item in Windows and choosing the "Sudo..." option and a 
+					command line client that can be used from a command prompt.
+				</p>
+			</div>
 			<div class="divSection">
 				<span class="spanSectionHeader">
 					Callback application
 				</span>
 				<p class="pSectionText">
-					Before we look at the sudowin process, the callback application needs to be 
-					explained.  The callback application is necessary on Windows 2000 and Windows XP 
+					The callback application is necessary on Windows 2000 and Windows XP 
 					operating systems because these operating systems do not support the win32 API 
 					function 
 					<a href="http://msdn.microsoft.com/library/en-us/dllproc/base/createprocesswithtokenw.asp">CreateProcessWithTokenW</a>.	

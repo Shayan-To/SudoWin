@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html 	PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<title>Sudo for Windows</title>
+		<link href="css/default.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="scr/default.js"></script>
+	</head>
+	<body onload="onPageLoad();">
+		<div id="divBody">
+			
+			<script type="text/javascript">
+				writerHeader();
+			</script>
+			
+			<div class="divSection">
+				<span class="spanSectionHeader">
+					General
+				</span>
+				<div class="divSubSection">
+					<span class="spanSubSectionHeader">
+						The client keeps telling me that the Sudo server is dead to me
+					</span>
+					<p class="pSectionText">
+						Be sure that you are in the configured Sudoers group and that you 
+						have logged out and back in.  New group memberships are not 
+						respected until your next logon.
+					</p>
+				</div>
+				<div class="divSubSection">
+					<span class="spanSubSectionHeader">
+						The client says that the command is not allowed
+					</span>
+					<p class="pSectionText">
+						If you are using the XmlAuthorizationPlugin check to make sure 
+						that the command you are trying to invoke sudo on is in the 
+						sudoers.xml file and it is enabled.  Another option is to allow
+						all commands for your user.
+					</p>
+				</div>
+				<div class="divSubSection">
+					<span class="spanSubSectionHeader">
+						How do I use the console client?
+					</span>
+					<p class="pSectionText">
+						The console client binary is compiled as Sudowin.Clients.Console.exe, 
+						but when Sudo for Windows is installed it renames the console client 
+						to sudo.exe and adds the directory sudo.exe is in to the system's
+						PATH environment variable.  This means that you can execute sudo.exe 
+						from any directory in any command line interpreter.
+					</p>
+				</div>
+			</div>
+			<script type="text/javascript">
+				writeFooter();
+			</script>
+		</div>
+	</body>
+</html>

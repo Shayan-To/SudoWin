@@ -45,7 +45,7 @@ namespace Sudowin.WindowsService
 		///		Each time a user executes sudo they 
 		///		get a number of chances during that
 		///		execution to enter their correct
-		///		password.
+		///		passphrase.
 		/// 
 		///		The invalid logon attempts that occur
 		///		during a single execution of sudo get
@@ -57,7 +57,7 @@ namespace Sudowin.WindowsService
 		///		Each time a user executes sudo they 
 		///		get a number of chances during that
 		///		execution to enter their correct
-		///		password.  
+		///		passphrase.  
 		/// 
 		///		This member represents the number of
 		///		times a user has exceeded their invalid

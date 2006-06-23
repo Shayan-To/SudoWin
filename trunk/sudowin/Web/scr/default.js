@@ -19,8 +19,9 @@ function writerHeader()
 		'<div id="divLinksHeader">' +
 			'<a href="index.html">intro</a> . ' +
 			'<a href="how.html">how</a> . ' +
-			'<a href="">plugins</a> . ' +
-			'<a href="http://sourceforge.net/pm/task.php?group_project_id=48101&group_id=143653&func=browse">todo</a> . ' +
+			'<a href="plugins.html">plugins</a> . ' +
+			'<a href="faq.html">faq</a> . ' +
+			'<a href="todo.html">todo</a> . ' +
 			'<a href="who.html">who</a>' +
 		'</div>' +
 		

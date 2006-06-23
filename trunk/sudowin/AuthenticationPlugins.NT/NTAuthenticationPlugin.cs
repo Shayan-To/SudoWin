@@ -35,7 +35,7 @@ namespace Sudowin.AuthenticationPlugins.NT
 	public class NTAuthenticationPlugin : IAuthenticationPlugin
 	{
 		/// <summary>
-		///		Verifies the credentials of a user with a password.
+		///		Verifies the credentials of a user with a passphrase.
 		/// </summary>
 		/// <param name="domainOrComputerName">
 		///		Domain name or computer name the user account belongs to.
@@ -43,7 +43,7 @@ namespace Sudowin.AuthenticationPlugins.NT
 		/// <param name="userName">
 		///		Username of account to validate.
 		/// </param>
-		/// <param name="password">
+		/// <param name="passphrase">
 		///		Password for the given username.
 		/// </param>
 		/// <returns>

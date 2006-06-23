@@ -41,7 +41,7 @@ namespace Sudowin.AuthenticationPlugins
 	public interface IAuthenticationPlugin
 	{
 		/// <summary>
-		///		Verifies the credentials of a user with a password.
+		///		Verifies the credentials of a user with a passphrase.
 		/// </summary>
 		/// <param name="domainOrComputerName">
 		///		Domain name or computer name the user account belongs to.
@@ -49,12 +49,12 @@ namespace Sudowin.AuthenticationPlugins
 		/// <param name="userName">
 		///		Username of account to validate.
 		/// </param>
-		/// <param name="password">
-		///		Password for the given username.
+		/// <param name="passphrase">
+		///		Passphrase for the given username.
 		/// </param>
 		/// <returns>
 		///		True if the credentials are successfully verified; otherwise false.
 		/// </returns>
-		bool VerifyCredentials( string domainOrComputerName, string userName, string password );
+		bool VerifyCredentials( string domainOrComputerName, string userName, string passphrase );
 	}
 }
