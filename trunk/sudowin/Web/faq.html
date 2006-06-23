@@ -50,6 +50,37 @@
 						from any directory in any command line interpreter.
 					</p>
 				</div>
+				<div class="divSubSection">
+					<span class="spanSubSectionHeader">
+						It still is not working, can you help?
+					</span>
+					<p class="pSectionText">
+						Sure.  First you need to turn on verbose logging (see below) and then 
+						send me your log file.
+					</p>
+				</div>
+			</div>
+			<div class="divSection">
+				<span class="spanSectionHeader">
+					Debugging
+				</span>
+				<div class="divSubSection">
+					<span class="spanSubSectionHeader">
+						Turning on verbose logging
+					</span>
+					<p class="pSectionText">
+						We need to change a setting in the sudo server's configuration file.  
+						This file is located at INSTALLDIR\Server\Sudo.WindowsService.exe.config.  
+						Find this line:
+					</p>
+					<p class="code">
+						&lt;source name="traceSrc" switchValue="..."&gt;
+					</p>
+					<p>
+						Now change the switch value to "ActivityTracing, Verbose" and restart
+						the Windows service hosting the sudo server.
+					</p>
+				</div>
 			</div>
 			<script type="text/javascript">
 				writeFooter();
