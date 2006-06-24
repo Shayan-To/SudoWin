@@ -62,6 +62,45 @@
 			</div>
 			<div class="divSection">
 				<span class="spanSectionHeader">
+					Upgrading
+				</span>
+				<div class="divSubSection">
+					<span class="spanSubSectionHeader">
+						0.1.0-r76 to 0.1.1-r95
+					</span>
+					<ol>
+						<li>
+							Make a copy of your sudoers.xml file.  This is located at INSTALLDIR\
+							Server\sudoers.xml.
+						</li>
+						<li>
+							Use "Add/Remove Programs" or the original installer to remove the 
+							0.1.0-r76 version of Sudo for Windows.
+						</li>
+						<li>
+							Install 0.1.1-r95.
+						</li>
+						<li>
+							Copy your old sudoers.xml file back to INSTALLDIR\Server\sudoers.xml.
+						</li>
+						<li>
+							Restart the Sudowin service.
+						</li>
+						<li>
+							Add the desired users back into the Sudoers group on the local computer.
+						</li>
+						<li>
+							Log out and back into your computer.
+						</li>
+						<li>
+							That's it!  I hope to make this easier in the future.  The installer 
+							that comes with Visual Studio .NET 2005 sucks for doing upgrade deploymnents.
+						</li>
+					</ol>
+				</div>
+			</div>
+			<div class="divSection">
+				<span class="spanSectionHeader">
 					Debugging
 				</span>
 				<div class="divSubSection">
