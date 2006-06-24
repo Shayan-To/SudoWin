@@ -26,7 +26,7 @@ function writerHeader()
 		'</div>' +
 		
 		'<div id="divDownload">' +
-			'-~= download <a href="http://sourceforge.net/project/showfiles.php?group_id=143653&package_id=157780&release_id=426244">0.1.0-r76</a> =~-' +
+			'download <a href="http://sourceforge.net/project/showfiles.php?group_id=143653&package_id=157780&release_id=427299">0.1.1-r95</a> (<span style="color:red; font-weight:bold;">NEW</span> 2006/06/24)' +
 		'</div>' );
 }
 
