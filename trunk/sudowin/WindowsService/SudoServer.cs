@@ -240,21 +240,6 @@ namespace Sudowin.WindowsService
 			string dhn_part = un_split[ 0 ];
 			string un_part = un_split[ 1 ];
 
-			// determine if this computer is a member of an active directory
-			string ad_name = string.Empty;
-			DirectoryEntry ad = null;
-			try
-			{
-				ad = new DirectoryEntry( "LDAP://RootDSE" );
-				string dnc = Convert.ToString( ad.Properties[ "DefaultNamingContext" ][ 0 ] );
-				ad_name = Regex.Replace( dnc, "^DC=([^,]+),.*", "$1", RegexOptions.IgnoreCase );
-			}
-			catch
-			{
-			}
-			if ( ad != null )
-				ad.Dispose();
-
 			// used for asdi calls
 			object[] user_path = null;
 
@@ -273,36 +258,6 @@ namespace Sudowin.WindowsService
 					};
 
 				user.Close();
-				/*
-				// machine is member of ad
-				if ( ad_name.Length > 0 )
-				{
-					user_path = new object[] 
-					{
-						string.Format(
-							CultureInfo.CurrentCulture,
-							"WinNT://{0}/{1}/{2}",
-							ad_name, dhn_part, un_part )
-					};
-				}
-
-				// stand-a-lone machine
-				else
-				{
-					// find the user instead of building the path.  this is 
-					// in case this machine belongs to a workgroup.  it is 
-					// easier to search for the user and get their path that 
-					// way than it is to get the computer's workgroup
-					DirectoryEntry user = user = localhost.Children.Find( un_part, "user" );
-					
-					user_path = new object[] 
-					{
-						user.Path
-					};
-
-					user.Close();
-				}
-				*/
 			}
 
 			// ad user

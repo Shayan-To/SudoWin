@@ -522,7 +522,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Sudowin.AuthorizationPlugins, Version=0.0.2366.4215, Culture=neutral, PublicKeyToken=55aeb4cbba10e8c9, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Sudowin.AuthorizationPlugins, Version=0.0.2366.9834, Culture=neutral, PublicKeyToken=55aeb4cbba10e8c9, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_4E5FD4A3ABDF5B549C821694E3D478E6"
@@ -553,7 +553,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Sudowin.AuthenticationPlugins, Version=0.0.2366.4215, Culture=neutral, PublicKeyToken=55aeb4cbba10e8c9, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Sudowin.AuthenticationPlugins, Version=0.0.2366.9834, Culture=neutral, PublicKeyToken=55aeb4cbba10e8c9, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_5830F193B4D7A8506A242824868D4CDC"
@@ -624,7 +624,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Sudowin.PublicLibrary, Version=0.0.2366.4215, Culture=neutral, PublicKeyToken=55aeb4cbba10e8c9, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Sudowin.PublicLibrary, Version=0.0.2366.9834, Culture=neutral, PublicKeyToken=55aeb4cbba10e8c9, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_C67E17FA0AACFD7C9953D1EA4D791489"
@@ -852,14 +852,14 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Sudo for Windows"
-        "ProductCode" = "8:{C3BF6345-C804-4AA0-A855-7A46786B8630}"
-        "PackageCode" = "8:{187A1CDE-F5A0-4CD5-9774-97ADB8F43C48}"
+        "ProductCode" = "8:{92E7B445-552F-4000-957B-A6F2A059D037}"
+        "PackageCode" = "8:{0E5ABA75-F501-4445-B3E6-EEB8B7192420}"
         "UpgradeCode" = "8:{3B0AA51B-8E14-49F5-B299-22C35C55088B}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:0.1.0"
+        "ProductVersion" = "8:0.1.1"
         "Manufacturer" = "8:l o s t c r e a t i o n s"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:http://sudowin.sourceforge.net"
