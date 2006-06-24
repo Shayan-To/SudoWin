@@ -24,9 +24,33 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+UPGRADING SUDO FOR WINDOWS
+--------------------------
+
+0.1.0-r76 to 0.1.1-r95
+	
+	- Make a copy of your sudoers.xml file.  This is located at INSTALLDIR\
+	Server\sudoers.xml.
+	
+	- Use "Add/Remove Programs" or the original installer to remove the 
+	0.1.0-r76 version of Sudo for Windows.
+	
+	- Install 0.1.1-r95.
+	
+	- Copy your old sudoers.xml file back to INSTALLDIR\Server\sudoers.xml.
+	
+	- Restart the Sudowin service.
+	
+	- Add the desired users back into the Sudoers group on the local computer.
+	
+	- Log out and back into your computer.
+	
+	- That's it!  I hope to make this easier in the future.  The installer 
+	that comes with Visual Studio .NET 2005 sucks for doing upgrade deploymnents.
+
+
 POST INSTALLATION STEPS
 -----------------------
-
 - You should edit the sudoers.xml file so that the users you want to have sudo
 privileges are in the file.  This file is located at INSTALLDIR\Server\sudoers.xml.  
 After you perform this step you will need to restart the Sudowin service.

@@ -26,6 +26,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 CHANGELOG
 
+2006/06/24
+----------
+- released Sudo for Windows version 0.1.0 (r95)
+
+- Fixed bug that prevented Active Directory users from using sudo
+
 2006/06/20
 ----------
 - released Sudo for Windows version 0.1.0 (r76)
