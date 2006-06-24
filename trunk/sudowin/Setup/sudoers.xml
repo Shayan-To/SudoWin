@@ -54,7 +54,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		<commandGroup name="standard">
 			<command path="c:\windows\system32\cmd.exe" />
 			<command path="C:\windows\notepad.exe" />
+			<command path="C:\windows\system32\notepad.exe" />
 			<command path="C:\windows\regedit.exe" />
+			<command path="C:\windows\explorer.exe" />
 		</commandGroup>
 	</commands>
 </sudoers>

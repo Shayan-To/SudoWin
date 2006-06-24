@@ -226,22 +226,80 @@ namespace Sudowin.WindowsService
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
 				"{0}, which={1}, privilegesGroup={2}",
 				userName, which, privilegesGroup );
-			
-			// remove the domain from the userName string
-			string un_part = userName.Split( new char[] { '\\' } )[ 1 ];
 
-			// get the directory entries for the localhost, the privileges
-			// group, and the user
-			DirectoryEntry localhost = new DirectoryEntry( "WinNT://" +
-				Environment.MachineName + ",computer" );
+			// get the directory entries for the localhost and the privileges group
+			DirectoryEntry localhost = new DirectoryEntry(
+				string.Format(
+				CultureInfo.CurrentCulture,
+				"WinNT://{0},computer",
+				Environment.MachineName ) );
 			DirectoryEntry group = localhost.Children.Find( privilegesGroup );
-			DirectoryEntry user = localhost.Children.Find( un_part, "user" );
 
-			// used for adsi calls
-			object[] path = new object[] { user.Path };
+			// get the domain/host name and user name
+			string[] un_split = userName.Split( new char[] { '\\' } );
+			string dhn_part = un_split[ 0 ];
+			string un_part = un_split[ 1 ];
+
+			// determine if this computer is a member of an active directory
+			string ad_name = string.Empty;
+			DirectoryEntry ad = null;
+			try
+			{
+				ad = new DirectoryEntry( "LDAP://RootDSE" );
+				string dnc = Convert.ToString( ad.Properties[ "DefaultNamingContext" ][ 0 ] );
+				ad_name = Regex.Replace( dnc, "^DC=([^,]+),.*", "$1", RegexOptions.IgnoreCase );
+			}
+			catch
+			{
+			}
+			if ( ad != null )
+				ad.Dispose();
+
+			// used for asdi calls
+			object[] user_path = null;
+
+			// local user
+			if ( Regex.IsMatch( dhn_part, Environment.MachineName, RegexOptions.IgnoreCase ) )
+			{
+				// machine is member of ad
+				if ( ad_name.Length > 0 )
+				{
+					user_path = new object[] 
+					{
+						string.Format(
+							CultureInfo.CurrentCulture,
+							"WinNT://{0}/{1}/{2}",
+							ad_name, dhn_part, un_part )
+					};
+				}
+
+				// stand-a-lone machine
+				else
+				{
+					user_path = new object[] 
+					{
+						string.Format(
+							CultureInfo.CurrentCulture,
+							"WinNT://{0}/{1}",
+							dhn_part, un_part )
+					};
+				}
+			}
+
+			// ad user
+			else
+			{
+				user_path = new object[] 
+				{
+					string.Format(
+						CultureInfo.CurrentCulture,
+						"WinNT://{0}/{1}",
+						dhn_part, un_part )
+				};
+			}
 
 			bool isAlreadyMember = bool.Parse( Convert.ToString(
-				group.Invoke( "IsMember", path ),
+				group.Invoke( "IsMember", user_path ),
 				CultureInfo.CurrentCulture ) );
 
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
@@ -251,7 +309,7 @@ namespace Sudowin.WindowsService
 			// add user to privileges group
 			if ( which == 1 && !isAlreadyMember )
 			{
-				group.Invoke( "Add", path );
+				group.Invoke( "Add", user_path );
 
 				m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
 					"{0}, added user to privileges group",
@@ -261,7 +319,7 @@ namespace Sudowin.WindowsService
 			// remove user from privileges group
 			else if ( which == 0 && isAlreadyMember )
 			{
-				group.Invoke( "Remove", path );
+				group.Invoke( "Remove", user_path );
 
 				m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
 					"{0}, removed user from privileges group",
@@ -272,14 +330,13 @@ namespace Sudowin.WindowsService
 			group.CommitChanges();
 
 			// cleanup
-			user.Dispose();
 			group.Dispose();
 			localhost.Dispose();
 
 			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.ExitMethod,
 				"exiting AddRemoveUser( string, int, string )" );
 
-			return( isAlreadyMember );
+			return ( isAlreadyMember );
 		}
 
 		/// <summary>
@@ -919,6 +976,10 @@ namespace Sudowin.WindowsService
 		/// </returns>
 		private string TestFileExtensions( string commandPath )
 		{
+			// test the commandPath without any extensions
+			if ( File.Exists( commandPath ) )
+				return ( commandPath );
+
 			// declare this method's return value
 			string withExtension = string.Empty;
 

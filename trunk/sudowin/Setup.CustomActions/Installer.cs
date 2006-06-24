@@ -30,6 +30,7 @@ using System;
 using System.IO;
 using System.Xml;
 using System.Globalization;
+using System.Windows.Forms;
 using System.ComponentModel;
 using System.DirectoryServices;
 using System.Collections.Generic;
@@ -41,6 +42,8 @@ namespace Sudowin.Setup.CustomActions
 	[RunInstaller( true )]
 	public partial class Installer : System.Configuration.Install.Installer
 	{
+		bool m_sudoers_group_already_exists = true;
+
 		public Installer()
 		{
 			InitializeComponent();
@@ -67,6 +70,7 @@ namespace Sudowin.Setup.CustomActions
 
 			if ( grp == null )
 			{
+				m_sudoers_group_already_exists = false;
 				grp = de.Children.Add( "Sudoers", "group" );
 				grp.Properties[ "description" ].Value = "Members in this group have the required " +
 					"privileges to initiate secure communication channels with the sudo server.";
@@ -220,24 +224,28 @@ namespace Sudowin.Setup.CustomActions
 
 			#region Delete the sudoers group
 
-			// delete the Sudoers group on the local machine if it exists
-			DirectoryEntry de = new DirectoryEntry( string.Format( "WinNT://{0},computer",
-				Environment.MachineName ) );
-			DirectoryEntry grp = null;
-			try
+			if ( !m_sudoers_group_already_exists )
 			{
-				grp = de.Children.Find( "Sudoers", "group" );
-			}
-			catch
-			{
-			}
 
-			if ( grp != null )
-			{
-				de.Children.Remove( grp );
-				grp.Close();
+				// delete the Sudoers group on the local machine if it exists
+				DirectoryEntry de = new DirectoryEntry( string.Format( "WinNT://{0},computer",
+					Environment.MachineName ) );
+				DirectoryEntry grp = null;
+				try
+				{
+					grp = de.Children.Find( "Sudoers", "group" );
+				}
+				catch
+				{
+				}
+
+				if ( grp != null )
+				{
+					de.Children.Remove( grp );
+					grp.Close();
+				}
+				de.Close();
 			}
-			de.Close();
 
 			#endregion
 
@@ -276,24 +284,30 @@ namespace Sudowin.Setup.CustomActions
 
 			#region Delete the sudoers group
 
-			// delete the Sudoers group on the local machine if it exists
-			DirectoryEntry de = new DirectoryEntry( string.Format( "WinNT://{0},computer",
-				Environment.MachineName ) );
-			DirectoryEntry grp = null;
-			try
-			{
-				grp = de.Children.Find( "Sudoers", "group" );
-			}
-			catch
-			{
-			}
+			DialogResult dr = MessageBox.Show( "Delete the Sudoers group?", "Would you like to?", 
+				MessageBoxButtons.YesNo, MessageBoxIcon.Information );
 
-			if ( grp != null )
+			if ( dr == DialogResult.Yes )
 			{
-				de.Children.Remove( grp );
-				grp.Close();
+				// delete the Sudoers group on the local machine if it exists
+				DirectoryEntry de = new DirectoryEntry( string.Format( "WinNT://{0},computer",
+					Environment.MachineName ) );
+				DirectoryEntry grp = null;
+				try
+				{
+					grp = de.Children.Find( "Sudoers", "group" );
+				}
+				catch
+				{
+				}
+
+				if ( grp != null )
+				{
+					de.Children.Remove( grp );
+					grp.Close();
+				}
+				de.Close();
 			}
-			de.Close();
 
 			#endregion
 
