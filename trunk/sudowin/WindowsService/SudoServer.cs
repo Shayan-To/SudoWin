@@ -261,6 +261,19 @@ namespace Sudowin.WindowsService
 			// local user
 			if ( Regex.IsMatch( dhn_part, Environment.MachineName, RegexOptions.IgnoreCase ) )
 			{
+				// find the user instead of building the path.  this is 
+				// in case this machine belongs to a workgroup or a domain.  
+				//  it is easier to search for the user and get their path that 
+				// way than it is to get the computer's workgroup
+				DirectoryEntry user = user = localhost.Children.Find( un_part, "user" );
+
+				user_path = new object[] 
+					{
+						user.Path
+					};
+
+				user.Close();
+				/*
 				// machine is member of ad
 				if ( ad_name.Length > 0 )
 				{
@@ -276,14 +289,20 @@ namespace Sudowin.WindowsService
 				// stand-a-lone machine
 				else
 				{
+					// find the user instead of building the path.  this is 
+					// in case this machine belongs to a workgroup.  it is 
+					// easier to search for the user and get their path that 
+					// way than it is to get the computer's workgroup
+					DirectoryEntry user = user = localhost.Children.Find( un_part, "user" );
+					
 					user_path = new object[] 
 					{
-						string.Format(
-							CultureInfo.CurrentCulture,
-							"WinNT://{0}/{1}",
-							dhn_part, un_part )
+						user.Path
 					};
+
+					user.Close();
 				}
+				*/
 			}
 
 			// ad user
