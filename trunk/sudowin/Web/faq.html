@@ -79,8 +79,66 @@
 						It still is not working, can you help?
 					</span>
 					<p class="pSectionText">
-						Sure.  First you need to turn on verbose logging (see below) and then 
-						send me your log file.
+						Sure.  First you need to turn on verbose logging (see below).  After that 
+						please clean your server configuration file, Sudowin.WindowsService.exe.confg, 
+						and sudoers file, sudoers.xml, both located in INSTALLDIR\Server, and then 
+						zip them all three files up and post a bug report 
+						<a href="http://sourceforge.net/tracker/?atid=756120&group_id=143653&func=browse">here</a>.
+					</p>
+				</div>
+				<div class="divSubSection">
+					<span class="spanSubSectionHeader">
+						Turning on verbose logging
+					</span>
+					<p class="pSectionText">
+						We need to change a setting in the sudo server's configuration file.  
+						This file is located at INSTALLDIR\Server\Sudo.WindowsService.exe.config.  
+						Find this line:
+					</p>
+					<p class="code">
+						&lt;source name="traceSrc" switchValue="..."&gt;
+					</p>
+					<p>
+						Now change the switch value to "ActivityTracing, Verbose" and restart
+						the Windows service hosting the sudo server.
+					</p>
+				</div>
+				<div class="divSubSection">
+					<span class="spanSubSectionHeader">
+						When I use sudo from the command line I get the error message 
+						"Sudowin.Callback.Application has encountered a problem and need to 
+						close.  We are sorry for the inconvenience."
+					</span>
+					<p class="pSectionText">
+						This is a <a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1513005&group_id=143653&atid=756120">known bug</a>.  
+						It occurs because the application that is being 
+						launched is not a valid win32 binary.  For example, the following 
+						command can be used to reproduce the bug:
+					</p>
+					<p class="code">
+						sudo c:\windows\system32\main.cpl
+					</p>
+					<p class="pSectionText">
+						That command *should* open the mouse control panel with elevated 
+						privileges, but it produces the bug.  This file is not a valid win32 
+						binary.  You can double-click on it in Explorer or even run it from 
+						the command prompt, but in the background the file 
+						"c:\windows\system32\control.exe" is being used to launch the applet.
+					</p>
+					<p>
+						There are two work-a-rounds.  Either launch a new command prompt with 
+						sudo and invoke the invalid win32 application from there or use the 
+						invalid win32 application's handler, such as control.exe, to launch the 
+						invalid win32 application in conjunction with sudo.  For example:
+					</p>
+					<p class="code">
+						sudo control main.cpl
+					</p>
+					<p>
+						A future version of Sudo for Windows will gracefully handle these 
+						errors and report to the user the cause of the problem.  Additionally, 
+						future versions will attempt to recognize these invalid win32 applications 
+						and launch them with their handler applications.
 					</p>
 				</div>
 			</div>
@@ -121,28 +179,6 @@
 							that comes with Visual Studio .NET 2005 sucks for doing upgrade deploymnents.
 						</li>
 					</ol>
-				</div>
-			</div>
-			<div class="divSection">
-				<span class="spanSectionHeader">
-					Debugging
-				</span>
-				<div class="divSubSection">
-					<span class="spanSubSectionHeader">
-						Turning on verbose logging
-					</span>
-					<p class="pSectionText">
-						We need to change a setting in the sudo server's configuration file.  
-						This file is located at INSTALLDIR\Server\Sudo.WindowsService.exe.config.  
-						Find this line:
-					</p>
-					<p class="code">
-						&lt;source name="traceSrc" switchValue="..."&gt;
-					</p>
-					<p>
-						Now change the switch value to "ActivityTracing, Verbose" and restart
-						the Windows service hosting the sudo server.
-					</p>
 				</div>
 			</div>
 			<script type="text/javascript">
