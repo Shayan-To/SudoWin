@@ -52,6 +52,28 @@
 				</div>
 				<div class="divSubSection">
 					<span class="spanSubSectionHeader">
+						I don't have elevated privileges after I sudo a folder.
+					</span>
+					<p class="pSectionText">
+						You madam are correct.  It turns out that since explorer.exe is the 
+						shell and it always has a process running, any new instances of 
+						explorer.exe respect your logon token from the original process.  This 
+						in effect cancels out the usefulness of sudo for opening a folder.
+					</p>
+					<p class="pSectionText">
+						You can verify that sudo still works by opening notepad with sudo 
+						and then using notepad's File->Open dialog to create new file where 
+						you normally do not have permissions in the mini-explorer window.
+					</p>
+					<p class="pSectionText">
+						I have a fix for this bug and it will be available in the next release.  
+						The fix involves turning sudo on and off for explorer.  I will essentially 
+						restart explorer for you.  If anyone knows a way to have explorer launch 
+						as a distinct process, please let me know.
+					</p>
+				</div>
+				<div class="divSubSection">
+					<span class="spanSubSectionHeader">
 						It still is not working, can you help?
 					</span>
 					<p class="pSectionText">
