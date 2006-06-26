@@ -52,24 +52,26 @@
 				</div>
 				<div class="divSubSection">
 					<span class="spanSubSectionHeader">
-						I don't have elevated privileges after I sudo a folder.
+						I don't have elevated privileges after I sudo a folder
 					</span>
 					<p class="pSectionText">
-						You madam are correct.  It turns out that since explorer.exe is the 
-						shell and it always has a process running, any new instances of 
-						explorer.exe respect your logon token from the original process.  This 
-						in effect cancels out the usefulness of sudo for opening a folder.
+						You need to ensure that you are launching new Explorer windows 
+						as separate processes.  Otherwise when you launch a new instance 
+						of Explorer it will inherit your original logon token that does 
+						not have elevated privileges.
 					</p>
 					<p class="pSectionText">
-						You can verify that sudo still works by opening notepad with sudo 
-						and then using notepad's File->Open dialog to create new file where 
-						you normally do not have permissions in the mini-explorer window.
+						To configure this setting simply open an Explorer window and click 
+						on "Tools->Folder Options".  Click on the "View" tab and find the 
+						option "Launch folder windows in a separate process" and ensure that 
+						it is checked.
 					</p>
 					<p class="pSectionText">
-						I have a fix for this bug and it will be available in the next release.  
-						The fix involves turning sudo on and off for explorer.  I will essentially 
-						restart explorer for you.  If anyone knows a way to have explorer launch 
-						as a distinct process, please let me know.
+						To verify that new Explorer windows are launching as new processes 
+						open up the Task Manager (Start->Run->taskmgr.exe) and sort the 
+						processes by name.  Open a folder and see if a new "Explorer.exe" 
+						process appears.  If it does then you are golden, otherwise you need 
+						to verify that the option is checked.
 					</p>
 				</div>
 				<div class="divSubSection">
