@@ -16,6 +16,13 @@ function writerHeader()
 		
 		'<hr style="clear:both;"/>' +
 		
+		'<div id="divBookmarkSites">' +
+			'<a href="http://slashdot.org/bookmark.pl?url=http://sudowin.sourceforge.net"><img title="slashdot it" src="img/slashdot.png"></a>' +
+			'<a href="http://digg.com/submit?phase=2&url=http://sudowin.sourceforge.net&title=Sudo+for+Windows"><img title="digg it" src="img/digg.png"></a>' +
+			'<a href="http://del.icio.us/post?url=http://sudowin.sourceforge.net&title=Sudo+for+Windows"><img title="make it del.icio.us" src="img/delicious.png"></a>' +
+			'<a href="http://reddit.com/submit?url=http://sudowin.sourceforge.net&title=Sudo+for+Windows"><img title="reddit" src="img/reddit.png"></a>' +
+		'</div>' +
+		
 		'<div id="divLinksHeader">' +
 			'<a href="index.html">intro</a> . ' +
 			'<a href="how.html">how</a> . ' +

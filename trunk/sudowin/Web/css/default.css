@@ -64,6 +64,7 @@ div#divSourceForgeImage
 div#divLinksHeader
 {
 	position:			relative;
+	clear:				both;
 	top:				5px;
 	left:				230px;
 	margin-bottom:		20px;
@@ -154,4 +155,15 @@ table.tablePretty td.tdBuffer
 table.tablePretty td.tdDescription
 {
 	vertical-align:		top;
+}
+
+div#divBookmarkSites
+{
+	float:				right;
+}
+
+div#divBookmarkSites img
+{
+	border:				none;
+	margin-left:		10px;
 }
