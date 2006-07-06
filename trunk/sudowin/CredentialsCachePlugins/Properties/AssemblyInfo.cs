@@ -1,3 +1,4 @@
+﻿/*
 Copyright (c) 2005, 2006, Schley Andrew Kutz <akutz@lostcreations.com>
 All rights reserved.
 
@@ -23,54 +24,39 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
-CHANGELOG
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
-2006/07/05
-----------
-- Renamed the namespace PublicLibrary to Common
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+[assembly: AssemblyTitle( "Sudowin.CredentialsCachePlugins" )]
+[assembly: AssemblyDescription( "" )]
+[assembly: AssemblyConfiguration( "" )]
+[assembly: AssemblyCompany( "l o s t c r e a t i o n s" )]
+[assembly: AssemblyProduct( "Sudowin" )]
+[assembly: AssemblyCopyright( "Copyright © l o s t c r e a t i o n s 2006" )]
+[assembly: AssemblyTrademark( "" )]
+[assembly: AssemblyCulture( "" )]
 
-- Renamed Common.ManagedMethods to Common.Managed and source file accordingly
+// Setting ComVisible to false makes the types in this assembly not visible 
+// to COM components.  If you need to access a type in this assembly from 
+// COM, set the ComVisible attribute to true on that type.
+[assembly: ComVisible( false )]
 
-- Renamed Common.Win32 to Common.Native and source file accordingly 
+// The following GUID is for the ID of the typelib if this project is exposed to COM
+[assembly: Guid( "a1da5f20-fa68-4a6a-ba2c-2160b1f7753a" )]
 
-2006/07/01
-----------
-- Created CachedCredentialsPlugin
-
-- Created CachedCredentialsPlugin.LocalServer
-
-2006/06/29
-----------
-- Added md5Checksum attribute to the command node.  This lets the administrator 
-associate md5 checksums against configured executables to ensure the integrity 
-of the file being sudoed.
-
-- Gracefully handles errors in the callback application.
-
-2006/06/25
-----------
-- Added allowAllCommands attribute to the default settings section in the 
-XmlAuthorizationPlugin section.  This will create an insecure mode where all 
-users can execute all commands.  This mode is not recommended and if used 
-should only be used on stand-a-lone machines where users wish to practice LUA, 
-but want easy sudo.
-
-
-2006/06/24
-----------
-- Released Sudo for Windows version 0.1.0 (r95)
-
-- Fixed bug that prevented Active Directory users from using sudo
-
-2006/06/20
-----------
-- released Sudo for Windows version 0.1.0 (r76)
-
-2006/06/17
-----------
-- changed the license copyright notice  to reflect the change from 
-"sakutz@gmail.com" to "akutz@lostcreations.com" and from "Lost Creations" to 
-"l o s t c r e a t i o n s"
-
-- changed too much to count
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+[assembly: AssemblyVersion( "0.1.1.0" )]

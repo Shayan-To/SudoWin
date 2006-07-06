@@ -1,3 +1,4 @@
+/*
 Copyright (c) 2005, 2006, Schley Andrew Kutz <akutz@lostcreations.com>
 All rights reserved.
 
@@ -23,54 +24,51 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
-CHANGELOG
+using System;
 
-2006/07/05
-----------
-- Renamed the namespace PublicLibrary to Common
+namespace Sudowin.CredentialsCachePlugins
+{
+	public struct CredentialsCache
+	{
+		/// <summary>
+		///		Number of invalid logon attempts the 
+		///		user has made.
+		/// 
+		///		Each time a user executes sudo they 
+		///		get a number of chances during that
+		///		execution to enter their correct
+		///		passphrase.
+		/// 
+		///		The invalid logon attempts that occur
+		///		during a single execution of sudo get
+		///		totalled in this member.
+		/// </summary>
+		public int InvalidLogonCount;
 
-- Renamed Common.ManagedMethods to Common.Managed and source file accordingly
+		/// <summary>
+		///		Each time a user executes sudo they 
+		///		get a number of chances during that
+		///		execution to enter their correct
+		///		passphrase.  
+		/// 
+		///		This member represents the number of
+		///		times a user has exceeded their invalid
+		///		logon limit while attempting to execute
+		///		Sudowin.
+		/// </summary>
+		public int TimesExceededInvalidLogonCount;
 
-- Renamed Common.Win32 to Common.Native and source file accordingly 
+		/// <summary>
+		///		The user's passphrase.
+		/// </summary>
+		public string Passphrase;
 
-2006/07/01
-----------
-- Created CachedCredentialsPlugin
-
-- Created CachedCredentialsPlugin.LocalServer
-
-2006/06/29
-----------
-- Added md5Checksum attribute to the command node.  This lets the administrator 
-associate md5 checksums against configured executables to ensure the integrity 
-of the file being sudoed.
-
-- Gracefully handles errors in the callback application.
-
-2006/06/25
-----------
-- Added allowAllCommands attribute to the default settings section in the 
-XmlAuthorizationPlugin section.  This will create an insecure mode where all 
-users can execute all commands.  This mode is not recommended and if used 
-should only be used on stand-a-lone machines where users wish to practice LUA, 
-but want easy sudo.
-
-
-2006/06/24
-----------
-- Released Sudo for Windows version 0.1.0 (r95)
-
-- Fixed bug that prevented Active Directory users from using sudo
-
-2006/06/20
-----------
-- released Sudo for Windows version 0.1.0 (r76)
-
-2006/06/17
-----------
-- changed the license copyright notice  to reflect the change from 
-"sakutz@gmail.com" to "akutz@lostcreations.com" and from "Lost Creations" to 
-"l o s t c r e a t i o n s"
-
-- changed too much to count
+		/// <summary>
+		///		True if the user has valid cached credentials;
+		///		otherwise false.
+		/// </summary>
+		public bool HasValidCachedCredentials;
+	}
+}
