@@ -26,14 +26,14 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using Win32;
+using Native;
 using System;
 using System.IO;
 using System.Text;
 using System.Security;
 using System.Threading;
 using System.Reflection;
-using Sudowin.PublicLibrary;
+using Sudowin.Common;
 using System.Diagnostics;
 using System.Configuration;
 using System.Globalization;
@@ -56,7 +56,7 @@ namespace Sudowin.WindowsService
 	/// </summary>
 	public class SudoServer :	MarshalByRefObject, 
 		
-								Sudowin.PublicLibrary.ISudoServer, 
+								Sudowin.Common.ISudoServer, 
 		
 								IDisposable
 	{
@@ -179,7 +179,7 @@ namespace Sudowin.WindowsService
 				"constructing SudoServer" );
 
 			string dsuri = ConfigurationManager.AppSettings[ "dataServerUri" ];
-			
+
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
 				"getting reference to SAO, m_data_server={0}", dsuri );
 
@@ -314,7 +314,7 @@ namespace Sudowin.WindowsService
 		}
 
 		/// <summary>
-		///		Invokes sudo on the given command p.
+		///		Invokes sudo on the given command path
 		/// </summary>
 		/// <param name="passphrase">
 		///		passphrase of user invoking Sudowin.
@@ -566,7 +566,7 @@ namespace Sudowin.WindowsService
 
 			// get and parse the authentication plugin uri
 			string authn_plugin_uri;
-			ManagedMethods.GetConfigValue( "authenticationPluginAssembly", out authn_plugin_uri );
+			Managed.GetConfigValue( "authenticationPluginAssembly", out authn_plugin_uri );
 			if ( authn_plugin_uri.Length == 0 )
 			{
 				string msg = "authenticationPluginAssembly must be a " +

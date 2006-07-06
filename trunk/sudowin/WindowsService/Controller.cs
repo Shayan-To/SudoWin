@@ -27,14 +27,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
-using Sudowin.PublicLibrary;
+using System.Diagnostics;
+using System.Configuration;
+using Sudowin.Common;
 using System.ComponentModel;
 using System.ServiceProcess;
 using System.Runtime.Remoting;
 using System.Security.Permissions;
+using System.Text.RegularExpressions;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
-using System.Diagnostics;
+using System.Globalization;
 
 namespace Sudowin.WindowsService
 {
@@ -76,6 +79,38 @@ namespace Sudowin.WindowsService
 
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose, 
 				"configuring remoting with " + remote_config_uri );
+
+			// load the plugins
+			PluginConfigurationSchema pcs = new PluginConfigurationSchema();
+			pcs.ReadXml( ConfigurationManager.AppSettings[ "pluginConfigurationUri" ] );
+			
+			// load the authentication plugins
+			foreach ( Row r in pcs.authenticationPlugin.Rows )
+			{
+				PluginConfigurationSchema.authenticationPluginRow apr = r as
+					PluginConfigurationSchema.authenticationPluginRow;
+
+				Regex rx = 
+					new Regex( @"^(?<assembly>.+)\.(?<class>[^,]+),(?<assemblyVersion>.+)$", 
+					RegexOptions.IgnoreCase );
+				Match m = rx.Match( apr.assemblyString );
+				if ( !m.Success )
+				{
+					string msg = string.Format( CultureInfo.CurrentCulture,
+						"assemblyString is not properly formatted, {0}",
+						apr.assemblyString );
+					m_ts.TraceEvent( TraceEventType.Critical, 10, msg );
+					throw new System.Configuration.ConfigurationErrorsException( msg );
+				}
+
+				string plugin_assembly = m.Groups[ "assembly" ].Value;
+				string plugin_class = m.Groups[ "class" ].Value;
+				string plugin_version = m.Groups[ "version" ].Value;
+
+				// find the assembly
+
+				
+			}
 			
 			// configure remoting channels and objects
 			RemotingConfiguration.Configure( remote_config_uri, true );

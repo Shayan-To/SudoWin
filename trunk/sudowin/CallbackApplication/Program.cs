@@ -29,11 +29,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.Text;
 using System.Reflection;
-using Sudowin.PublicLibrary;
+using Sudowin.Common;
 using System.Diagnostics;
 using System.Runtime.Remoting;
 using System.Security.Principal;
 using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace Sudowin.CallbackApplication
 {
@@ -41,55 +42,40 @@ namespace Sudowin.CallbackApplication
 	{
 		static void Main( string[] args )
 		{
-			/*
-			#region configure remoting
-
-			// get path to the actual exe
-			Uri uri = new Uri(
-				Assembly.GetExecutingAssembly().GetName().CodeBase );
-
-			// configure remoting channels and objects
-			RemotingConfiguration.Configure( uri.LocalPath + ".config", true );
-
-			// get the server object that is used to elevate
-			// privleges and act as a backend store for
-			// caching credentials
-
-			// get an array of the registered well known client urls
-			WellKnownClientTypeEntry[] wkts =
-				RemotingConfiguration.GetRegisteredWellKnownClientTypes();
-
-			// loop through the list of well known clients until
-			// the SudoServer object is found
-			ISudoServer iss = null;
-			for ( int x = 0; x < wkts.Length && iss == null; ++x )
+			try
 			{
-				iss = Activator.GetObject( typeof( ISudoServer ),
-					wkts[ x ].ObjectUrl ) as ISudoServer;
-			}
-
-			#endregion
-			*/
-
-			// enclose arguments with quotes that have spaces in them -- this bit
-			// 'o code was intended to fix the problem with msi files and passing
-			// unescaped paths -- i would have preferred a more elegant solution
-			// using Array.ForEach<T>, but alas, this method does not properly set
-			// the values back inside the array
-			string cmd_args = string.Empty;
-			if ( args.Length > 2 )
-			{
-				string[] arr_cmd_args = new string[ args.Length - 2 ];
-				Array.Copy( args, 2, arr_cmd_args, 0, args.Length - 2 );
-				for ( int x = 0; x < arr_cmd_args.Length; ++x )
+				// enclose arguments with quotes that have spaces in them -- this bit
+				// 'o code was intended to fix the problem with msi files and passing
+				// unescaped paths -- i would have preferred a more elegant solution
+				// using Array.ForEach<T>, but alas, this method does not properly set
+				// the values back inside the array
+				string cmd_args = string.Empty;
+				if ( args.Length > 2 )
 				{
-					if ( arr_cmd_args[ x ].Contains( " " ) && arr_cmd_args[ x ][ 0 ] != '"' )
-						arr_cmd_args[ x ] = string.Format( "\"{0}\"", arr_cmd_args[ x ] );
+					string[] arr_cmd_args = new string[ args.Length - 2 ];
+					Array.Copy( args, 2, arr_cmd_args, 0, args.Length - 2 );
+					for ( int x = 0; x < arr_cmd_args.Length; ++x )
+					{
+						if ( arr_cmd_args[ x ].Contains( " " ) && arr_cmd_args[ x ][ 0 ] != '"' )
+							arr_cmd_args[ x ] = string.Format( "\"{0}\"", arr_cmd_args[ x ] );
+					}
+					cmd_args = string.Join( " ", arr_cmd_args );
 				}
-				cmd_args = string.Join( " ", arr_cmd_args );
-			}
 
-			CreateProcessLoadProfile( args[ 0 ], args[ 1 ], cmd_args );
+				CreateProcessLoadProfile( args[ 0 ], args[ 1 ], cmd_args );
+			}
+			catch ( Exception e )
+			{
+				string msg = string.Format( CultureInfo.CurrentCulture,
+					"I do apologize, but I seem to have lost my pants.  Until I find them, " +
+					"be a good fellow or madam and send the following error to the author of " +
+					"this dashingly handsome program.{0}{0}" +
+					"Message: {1}" +
+					"Stacktrace: {2}",
+					Environment.NewLine,
+					e.Message, e.StackTrace );
+				Console.WriteLine( msg );
+			}
 		}
 
 		/// <summary>

@@ -43,6 +43,7 @@ namespace Sudowin.Setup.CustomActions
 	public partial class Installer : System.Configuration.Install.Installer
 	{
 		bool m_sudoers_group_already_exists = true;
+		bool m_sudoers_file_already_exists = true;
 
 		public Installer()
 		{
@@ -52,6 +53,10 @@ namespace Sudowin.Setup.CustomActions
 		public override void Install( System.Collections.IDictionary stateSaver )
 		{
 			base.Install( stateSaver );
+
+			string target_dir = this.Context.Parameters[ "TargetDir" ];
+			string connectionString = string.Format( @"{0}Server\Sudowin.WindowsService.exe.config",
+				target_dir );
 
 			#region Create the sudoers group
 
@@ -216,13 +221,41 @@ namespace Sudowin.Setup.CustomActions
 			Environment.SetEnvironmentVariable( "PATH", path, EnvironmentVariableTarget.Machine );
 
 			#endregion
+
+			#region Copy the sudoers file into place
+
+			string sudoers_old_file_path = string.Format( CultureInfo.CurrentCulture,
+				@"{0}sudoers.xml", target_dir );
+			string sudoers_new_file_path = string.Format( CultureInfo.CurrentCulture,
+				@"{0}Server\sudoers.xml", target_dir );
+
+			// if the sudoers file already exists then delete the stock one 
+			// that comes with the installer
+			if ( File.Exists( sudoers_file_path ) )
+			{
+				m_sudoers_file_already_exists = true;
+				File.Delete( sudoers_old_file_path );
+			}
+
+			// if the sudoers file does not already exist then move the stock
+			// sudoers file that comes with the installer into the Server 
+			// directory
+			else
+			{
+				File.Move( sudoers_old_file_path, sudoers_file_path );
+			}
+
+
+			#endregion
 		}
 
 		public override void Rollback( System.Collections.IDictionary savedState )
 		{
+			base.Rollback( savedState );
+
 			string target_dir = this.Context.Parameters[ "TargetDir" ];
 
-			#region Delete the sudoers group
+			#region Remove the Sudoers group
 
 			if ( !m_sudoers_group_already_exists )
 			{
@@ -249,8 +282,6 @@ namespace Sudowin.Setup.CustomActions
 
 			#endregion
 
-			base.Rollback( savedState );
-
 			#region Remove sudo.exe and remove directory from system path
 
 			string exe_new_path = string.Format( @"{0}Clients\Console\sudo.exe", target_dir );
@@ -262,7 +293,7 @@ namespace Sudowin.Setup.CustomActions
 				File.Delete( cfg_new_path );
 
 			string path = Environment.GetEnvironmentVariable( "PATH" );
-			string rem_path_patt = string.Format( @"(.*)({0}Clients\\Console)(.*)", target_dir.Replace( @"\", @"\\" ) );
+			string rem_path_patt = string.Format( @"(.*)({0}Clients\\Console)(.*)" );
 			if ( Regex.IsMatch( path, rem_path_patt ) )
 			{
 				path = Regex.Replace( path, rem_path_patt, "$1$2" );
@@ -270,21 +301,29 @@ namespace Sudowin.Setup.CustomActions
 				Environment.SetEnvironmentVariable( "PATH", path, EnvironmentVariableTarget.Machine );
 			}
 
+			#region Delete the sudoers file
+			
+			string sudoers_file_path = string.Format( CultureInfo.CurrentCulture,
+					@"{0}Server\sudoers.xml", target_dir );
+			if ( File.Exists( sudoers_file_path ) )
+				File.Delete( sudoers_file_path );
+
 			#endregion
 
-			// remove the installation directory
-			//string target_dir = this.Context.Parameters[ "TargetDir" ];
-			//if ( Directory.Exists( target_dir ) )
-			//	Directory.Delete( target_dir );
+			#endregion
 		}
 
 		public override void Uninstall( System.Collections.IDictionary savedState )
 		{
 			string target_dir = this.Context.Parameters[ "TargetDir" ];
 
-			#region Delete the sudoers group
+			base.Uninstall( savedState );
 
-			DialogResult dr = MessageBox.Show( "Delete the Sudoers group?", "Would you like to?", 
+			#region Remove the Sudoers group
+
+			DialogResult dr = MessageBox.Show(
+				"Delete the Sudoers group?",
+				"Click \"Yes\" to delete the Sudoers group (not recommended if you are upgrading).",
 				MessageBoxButtons.YesNo, MessageBoxIcon.Information );
 
 			if ( dr == DialogResult.Yes )
@@ -311,13 +350,23 @@ namespace Sudowin.Setup.CustomActions
 
 			#endregion
 
-			base.Uninstall( savedState );
+			#region Remove the Sudoers file
 
-			// remove the installation directory
-			//string target_dir = this.Context.Parameters[ "TargetDir" ];
-			//if ( Directory.Exists( target_dir ) )
-			//	Directory.Delete( target_dir );
+			dr = MessageBox.Show(
+				"Delete the Sudoers file?",
+				"Click \"Yes\" to delete the Sudoers file (not recommended if you are upgrading).",
+				MessageBoxButtons.YesNo, MessageBoxIcon.Information );
 
+			if ( dr == DialogResult.Yes )
+			{
+				string sudoers_file_path = string.Format( CultureInfo.CurrentCulture,
+					@"{0}Server\sudoers.xml", target_dir );
+				if ( File.Exists( sudoers_file_path ) )
+					File.Delete( sudoers_file_path );
+			}
+
+			#endregion
+			
 			#region Remove sudo.exe and remove directory from system path
 
 			string exe_new_path = string.Format( @"{0}Clients\Console\sudo.exe", target_dir );
@@ -329,7 +378,7 @@ namespace Sudowin.Setup.CustomActions
 				File.Delete( cfg_new_path );
 
 			string path = Environment.GetEnvironmentVariable( "PATH" );
-			string rem_path_patt = string.Format( @"(.*)({0}Clients\\Console)(.*)", target_dir.Replace( @"\", @"\\" ) );
+			string rem_path_patt = string.Format( @"(.*)({0}Clients\\Console)(.*)" );
 			if ( Regex.IsMatch( path, rem_path_patt ) )
 			{
 				path = Regex.Replace( path, rem_path_patt, "$1$2" );

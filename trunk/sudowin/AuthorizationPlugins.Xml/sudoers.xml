@@ -30,7 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 -->
 
-<sudoers	xmlns="http://sudowin.sourceforge.net/schemas/FileDataStoreSchema_v0.1/"
+<sudoers	xmlns="http://sudowin.sourceforge.net/schemas/XmlAuthorizationPlugin/"
 			privilegesGroup="Administrators" 
 			invalidLogons="3"
 			timesExceededInvalidLogons="3"
@@ -39,7 +39,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 			logonTimeout="180" 
 			startTime="00:00:00.00000" 
 			endTime="23:59:59.99999" 
-			loggingLevel="Both">
+			loggingLevel="Both" 
+			allowAllCommands="false">
 	<users>
 		<userGroup name="standard">
 			<users>
@@ -49,9 +50,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 					</commands>
 				</user>
 			</users>
-			<commands>
-				<command path="c:\windows\system32\notepad.exe" />
-			</commands>
 			<commandGroupRefs>
 				<commandGroupRef commandGroupName="standard"/>
 			</commandGroupRefs>
@@ -59,8 +57,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</users>
 	<commands>
 		<commandGroup name="standard">
-			<command path="c:\windows\system32\cmd.exe" />
-			<command path="C:\Program Files\Microsoft Visual Studio 8\Common7\ide\devenv.exe" />
+			<!-- 
+				Windows XP SP2 files - checksums may vary per operating system, service pack
+			-->
+			<command path="c:\windows\system32\cmd.exe" md5Checksum="eeb024f2c81f0d55936fb825d21a91d6" />
+			<command path="c:\windows\explorer.exe" md5Checksum="45757077a47c68a603a79b03a1a836ab" />
+			<command path="c:\windows\system32\notepad.exe" md5Checksum="388b8fbc36a8558587afc90fb23a3b99" />
 		</commandGroup>
 	</commands>
 </sudoers>

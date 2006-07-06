@@ -29,7 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.Text;
 using System.Reflection;
-using Sudowin.PublicLibrary;
+using Sudowin.Common;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Forms;

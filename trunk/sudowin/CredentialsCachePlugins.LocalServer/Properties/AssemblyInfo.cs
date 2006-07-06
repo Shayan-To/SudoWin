@@ -1,4 +1,4 @@
-/*
+﻿/*
 Copyright (c) 2005, 2006, Schley Andrew Kutz <akutz@lostcreations.com>
 All rights reserved.
 
@@ -26,37 +26,37 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
-using Sudowin.Common;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
-namespace Sudowin.AuthenticationPlugins.NT
-{
-	
-	public class NTAuthenticationPlugin : IAuthenticationPlugin
-	{
-		/// <summary>
-		///		Verifies the credentials of a user with a passphrase.
-		/// </summary>
-		/// <param name="domainOrComputerName">
-		///		Domain name or computer name the user account belongs to.
-		/// </param>
-		/// <param name="userName">
-		///		Username of account to validate.
-		/// </param>
-		/// <param name="passphrase">
-		///		Password for the given username.
-		/// </param>
-		/// <returns>
-		///		True if the credentials are successfully verified; otherwise false.
-		/// </returns>
-		public bool VerifyCredentials( string domainOrComputerName, string userName, string password )
-		{
-			IntPtr hLogon = IntPtr.Zero;
-			bool logonSuccessful = Native.Native.LogonUser( userName, domainOrComputerName, password,
-				Native.LogonType.Interactive, Native.LogonProvider.WinNT50, out hLogon );
-			if ( logonSuccessful )
-				Native.Native.CloseHandle( hLogon );
-			return ( logonSuccessful );
-		}
-	}
-}
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+[assembly: AssemblyTitle( "Sudowin.CredentialsCachePlugins.LocalServer" )]
+[assembly: AssemblyDescription( "" )]
+[assembly: AssemblyConfiguration( "" )]
+[assembly: AssemblyCompany( "l o s t c r e a t i o n s" )]
+[assembly: AssemblyProduct( "Sudowin" )]
+[assembly: AssemblyCopyright( "Copyright © l o s t c r e a t i o n s 2006" )]
+[assembly: AssemblyTrademark( "" )]
+[assembly: AssemblyCulture( "" )]
+
+// Setting ComVisible to false makes the types in this assembly not visible 
+// to COM components.  If you need to access a type in this assembly from 
+// COM, set the ComVisible attribute to true on that type.
+[assembly: ComVisible( false )]
+
+// The following GUID is for the ID of the typelib if this project is exposed to COM
+[assembly: Guid( "d52373d6-2fcc-4288-8fb3-f1c7c30edc46" )]
+
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+[assembly: AssemblyVersion( "0.1.1.0" )]

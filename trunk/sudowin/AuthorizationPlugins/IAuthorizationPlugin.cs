@@ -27,7 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
-using Sudowin.PublicLibrary;
+using Sudowin.Common;
 
 namespace Sudowin.AuthorizationPlugins
 {
@@ -59,14 +59,14 @@ namespace Sudowin.AuthorizationPlugins
 		void Close();
 
 		/// <summary>
-		///		Gets a Sudowin.PublicLibrary.UserInfo structure
+		///		Gets a Sudowin.Common.UserInfo structure
 		///		from the authorization source for the given user name.
 		/// </summary>
 		/// <param name="userName">
 		///		User name to get information for.
 		/// </param>
 		/// <param name="userInfo">
-		///		Sudowin.PublicLibrary.UserInfo structure for
+		///		Sudowin.Common.UserInfo structure for
 		///		the given user name.
 		/// </param>
 		/// <returns>
@@ -76,7 +76,7 @@ namespace Sudowin.AuthorizationPlugins
 		bool GetUserInfo( string userName, ref UserInfo userInfo );
 
 		/// <summary>
-		///		Gets a Sudowin.PublicLibrary.CommandInfo structure
+		///		Gets a Sudowin.Common.CommandInfo structure
 		///		from the authorization source for the given user name,
 		///		command path, and command arguments.
 		/// </summary>
@@ -90,7 +90,7 @@ namespace Sudowin.AuthorizationPlugins
 		///		Command arguments to get information for.
 		/// </param>
 		/// <param name="commandInfo">
-		///		Sudowin.PublicLibrary.CommandInfo structure for
+		///		Sudowin.Common.CommandInfo structure for
 		///		the given user name, command path, and command 
 		///		arguments.
 		/// </param>

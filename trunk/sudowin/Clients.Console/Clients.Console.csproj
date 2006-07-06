@@ -68,9 +68,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PublicLibrary\PublicLibrary.csproj">
+    <ProjectReference Include="..\Common\Common.csproj">
       <Project>{81E98C70-C681-4DD4-B6B1-154E12567B9C}</Project>
-      <Name>PublicLibrary</Name>
+      <Name>Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -29,7 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.Security;
 using System.Threading;
-using Sudowin.PublicLibrary;
+using Sudowin.Common;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -93,7 +93,7 @@ namespace Sudowin.WindowsService
 
 			// get the authorization plugin connection string
 			string authz_cnxn_str;
-			ManagedMethods.GetConfigValue( 
+			Managed.GetConfigValue( 
 				"authorizationPluginConnectionString",
 				out authz_cnxn_str );
 			m_ts.TraceEvent( TraceEventType.Verbose, 10,
@@ -109,7 +109,7 @@ namespace Sudowin.WindowsService
 
 			// get the authorization plugin schema file uri
 			string authz_schema_uri;
-			ManagedMethods.GetConfigValue( "authorizationPluginSchemaFileUri", out authz_schema_uri );
+			Managed.GetConfigValue( "authorizationPluginSchemaFileUri", out authz_schema_uri );
 			//if ( authz_schema_uri.Length == 0 )
 			//{
 			//	string msg = "authorizationPluginSchemaFileUri must be a " +
@@ -121,7 +121,7 @@ namespace Sudowin.WindowsService
 
 			// get and parse the authorization plugin uri
 			string authz_plugin_uri;
-			ManagedMethods.GetConfigValue( "authorizationPluginAssembly", out authz_plugin_uri );
+			Managed.GetConfigValue( "authorizationPluginAssembly", out authz_plugin_uri );
 			if ( authz_plugin_uri.Length == 0 )
 			{
 				string msg = "authorizationPluginAssembly must be a " +
@@ -365,14 +365,14 @@ namespace Sudowin.WindowsService
 		}
 
 		/// <summary>
-		///		Gets a Sudowin.PublicLibrary.UserInfo structure
+		///		Gets a Sudowin.Common.UserInfo structure
 		///		from the authorization plugin for the given user name.
 		/// </summary>
 		/// <param name="userName">
 		///		User name to get information for.
 		/// </param>
 		/// <param name="userInfo">
-		///		Sudowin.PublicLibrary.UserInfo structure for
+		///		Sudowin.Common.UserInfo structure for
 		///		the given user name.
 		/// </param>
 		/// <returns>
@@ -385,7 +385,7 @@ namespace Sudowin.WindowsService
 		}
 
 		/// <summary>
-		///		Gets a Sudowin.PublicLibrary.CommandInfo structure
+		///		Gets a Sudowin.Common.CommandInfo structure
 		///		from the authorization plugin for the given user name,
 		///		command p, and command arguments.
 		/// </summary>
@@ -399,7 +399,7 @@ namespace Sudowin.WindowsService
 		///		Command arguments to get information for.
 		/// </param>
 		/// <param name="commandInfo">
-		///		Sudowin.PublicLibrary.CommandInfo structure for
+		///		Sudowin.Common.CommandInfo structure for
 		///		the given user name, command p, and command 
 		///		arguments.
 		/// </param>

@@ -31,7 +31,7 @@ using System.IO;
 using System.Text;
 using System.Drawing;
 using System.Reflection;
-using Sudowin.PublicLibrary;
+using Sudowin.Common;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Runtime.Remoting;

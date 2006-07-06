@@ -32,7 +32,7 @@ using System.Data;
 using System.Text;
 using System.Xml.Schema;
 using System.Diagnostics;
-using Sudowin.PublicLibrary;
+using Sudowin.Common;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -45,6 +45,13 @@ namespace Sudowin.AuthorizationPlugins.Xml
 	/// </summary>
 	public class XmlAuthorizationPlugin : IAuthorizationPlugin
 	{
+		private struct FindCommandNodeSearchParameters
+		{
+			public string Path;
+			public string Arguments;
+			public string Md5Checksum;
+		}
+		
 		/// <summary>
 		///		Trace source that can be defined in the 
 		///		config file for Sudowin.WindowsService.
@@ -67,7 +74,9 @@ namespace Sudowin.AuthorizationPlugins.Xml
 		///		query into all lowercase.
 		/// </summary>
 		private const string XpathTranslateFormat = 
-			"translate({0},'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')";
+			"translate({0}," + 
+			"'ABCDEFGHIJKLMNOPQRSTUVWXYZ'," + 
+			"'abcdefghijklmnopqrstuvwxyz')";
 
 		/// <summary>
 		///		For parsing the xml file.
@@ -186,14 +195,14 @@ namespace Sudowin.AuthorizationPlugins.Xml
 		}
 
 		/// <summary>
-		///		Gets a Sudowin.PublicLibrary.UserInfo structure
+		///		Gets a Sudowin.Common.UserInfo structure
 		///		from the xml file for the given user name.
 		/// </summary>
 		/// <param name="userName">
 		///		User name to get information for.
 		/// </param>
 		/// <param name="userInfo">
-		///		Sudowin.PublicLibrary.UserInfo structure for
+		///		Sudowin.Common.UserInfo structure for
 		///		the given user name.
 		/// </param>
 		/// <returns>
@@ -238,7 +247,7 @@ namespace Sudowin.AuthorizationPlugins.Xml
 		}
 
 		/// <summary>
-		///		Gets a Sudowin.PublicLibrary.CommandInfo structure
+		///		Gets a Sudowin.Common.CommandInfo structure
 		///		from the xml file for the given user name,
 		///		command path, and command arguments.
 		/// </summary>
@@ -252,7 +261,7 @@ namespace Sudowin.AuthorizationPlugins.Xml
 		///		Command arguments to get information for.
 		/// </param>
 		/// <param name="commandInfo">
-		///		Sudowin.PublicLibrary.CommandInfo structure for
+		///		Sudowin.Common.CommandInfo structure for
 		///		the given user name, command path, and command 
 		///		arguments.
 		/// </param>
@@ -281,7 +290,7 @@ namespace Sudowin.AuthorizationPlugins.Xml
 			// are all commands allowed?
 			XapBool all_cmds_allwd;
 			GetUserAttributeValue(
-				u_node, false, "allowAllCommands", out all_cmds_allwd );
+				u_node, true, "allowAllCommands", out all_cmds_allwd );
 			if ( all_cmds_allwd == XapBool.True )
 			{
 				commandInfo.IsCommandAllowed = true;
@@ -289,7 +298,11 @@ namespace Sudowin.AuthorizationPlugins.Xml
 			}
 
 			// find the command node
-			XmlNode c_node = FindCommandNode( u_node, commandPath, commandArguments );
+			//XmlNode c_node = FindCommandNode( u_node, commandPath, commandArguments );
+			FindCommandNodeSearchParameters fnsp = new FindCommandNodeSearchParameters();
+			fnsp.Path = commandPath;
+			fnsp.Arguments = commandArguments;
+			XmlNode c_node = FindCommandNode( u_node, fnsp );
 
 			if ( c_node == null )
 				return ( false );
@@ -322,8 +335,10 @@ namespace Sudowin.AuthorizationPlugins.Xml
 		/// </returns>
 		private XmlNode FindCommandNode(
 			XmlNode userNode,
-			string commandPath,
-			string commandArguments )
+			FindCommandNodeSearchParameters searchParameters,
+			params string[] args )
+			//string commandPath,
+			//string commandArguments )
 		{
 			/*
 			 * if the user is not disabled we need to discover whether
@@ -352,7 +367,7 @@ namespace Sudowin.AuthorizationPlugins.Xml
 			XmlNode local_cmds = userNode.SelectSingleNode(
 				"d:commands", m_namespace_mgr );
 			if ( local_cmds != null && local_cmds.HasChildNodes )
-				cmd_node = FindCommandNode( local_cmds, commandPath );
+				cmd_node = FindCommandNode( local_cmds, searchParameters );
 			
 			// 2) commandGroupRefs node local to user
 			if ( cmd_node == null )
@@ -362,7 +377,7 @@ namespace Sudowin.AuthorizationPlugins.Xml
 				if ( local_cmd_refs != null && local_cmd_refs.HasChildNodes )
 				{
 					cmd_node = FindCommandNode( userNode,
-						local_cmd_refs, commandPath, commandArguments );
+						local_cmd_refs, searchParameters );
 				}
 			}
 			
@@ -373,7 +388,7 @@ namespace Sudowin.AuthorizationPlugins.Xml
 					"d:commands", m_namespace_mgr );
 
 				if ( parent_cmds != null && parent_cmds.HasChildNodes )
-					cmd_node = FindCommandNode( parent_cmds, commandPath );
+					cmd_node = FindCommandNode( parent_cmds, searchParameters );
 			}
 
 			// 4) commandGroupRefs node local to user's parent user group
@@ -384,7 +399,7 @@ namespace Sudowin.AuthorizationPlugins.Xml
 				if ( parent_cmd_refs != null && parent_cmd_refs.HasChildNodes )
 				{
 					cmd_node = FindCommandNode( userNode,
-						parent_cmd_refs, commandPath, commandArguments );
+						parent_cmd_refs, searchParameters );
 				}
 			}
 			return ( cmd_node );
@@ -473,6 +488,43 @@ namespace Sudowin.AuthorizationPlugins.Xml
 			//**********************************************************
 			// !!! RETURN RETURN RETURN !!!
 			//
+			// check to see if the command is being executed on an 
+			// allowed host or network
+			/*
+			string allwd_nets = string.Empty;
+			GetCommandAttributeValue(
+				userNode, true, commandNode, "allowedNetworks", out allwd_nets );
+			if ( allwd_nets.Length > 0 )
+			{
+				// TODO: Create a regex to validate the allowedNetworks value
+
+				string[] allwd_nets_vals = allwd_nets.Split( new char[] { ',' } );
+				bool host_exists_in_allwd_nets = false;
+				Array.ForEach<string>( allwd_nets_vals, delegate( string anv )
+				{
+					// host name
+					if ( Regex.IsMatch( anv, @"(\w*\.?)+", RegexOptions.IgnoreCase ) )
+					{
+						
+					}
+
+					// ip address
+					else if ( Regex.IsMatch( anv, @"(\d{1,3}\.){3}\d{1,3}" ) )
+					{
+
+					}
+
+					// ip range
+					else if ( Regex.IsMatch( anv, @"(\d{1,3}\.){2}\d{1,3}(\?" ) )
+					{
+
+					}
+				} );
+			}
+			*/
+			//**********************************************************
+			// !!! RETURN RETURN RETURN !!!
+			//
 			// well, if we made it this far it means the user is
 			// allowed to execute the command
 			return ( true );
@@ -505,8 +557,9 @@ namespace Sudowin.AuthorizationPlugins.Xml
 		private XmlNode FindCommandNode(
 			XmlNode userNode,
 			XmlNode commandGroupRefsParent,
-			string commandPath,
-			string commandArguments )
+			FindCommandNodeSearchParameters searchParameters )
+			//string commandPath,
+			//string commandArguments )
 		{
 			XmlNode cmd_node = null;
 
@@ -530,7 +583,7 @@ namespace Sudowin.AuthorizationPlugins.Xml
 				// if the command group is found then search
 				// the command group for the command
 				if ( cmdgrp != null && cmdgrp.HasChildNodes )
-					cmd_node = FindCommandNode( cmdgrp, commandPath );
+					cmd_node = FindCommandNode( cmdgrp, searchParameters );
 
 				// if the command is found determine if it is
 				// allowed to be executed
@@ -556,7 +609,8 @@ namespace Sudowin.AuthorizationPlugins.Xml
 		/// <returns></returns>
 		private XmlNode FindCommandNode(
 			XmlNode commandNodeParent,
-			string commandPath )
+			FindCommandNodeSearchParameters searchParameters )
+			//string commandPath )
 		{
 			// build the query used to look for the command node in
 			// the current node context with the given command path
@@ -566,7 +620,7 @@ namespace Sudowin.AuthorizationPlugins.Xml
 				string.Format( CultureInfo.CurrentCulture,
 					XpathTranslateFormat, "@path" ),
 				string.Format( CultureInfo.CurrentCulture,
-					XpathTranslateFormat, "'" + commandPath + "'" ) );
+					XpathTranslateFormat, "'" + searchParameters.Path + "'" ) );
 
 			// look for the command node
 			XmlNode cmd_node = commandNodeParent.SelectSingleNode(
@@ -616,8 +670,13 @@ namespace Sudowin.AuthorizationPlugins.Xml
 			// go to the default settings
 			else if ( checkDefaults )
 			{
-				attributeValue =
-					userNode.OwnerDocument.DocumentElement.Attributes[ attributeName ].Value;
+				XmlNode an = userNode.OwnerDocument.DocumentElement.Attributes.GetNamedItem( attributeName );
+				if ( an != null )
+					attributeValue = an.Value;
+				else
+					attributeValue = string.Empty;
+				//attributeValue =
+				//	userNode.OwnerDocument.DocumentElement.Attributes[ attributeName ].Value;
 			}
 			else
 				attributeValue = string.Empty;
@@ -809,5 +868,188 @@ namespace Sudowin.AuthorizationPlugins.Xml
 		}
 
 		#endregion
+
+		private bool VerifyCommand(
+			string userName,
+			ref string commandPath,
+			string commandArguments )
+		{
+			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
+				"entering VerifyCommand( string, ref string, string )" );
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
+				"userName={0},commandPath={1},commandArguments={2}",
+				userName, commandPath, commandArguments );
+
+			CommandInfo ci = new CommandInfo();
+
+			// declare this method's return value
+			bool isCommandVerified =
+
+				!IsShellCommand( commandPath )
+
+				&&
+
+				IsCommandPathValid( ref commandPath )
+
+				&&
+
+				m_data_server.GetCommandInfo(
+					userName,
+					commandPath,
+					commandArguments,
+					ref ci )
+
+				&&
+
+				ci.IsCommandAllowed;
+
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+				"{0}, isCommandVerified={1}", userName, isCommandVerified );
+			m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitMethod,
+				"exiting VerifyCommand( string, ref string, string )" );
+
+			return ( isCommandVerified );
+		}
+
+		/// <summary>
+		///		Checks to see if the given command name
+		///		exists exactly as entered, as entered with
+		///		known executable file extensions on the end,
+		///		or somewhere in one of the directories 
+		///		specified in the environment variable %PATH%.
+		/// </summary>
+		/// <param name="commandPath">
+		///		Command to check.  If this method returns true
+		///		this parameter will be set to the fully
+		///		qualified p of the command.
+		/// </param>
+		/// <returns>
+		///		True if the command exists, otherwise false.
+		/// </returns>
+		private bool IsCommandPathValid( ref string commandPath )
+		{
+			// declare this method's return value
+			bool isValid = false;
+
+			// check to see if commandPath exists as entered or 
+			// as entered with any of the known executable file
+			// extensions appended to it
+			if ( commandPath.Contains( "\\" ) ||
+				commandPath.Contains( "/" ) )
+			{
+				// check to see if the commandPath exists
+				if ( !( isValid = File.Exists( commandPath ) ) )
+				{
+					// check to see if commandPath exists with any of the
+					// known executable file extensions appended to it
+					isValid = ( commandPath = TestFileExtensions( commandPath ) ).Length > 0;
+				}
+			}
+
+			// check to see if commandPath exists in any of the folders
+			// listed in the PATH environment variable
+			else
+			{
+				string p = Environment.GetEnvironmentVariable( "PATH" );
+				string[] pdirs = p.Split( new char[] { ';' } );
+
+				for ( int x = 0; x < pdirs.Length && !isValid; ++x )
+				{
+					string pd = pdirs[ x ];
+
+					// add a trailing slash to the path directory
+					// if it does not have one
+					if ( !Regex.IsMatch( pd, @"^.+(\\|/)$" ) )
+					{
+						// add the appropriate type of slash,
+						// i.e. a slash or a backslash
+						if ( pd.IndexOf( '\\' ) > -1 )
+							pd += "\\";
+						else
+							pd += "/";
+					}
+
+					// check to see if commandPath exists with
+					// the current path directory prepended to it
+					commandPath = pd + commandPath;
+
+					commandPath = TestFileExtensions( commandPath );
+					isValid = commandPath.Length > 0;
+				}
+			}
+
+			return ( isValid );
+		}
+
+		/// <summary>
+		///		Tests all the executable file extensions on
+		///		the command p parameter in order to determine
+		///		whether the given command name is a valid 
+		///		executable without the extension on the end.
+		/// </summary>
+		/// <param name="commandPath">
+		///		Command to test.
+		/// </param>
+		/// <returns>
+		///		If a command with an executable file extension was
+		///		found then this method returns the fully qualified p 
+		///		to the command with the correct file extension 
+		///		appended to the end.
+		/// 
+		///		If no command was found this method returns
+		///		an empty string.
+		/// </returns>
+		private string TestFileExtensions( string commandPath )
+		{
+			// test the commandPath without any extensions
+			if ( File.Exists( commandPath ) )
+				return ( commandPath );
+
+			// declare this method's return value
+			string withExtension = string.Empty;
+
+			// declare a bool that is true of the
+			// command exists with the given file
+			// extension
+			bool ce = false;
+
+			// test all the possible executable extensions
+			for ( int x = 0; x < 4 && !ce; ++x )
+			{
+				switch ( x )
+				{
+					case 0:
+					{
+						withExtension = commandPath + ".exe";
+						break;
+					}
+					case 1:
+					{
+						withExtension = commandPath + ".bat";
+						break;
+					}
+					case 2:
+					{
+						withExtension = commandPath + ".cmd";
+						break;
+					}
+					case 3:
+					{
+						withExtension = commandPath + ".lnk";
+						break;
+					}
+				}
+
+				m_ts.TraceEvent( TraceEventType.Verbose, 10, withExtension );
+
+				// set the the return value to an empty string
+				// if the file does not exist and this is the
+				// last iteration of this loop
+				if ( !( ce = File.Exists( withExtension ) ) )
+					withExtension = string.Empty;
+			}
+
+			return ( withExtension );
+		}
 	}
 }
