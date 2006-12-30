@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html 	PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<title>Sudo for Windows</title>
+		<link href="css/default.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="scr/default.js"></script>
+	</head>
+	<body onload="onPageLoad();">
+		<div id="divBody">
+			
+			<script type="text/javascript">
+				writerHeader();
+			</script>
+			
+			<div id="divImages">
+				<!--<img src="img/sudo_vs2k5.png" class="imgFirst" alt="Right-clicking on Visual Studio" />-->
+				<img src="img/sudo_folder.png" class="imgFirst" alt="Right-clicking on a folder" />
+				<img src="img/sudo_gui_client.png" class="imgLatter" alt="The GUI client" />
+				<img src="img/sudo_console_client.png" class="imgLatter" alt="The console client" />
+			</div>
+			<div id="divImagesCaptions">
+				<!--<span style="margin-left: 39px;">Right-clicking on Visual Studio</span>-->
+				<span style="margin-left: 57px;">Right-clicking on a folder</span>
+				<span style="margin-left: 95px;">The GUI client</span>
+				<span style="margin-left: 117px;">The console client</span>
+			</div>
+			
+			<div class="divSection">
+				<span class="spanSectionHeader">
+					Project description
+				</span>
+				<p class="pSectionText">
+					Sudo for Windows (sudowin) allows authorized users to launch 
+					processes with elevated privileges using their own passphrase. 
+					Unlike the runas command, Sudo for Windows preserves the 
+					user's profile and ownership of created objects.
+				</p>
+			</div>
+			
+			<div class="divSection">
+				<span class="spanSectionHeader">
+					Technical requirements
+				</span>
+				<ul>
+					<li>
+						Microsoft .NET 2.0 Framework
+					</li>
+					<li>
+						Microsoft Windows 2000, Microsoft Windows XP, Microsoft Windows Server 2003, 
+						Microsoft Windows Vista Beta 2
+					</li>
+				</ul>
+			</div>
+			
+			<div class="divSection">
+				<span class="spanSectionHeader">
+					The runas command
+				</span>
+				<p class="pSectionText">
+					There seems to be a lot of confusion about what the Windows runas 
+					command.  The runas command does not enable a user to escalate her 
+					privileges, it allows the user to assume the identity of a privileged 
+					account, if she knows the passphrase of that account.  For this reason 
+					the runas command should be thought of as an equivalent to the UNIX/Linux 
+					command, su.
+				</p>
+			</div>
+			
+			<div class="divSection">
+				<span class="spanSectionHeader">
+					Windows Vista and User Account Control (UAC)
+				</span>
+				<p class="pSectionText">
+					A lot of people ask why there is still a need for a separate sudo for 
+					windows project when Windows Vista includes includes sudo-like 
+					functionality.  The rub is <span style="font-weight:bold;">there 
+					is no sudo in Windows Vista</span>.
+				</p>
+				<p class="pSectionText">
+					Windows Vista implements a feature called 
+					<a href="http://www.microsoft.com/technet/windowsvista/security/uacppr.mspx">
+					User Account Control (UAC)</a>.  UAC includes support for Over-the-Shoulder 
+					(OTS) Credentials -- that is a user is prompted for an administrative passphrase 
+					when an adminstrative task needs to be accomplished.  If the user does not know 
+					the passphrase then they are not allowed to perform the task.  This is obviously 
+					not sudo because the user must know a passphrase that is not her own to 
+					accomplish a task.
+				</p>
+				<p class="pSectionText">
+					UAC also introduces Admin Approval Mode.  This is what is confused for sudo.  
+					Essentially, administrators are prompted for their credentials or their consent 
+					whenever they need to perform a sensitive task.  Because the administrators are 
+					being prompted for their own passphrase this may seem a lot like sudo, but there 
+					is one very important thing to remember -- the administrator is not being granted 
+					any priviliges that she does not already have.  There is no privilege escalation 
+					occurring.
+				</p>
+			</div>
+			
+			<div class="divSection">
+				<span class="spanSectionHeader">
+					The sudowin difference
+				</span>
+				<p class="pSectionText">
+					There are other tools available that provide similuar functionality, but 
+					they are all lacking in some respect.  Either they are not configurable, 
+					they are not extensible, or worse yet, they actually create 
+					security holes because they are subject to man-in-the-middle attacks.
+				</p>
+				<p class="pSectionText">
+					Sudo for Windows is out-of-the-box configurable.  There is not one setting 
+					that you cannot change simply by editing a text file.  And because of its 
+					plugin architecture, anyone with some programming experience can develop 
+					custom authentication and authorization plugins, extending its 
+					capabilities even further.
+				</p>
+				<p class="pSectionText">
+					Most importantly, Sudo for Windows does not decrease security by creating 
+					man-in-the-middle-attacks for malicious users and disgruntled administrators 
+					to exploit.  Sudo for Windows increases overall security by enabling your 
+					entire enterprise to run in Least User Access (LUA) mode.
+				</p>
+			</div>
+			
+			<div class="divSection">
+				<span class="spanSectionHeader">
+					Desktop deployment
+				</span>
+				<p class="pSectionText">
+					The Windows desktop environment would benefit greatly from Sudo for Windows.  
+					Windows could ship from the factory with the Administrator account disabled 
+					and the first user a member of the Sudoers group (much like Ubuntu Linux).  
+					Whenever a user needed to make a system change she could simply escalate her 
+					own privileges to do so instead of running the command with the Administrator 
+					account.  Bringing the goodness of Linux to the world of Windows! 
+				</p>
+			</div>
+			
+			<div class="divSection">
+				<span class="spanSectionHeader">
+					Enterprise deployment
+				</span>
+				<p class="pSectionText">
+					This is where Sudo for Windows really has an opportunity to shine.  Imagine that 
+					you are an Active Directory administrator who delegates OU management to other 
+					administrators.  Typically these administrators have two accounts -- one 
+					unprivileged, everyday account, and one privileged account used for system 
+					administration.  Keeping up with two accounts is a huge pain for administrators 
+					and inevitably results in most of them staying logged into their computers as 
+					the privileged account.
+				</p>
+				<p class="pSectionText">
+					Instead, use Sudo for Windows.  Delegate permissions on OUs to groups that your 
+					OU administrators are not normally members of.  Then when they use Sudo for Windows 
+					to launch their MMCs, their privileges are escalated so that they have access to 
+					manage their delegated OUs.  This is a very real example, and since Sudo for Windows 
+					comes packaged as a MSI it can be rolled out to every machine you manage via that 
+					wonderful thing we call Group Policy.
+				</p>
+				<p class="pSectionText">
+					This is just one example, but imagine what you could do!  Every object in Active 
+					Directory has permissions.  Now, all of a sudden, every object is more manageable 
+					thanks to Sudo for Windows.  Sudo for Windows will create happier administrators 
+					and a more secure environment.
+				</p>
+			</div>
+			<script type="text/javascript">
+				writeFooter();
+			</script>
+		</div>
+	</body>
+</html>

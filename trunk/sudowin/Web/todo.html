@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html 	PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<title>Sudo for Windows</title>
+		<link href="css/default.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="scr/default.js"></script>
+	</head>
+	<body onload="onPageLoad();">
+		<div id="divBody">
+			
+			<script type="text/javascript">
+				writerHeader();
+			</script>
+			
+			<div class="divSection">
+				<span class="spanSectionHeader">
+					T'will do
+				</span>
+				<ul>
+					<li>
+						Have the installer prompt during installation to add users 
+						to the sudoers group and sudoers file.
+					</li>
+					<li>
+						Have the installer prompt the user during uninstallation if 
+						they would like to leave the sudoers group and sudoers file 
+						in place.
+					</li>
+					<li>
+						Develop a GUI for editing the sudoers.xml file.
+					</li>
+					<li>
+						Develop a GUI for editing the sudo server configuration file.
+					</li>
+					<li>
+						Modularize the credentials caching mechanism.
+					</li>
+				</ul>
+			</div>
+			
+			<div class="divSection">
+				<span class="spanSectionHeader">
+					T'was done
+				</span>
+				<ul>
+					<li>
+						Modularize the authentication mechanism - IAuthenticationPlugin
+					</li>
+					<li>
+						Modularize the authorization mechanism - IAuthorizationPlugin 
+					</li>
+					<li>
+						Develop a MSI installer so that Sudo for Windows can be deployed
+						with group policy.  Have the installer create the Sudoers group 
+						and reconfigure the service configuration file based on environment.
+					</li>
+					<li>
+						Develop a GUI client.
+					</li>
+					<li>
+						Separate the callback application from the console client.
+					</li>
+				</ul>
+			</div>
+			<script type="text/javascript">
+				writeFooter();
+			</script>
+		</div>
+	</body>
+</html>
