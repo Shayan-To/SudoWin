@@ -30,7 +30,7 @@ using System;
 using System.Text;
 using System.Collections.Generic;
 
-namespace Sudowin.AuthenticationPlugins
+namespace Sudowin.Plugins.Authentication
 {
 	/// <summary>
 	///		IAuthenticationPlugin defines the interface for all classes that 
