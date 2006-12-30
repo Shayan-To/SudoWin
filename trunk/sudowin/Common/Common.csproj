@@ -7,8 +7,8 @@
     <ProjectGuid>{81E98C70-C681-4DD4-B6B1-154E12567B9C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sudowin.PublicLibrary</RootNamespace>
-    <AssemblyName>Sudowin.PublicLibrary</AssemblyName>
+    <RootNamespace>Sudowin.Common</RootNamespace>
+    <AssemblyName>Sudowin.Common</AssemblyName>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>sudowin.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
@@ -42,15 +42,12 @@
   <ItemGroup>
     <Compile Include="CommandInfo.cs" />
     <Compile Include="EventIds.cs" />
-    <Compile Include="ISudoServer.cs" />
     <Compile Include="LoggingLevelTypes.cs" />
-    <Compile Include="ManagedMethods.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Managed.cs" />
+    <Compile Include="Native.cs" />
     <Compile Include="SudoResultTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserInfo.cs" />
-    <Compile Include="Win32.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="sudowin.snk" />

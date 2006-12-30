@@ -32,7 +32,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace Win32
+namespace Native
 {
 	public enum TokenInformationTypes
 	{
@@ -727,7 +727,7 @@ namespace Win32
 		///		Bit field that determines whether certain StartupInfo members are used 
 		///		when the process creates a window.
 		/// </summary>
-		/// <seealso cref="Win32.StartupInfoFlags"/>
+		/// <seealso cref="Native.StartupInfoFlags"/>
 		public Int32 Flags;
 
 		/// <summary>
@@ -775,7 +775,7 @@ namespace Win32
 	}
 
 	/// <summary>
-	///		.NET method signatures for some Win32 functions.
+	///		.NET method signatures for some Native functions.
 	/// </summary>
 	public class Native
 	{

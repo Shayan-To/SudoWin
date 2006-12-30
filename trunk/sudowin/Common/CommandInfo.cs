@@ -28,7 +28,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 
-namespace Sudowin.PublicLibrary
+namespace Sudowin.Common
 {
 	/// <summary>
 	///		Information about a command listed in the sudoers data store
