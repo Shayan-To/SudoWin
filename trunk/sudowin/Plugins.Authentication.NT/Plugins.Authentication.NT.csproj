@@ -37,7 +37,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AuthenticationPlugins\Plugins.Authentication.csproj">
+    <ProjectReference Include="..\Plugins.Authentication\Plugins.Authentication.csproj">
       <Project>{5180BFF2-FADD-49CC-B0F3-E7EF1A7F9CCA}</Project>
       <Name>Plugins.Authentication</Name>
     </ProjectReference>

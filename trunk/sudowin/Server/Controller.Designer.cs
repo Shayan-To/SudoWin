@@ -26,41 +26,48 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
+namespace Sudowin.Server
+{
+	/// <summary>
+	///		Service controller for the Sudowin service.
+	/// </summary>
+	partial class Controller
+	{
+		/// <summary> 
+		///		Required designer variable.
+		/// </summary>
+		private System.ComponentModel.IContainer components = null;
 
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-[assembly: AssemblyTitle( "Sudowin.Common" )]
-[assembly: AssemblyDescription( "Contains shared methods and interfaces that " +
-	"all of this solution's assemblies may need to access." )]
-[assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "l o s t c r e a t i o n s" )]
-[assembly: AssemblyProduct( "Sudowin" )]
-[assembly: AssemblyCopyright( "Copyright © l o s t c r e a t i o n s 2006" )]
-[assembly: AssemblyTrademark( "" )]
-[assembly: AssemblyCulture( "" )]
+		/// <summary>
+		///		Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing">
+		///		True if managed resources should be disposed, false if otherwise.
+		///	</param>
+		protected override void Dispose( bool disposing )
+		{
+			if ( disposing && ( components != null ) )
+			{
+				components.Dispose();
+			}
+			base.Dispose( disposing );
+		}
 
-[assembly: CLSCompliant( true )]
+		#region Component Designer generated code
 
-// Setting ComVisible to false makes the types in this assembly not visible 
-// to COM componenets.  If you need to access a type in this assembly from 
-// COM, set the ComVisible attribute to true on that type.
-[assembly: ComVisible( false )]
+		/// <summary> 
+		/// Required method for Designer support - do not modify 
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
+			// 
+			// Controller
+			// 
+			this.ServiceName = "Sudowin";
 
-// The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid( "ddaeb38d-eeb7-4c90-80cf-aeb3b4f66208" )]
+		}
 
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-[assembly: AssemblyVersion( "0.2.0.0" )]
+		#endregion
+	}
+}

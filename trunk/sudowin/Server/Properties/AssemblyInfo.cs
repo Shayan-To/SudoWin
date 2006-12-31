@@ -28,31 +28,31 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 using System.Reflection;
+using System.Security.Permissions;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle( "Sudowin.Common" )]
-[assembly: AssemblyDescription( "Contains shared methods and interfaces that " +
-	"all of this solution's assemblies may need to access." )]
+[assembly: AssemblyTitle( "Sudowin.Servers.Standalone" )]
+[assembly: AssemblyDescription( "Hosts the server that sudo clients communicate with in order to facilitate privilege escalation." )]
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "l o s t c r e a t i o n s" )]
 [assembly: AssemblyProduct( "Sudowin" )]
-[assembly: AssemblyCopyright( "Copyright © l o s t c r e a t i o n s 2006" )]
+[assembly: AssemblyCopyright( "Copyright © l o s t c r e a t i o n s 2005" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
-
-[assembly: CLSCompliant( true )]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM componenets.  If you need to access a type in this assembly from 
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible( false )]
 
+[assembly: CLSCompliant( true )]
+
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid( "ddaeb38d-eeb7-4c90-80cf-aeb3b4f66208" )]
+[assembly: Guid( "d7a57c83-17df-48fe-8e54-3fbb65c4c539" )]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -61,6 +61,4 @@ using System.Runtime.CompilerServices;
 //      Build Number
 //      Revision
 //
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
 [assembly: AssemblyVersion( "0.2.0.0" )]

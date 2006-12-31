@@ -1,6 +1,3 @@
-<?xml version="1.0" encoding="utf-8" ?>
-
-<!--
 /*
 Copyright (c) 2005, Schley Andrew Kutz <sakutz@gmail.com>
 All rights reserved.
@@ -28,33 +25,52 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
--->
 
-<configuration>
-	<system.runtime.remoting>
-		<application>
-			<client>
-				<wellknown
-					type="Sudowin.Servers.ISudoServer, Sudowin.Servers"
-					url="ipc://Sudo/SudoServer.rem"
-				/>
-			</client>
-			<channels>
-				<channel
-					type="System.Runtime.Remoting.Channels.Ipc.IpcClientChannel, System.Runtime.Remoting, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
-					portName="Sudo"
-					secure="True"
-					tokenImpersonationLevel="Impersonation"
-					useDefaultCredentials="True">
+using System;
 
-					<serverProviders>
-						<formatter ref="binary" />
-						<provider
-							type="System.Runtime.Remoting.Channels.BinaryServerFormatterSinkProvider, System.Runtime.Remoting, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
-						/>
-					</serverProviders>
-				</channel>
-			</channels>
-		</application>
-	</system.runtime.remoting>
-</configuration>
+using System.Runtime.InteropServices;
+
+namespace Sudo.WindowsService
+{
+	/// <summary>
+	///		Used to persist information about sudoers
+	///		between calls.
+	/// </summary>
+	[Serializable]
+	public struct UserInfo
+	{
+		/// <summary>
+		///		Number of invalid logon attempts the 
+		///		user has made.
+		/// 
+		///		Each time a user executes sudo they 
+		///		get a number of chances during that
+		///		execution to enter their correct
+		///		password.
+		/// 
+		///		The invalid logon attempts that occur
+		///		during a single execution of sudo get
+		///		totalled in this member.
+		/// </summary>
+		public int InvalidLogonsCount;
+
+		/// <summary>
+		///		Each time a user executes sudo they 
+		///		get a number of chances during that
+		///		execution to enter their correct
+		///		password.  
+		/// 
+		///		This member represents the number of
+		///		times a user has exceeded their invalid
+		///		logon limit while attempting to execute
+		///		sudo.
+		/// </summary>
+		public int TimesExceededInvalidLogonsCount;
+		/*
+		/// <summary>
+		///		Whether or not the user's credentials 
+		///		are cached.
+		/// </summary>
+		public bool AreCredentialsCached;*/
+	}
+}
