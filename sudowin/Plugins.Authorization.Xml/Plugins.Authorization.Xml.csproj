@@ -38,7 +38,7 @@
     <Compile Include="XmlAuthorizationPlugin.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AuthorizationPlugins\AuthorizationPlugins.csproj">
+    <ProjectReference Include="..\Plugins.Authorization\Plugins.Authorization.csproj">
       <Project>{7937C406-0E88-4E48-AA1F-964E8FB8C1AD}</Project>
       <Name>AuthorizationPlugins</Name>
     </ProjectReference>
