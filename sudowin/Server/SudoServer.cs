@@ -39,10 +39,10 @@ using System.Configuration;
 using System.Globalization;
 using System.ComponentModel;
 using System.DirectoryServices;
-using Sudowin.Plugins.Authorization;
 using System.Security.Principal;
 using System.Collections.Generic;
 using System.Security.Permissions;
+using Sudowin.Plugins.Authorization;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Contexts;
@@ -56,7 +56,7 @@ namespace Sudowin.Server
 	/// </summary>
 	public class SudoServer :	MarshalByRefObject, 
 		
-								Sudowin.Servers.ISudoServer, 
+								Sudowin.Common.ISudoServer, 
 		
 								IDisposable
 	{
@@ -733,7 +733,7 @@ namespace Sudowin.Server
 				Regex.Replace( fcp, @"  ""([^""]*)""", "" ) );
 
 			ProcessInformation pi;
-			bool newProcessCreated = Native.CreateProcessAsUser(
+			bool newProcessCreated = Native.Native.CreateProcessAsUser(
 				userToken,
 				null,
 				fcp,

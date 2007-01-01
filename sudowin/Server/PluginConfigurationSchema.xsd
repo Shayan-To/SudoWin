@@ -28,7 +28,7 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 -->
-<xs:schema id="PluginConfigurationSchema" targetNamespace="http://sudowin.sourceforge.net/schemas/PluginConfiguration/" elementFormDefault="qualified" xmlns="http://sudowin.sourceforge.net/schemas/PluginConfiguration/" xmlns:mstns="http://sudowin.sourceforge.net/schemas/PluginConfiguration/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="0.2.0">
+<xs:schema id="PluginConfigurationSchema" targetNamespace="http://sudowin.sourceforge.net/schemas/PluginConfiguration/" elementFormDefault="qualified" xmlns="http://sudowin.sourceforge.net/schemas/PluginConfiguration/" xmlns:mstns="http://sudowin.sourceforge.net/schemas/PluginConfiguration/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="0.2.0.0">
 	<xs:element name="plugins">
 		<xs:complexType>
 			<xs:sequence>
@@ -42,6 +42,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		<xs:attribute name="assemblyString" type="xs:string" use="required" />
 		<xs:attribute name="serverType" type="serverTypeType" default="SingleCall" use="optional" />
 		<xs:attribute name="serverLifetime" type="xs:int" default="0" use="optional" />
+		<xs:attribute name="enabled" type="xs:boolean" default="true" use="optional" />
 	</xs:complexType>
 	<xs:complexType name="authorizationPluginType">
 		<xs:attribute name="assemblyString" type="xs:string" use="required" />
@@ -49,11 +50,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		<xs:attribute name="serverLifetime" type="xs:int" default="0" use="optional" />
 		<xs:attribute name="connectionString" type="xs:string" use="required" />
 		<xs:attribute name="schemaUri" type="xs:string" use="required" />
+		<xs:attribute name="enabled" type="xs:boolean" use="optional" default="true" />
 	</xs:complexType>
 	<xs:complexType name="credentialsCachePluginType">
 		<xs:attribute name="assemblyString" type="xs:string" use="required" />
 		<xs:attribute name="serverType" type="serverTypeType" default="SingleCall" use="optional" />
 		<xs:attribute name="serverLifetime" type="xs:int" default="0" use="optional" />
+		<xs:attribute name="enabled" type="xs:boolean" use="optional" default="true" />
 	</xs:complexType>
 	<xs:simpleType name="serverTypeType">
 		<xs:restriction base="xs:string">
@@ -64,21 +67,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<xs:complexType name="authenticationPluginGroupType">
 		<xs:sequence>
 			<xs:sequence>
-				<xs:element name="authenticationPlugin" type="authenticationPluginType" minOccurs="1" maxOccurs="unbounded" />
+				<xs:element name="authenticationPlugin" type="authenticationPluginType" minOccurs="1" maxOccurs="1" />
 			</xs:sequence>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="authorizationPluginGroupType">
 		<xs:sequence>
 			<xs:sequence>
-				<xs:element name="authorizationPlugin" type="authorizationPluginType" minOccurs="1" maxOccurs="unbounded" />
+				<xs:element name="authorizationPlugin" type="authorizationPluginType" minOccurs="1" maxOccurs="1" />
 			</xs:sequence>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="credentialsCachePluginGroupType">
 		<xs:sequence>
 			<xs:sequence>
-				<xs:element name="credentialsCachePlugin" type="credentialsCachePluginType" minOccurs="1" maxOccurs="unbounded" />
+				<xs:element name="credentialsCachePlugin" type="credentialsCachePluginType" minOccurs="1" maxOccurs="1" />
 			</xs:sequence>
 		</xs:sequence>
 	</xs:complexType>

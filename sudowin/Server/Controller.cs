@@ -27,9 +27,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
+using System.Data;
+using Sudowin.Common;
+using Sudowin.Plugins;
+using System.Reflection;
 using System.Diagnostics;
 using System.Configuration;
-using Sudowin.Common;
+using System.Globalization;
 using System.ComponentModel;
 using System.ServiceProcess;
 using System.Runtime.Remoting;
@@ -37,7 +41,6 @@ using System.Security.Permissions;
 using System.Text.RegularExpressions;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
-using System.Globalization;
 
 namespace Sudowin.Server
 {
@@ -71,7 +74,7 @@ namespace Sudowin.Server
 			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod, 
 				"entering OnStart" );
 			
-			// get p to the actual exe
+			// get the path to the actual service executable
 			Uri uri = new Uri( 
 				System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase );
 
@@ -79,53 +82,28 @@ namespace Sudowin.Server
 
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose, 
 				"configuring remoting with " + remote_config_uri );
+				
+			// configure remoting channels and objects
+			RemotingConfiguration.Configure( remote_config_uri, true );
 
 			// load the plugins
 			PluginConfigurationSchema pcs = new PluginConfigurationSchema();
 			pcs.ReadXml( ConfigurationManager.AppSettings[ "pluginConfigurationUri" ] );
+			LoadPlugins( pcs, "authenticationPlugin" );
+			LoadPlugins( pcs, "authorizationPlugin" );
+			LoadPlugins( pcs, "credentialsCachePlugin" );
 			
-			// load the authentication plugins
-			foreach ( Row r in pcs.authenticationPlugin.Rows )
-			{
-				PluginConfigurationSchema.authenticationPluginRow apr = r as
-					PluginConfigurationSchema.authenticationPluginRow;
-
-				Regex rx = 
-					new Regex( @"^(?<assembly>.+)\.(?<class>[^,]+),(?<assemblyVersion>.+)$", 
-					RegexOptions.IgnoreCase );
-				Match m = rx.Match( apr.assemblyString );
-				if ( !m.Success )
-				{
-					string msg = string.Format( CultureInfo.CurrentCulture,
-						"assemblyString is not properly formatted, {0}",
-						apr.assemblyString );
-					m_ts.TraceEvent( TraceEventType.Critical, 10, msg );
-					throw new System.Configuration.ConfigurationErrorsException( msg );
-				}
-
-				string plugin_assembly = m.Groups[ "assembly" ].Value;
-				string plugin_class = m.Groups[ "class" ].Value;
-				string plugin_version = m.Groups[ "version" ].Value;
-
-				// find the assembly
-
-				
-			}
-			
-			// configure remoting channels and objects
-			RemotingConfiguration.Configure( remote_config_uri, true );
-
 			// create the sa object
-			DataServer ds = Activator.GetObject( typeof( DataServer ),
-				System.Configuration.ConfigurationManager.AppSettings[ "dataServerUri" ] )
-				as DataServer;
+			//DataServer ds = Activator.GetObject( typeof( DataServer ),
+			//	System.Configuration.ConfigurationManager.AppSettings[ "dataServerUri" ] )
+			//	as DataServer;
 
 			// activate the data server object first before any of the
 			// sudo clients can do so.  this will cause any exceptions that
 			// might get thrown while reading the sudoers data source to
 			// cause the service not to start, rather than crashing a sudo
-			// ca application.
-			ds.Activate();
+			// client application.
+			// ds.Activate();
 
 			m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitMethod, 
 				"exiting OnStart" );
@@ -141,6 +119,92 @@ namespace Sudowin.Server
 			m_ts.Close();
 			m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitMethod, 
 				"exiting OnStop" );
+		}
+		
+		private void LoadPlugins( PluginConfigurationSchema pluginConfigSchema, string pluginType )
+		{
+			// determine the plugin type
+			DataRowCollection drc = null;
+			switch ( pluginType )
+			{
+				case "authenticationPlugin" :
+				{
+					drc = pluginConfigSchema.authenticationPlugin.Rows;
+					break;
+				}
+				case "authorizationPlugin" :
+				{
+					drc = pluginConfigSchema.authorizationPlugin.Rows;
+					break;
+				}
+				case "credentialsCachePlugin" :
+				{
+					drc = pluginConfigSchema.credentialsCachePlugin.Rows;
+					break;
+				}
+				default:
+				{
+					// do nothing
+					break;
+				}
+			}
+			
+			int x = 0;
+			
+			// activate the plugin assemblies
+			foreach ( DataRow r in drc )
+			{
+				string assem_str = Convert.ToString( 
+					r[ "assemblyString" ], CultureInfo.CurrentCulture );
+				
+			 	Regex rx =
+					new Regex( @"^(?<assembly>.+)\.(?<class>[^,]+),(?<assemblyVersion>.+)$",
+					RegexOptions.IgnoreCase );
+				Match m = rx.Match( assem_str );
+				if ( !m.Success )
+				{
+					string msg = string.Format( CultureInfo.CurrentCulture,
+						"assemblyString is not properly formatted, {0}", assem_str );
+					m_ts.TraceEvent( TraceEventType.Critical, 10, msg );
+					throw new System.Configuration.ConfigurationErrorsException( msg );
+				}
+				
+				
+				bool plugin_enabled = Convert.ToBoolean( r[ "enabled" ] );
+				
+				if ( plugin_enabled )
+				{
+					//
+					// register the plugin as a remoting object -- the plugins
+					// will have the following uri formats:
+					//
+					// pluginTypeXX.rem 
+					// 
+					// where the XX is plugin index (0 based) in its section 
+					// in the plugin configuration file.  for example, the 2nd 
+					// authorization plugin's uri would be:
+					//
+					// authorizationPlugin01.rem
+					//
+					Type t = Type.GetType( assem_str, true, true );
+					string uri = string.Format( "{0}{0:d2}.rem", pluginType, x );
+					RemotingConfiguration.RegisterWellKnownServiceType( t, uri, 
+						( WellKnownObjectMode ) Enum.Parse( typeof( WellKnownObjectMode ),
+							Convert.ToString( r[ "serverType" ], CultureInfo.CurrentCulture ) ) );
+					
+					// get a reference to the remoting object we just created
+					IPlugin ip = Activator.GetObject( typeof( IPlugin ), uri ) as IPlugin;
+
+					// activate the remoting object first before any of the sudo clients
+					// do so through a sudo invocation.  this will cause any exceptions
+					// that might get thrown in the plugin's construction to do so now,
+					// causing this service not to start.  it is better that the sudowin
+					// service fail outright than have a client application crash later
+					ip.Activate();
+				}
+
+				++x;
+			}
 		}
 	}
 }

@@ -27,18 +27,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
-using Sudowin.Common;
 
 namespace Sudowin.Plugins.Authorization
 {
-	/// <summary>
-	///		IAuthorizationPlugin defines the interface for all classes that 
-	///		are designed to operate as an authorization plugin for Sudowin.  
-	///		The sudo server uses authorization plugins to verify that a user 
-	///		is allowed to execute a given command with elevated privileges.
-	/// </summary>
-	public interface IAuthorizationPlugin : IPlugin, IDisposable
+	public class AuthorizationPlugin : IAuthorizationPlugin
 	{
+		#region IAuthorizationPlugin Members
+
 		/// <summary>
 		///		Opens a connection to the authorization data source 
 		///		and validates the data source with the given schema 
@@ -51,12 +46,18 @@ namespace Sudowin.Plugins.Authorization
 		/// <param name="schemaFileUri">
 		///		Uri of schema file to use to validate the data source.
 		/// </param>
-		void Open( string connectionString, Uri schemaFileUri );
+		public virtual void Open( string connectionString, Uri schemaFileUri )
+		{
+			throw new Exception( "This method must be overriden." );
+		}
 
 		/// <summary>
 		///		Closes the connection to the authorization data source.
 		/// </summary>
-		void Close();
+		public virtual void Close()
+		{
+			throw new Exception( "This method must be overriden." );
+		}
 
 		/// <summary>
 		///		Gets a Sudowin.Common.UserInfo structure
@@ -73,7 +74,10 @@ namespace Sudowin.Plugins.Authorization
 		///		True if the UserInfo struct is successfuly retrieved; 
 		///		false if otherwise.
 		/// </returns>
-		bool GetUserInfo( string userName, ref UserInfo userInfo );
+		public virtual bool GetUserInfo( string userName, ref Sudowin.Common.UserInfo userInfo )
+		{
+			throw new Exception( "This method must be overriden." );
+		}
 
 		/// <summary>
 		///		Gets a Sudowin.Common.CommandInfo structure
@@ -98,10 +102,39 @@ namespace Sudowin.Plugins.Authorization
 		///		True if the CommandInfo struct is successfuly retrieved; 
 		///		false if otherwise.
 		/// </returns>
-		bool GetCommandInfo(
-			string username,
-			string commandPath,
-			string commandArguments,
-			ref CommandInfo commandInfo );
+		public virtual bool GetCommandInfo( string username, string commandPath, string commandArguments, ref Sudowin.Common.CommandInfo commandInfo )
+		{
+			throw new Exception( "This method must be overriden." );
+		}
+
+		#endregion
+
+		#region IPlugin Members
+
+		/// <summary>
+		///		Activates the plugin for first-time use.  This method is necessary
+		///		because not all plugins are activated with the 'new' keyword, instead
+		///		some are activated with 'Activator.GetObject' and a method is required
+		///		to force the plugin's construction in order to catch any exceptions that
+		///		may be associated with a plugin's construction.
+		/// </summary>
+		public virtual void Activate()
+		{
+			
+		}
+
+		#endregion
+
+		#region IDisposable Members
+
+		/// <summary>
+		///		Free resources.
+		/// </summary>
+		public virtual void Dispose()
+		{
+			throw new Exception( "This method must be overriden." );
+		}
+
+		#endregion
 	}
 }

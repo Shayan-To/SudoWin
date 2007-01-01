@@ -27,36 +27,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
-using Sudowin.Common;
 
-namespace Sudowin.Plugins.Authentication.NT
+namespace Sudowin.Plugins
 {
-	
-	public class NTAuthenticationPlugin : AuthenticationPlugin
+	public interface IPlugin
 	{
 		/// <summary>
-		///		Verifies the credentials of a user with a passphrase.
+		///		Activates the plugin for first-time use.  This method is necessary
+		///		because not all plugins are activated with the 'new' keyword, instead
+		///		some are activated with 'Activator.GetObject' and a method is required
+		///		to force the plugin's construction in order to catch any exceptions that
+		///		may be associated with a plugin's construction.
 		/// </summary>
-		/// <param name="domainOrComputerName">
-		///		Domain name or computer name the user account belongs to.
-		/// </param>
-		/// <param name="userName">
-		///		Username of account to validate.
-		/// </param>
-		/// <param name="passphrase">
-		///		Password for the given username.
-		/// </param>
-		/// <returns>
-		///		True if the credentials are successfully verified; otherwise false.
-		/// </returns>
-		public override bool VerifyCredentials( string domainOrComputerName, string userName, string password )
-		{
-			IntPtr hLogon = IntPtr.Zero;
-			bool logonSuccessful = Native.Native.LogonUser( userName, domainOrComputerName, password,
-				Native.LogonType.Interactive, Native.LogonProvider.WinNT50, out hLogon );
-			if ( logonSuccessful )
-				Native.Native.CloseHandle( hLogon );
-			return ( logonSuccessful );
-		}
+		void Activate();
 	}
 }

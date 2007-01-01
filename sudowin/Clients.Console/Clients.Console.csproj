@@ -72,10 +72,6 @@
       <Project>{81E98C70-C681-4DD4-B6B1-154E12567B9C}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Servers\Servers.csproj">
-      <Project>{29E7F24B-CF4C-4447-9389-1EF8C30602AA}</Project>
-      <Name>Servers</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
