@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="CommandInfo.cs" />
     <Compile Include="EventIds.cs" />
+    <Compile Include="ISudoServer.cs" />
     <Compile Include="LoggingLevelTypes.cs" />
     <Compile Include="Managed.cs" />
     <Compile Include="Native.cs" />

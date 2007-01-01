@@ -28,16 +28,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 using System.Text;
+using Sudowin.Common;
 using System.Security;
 using System.Threading;
 using System.Diagnostics;
-using Sudowin.Common;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace Sudowin.Plugins.CredentialsCache.LocalServer
 {
-	public class LocalServerCredentialsCachePlugin : ICredentialsCachePlugin
+	public class LocalServerCredentialsCachePlugin : Sudowin.Plugins.CredentialsCache.CredentialsCachePlugin
 	{
 		/// <summary>
 		///		Trace source that can be defined in the 
@@ -72,7 +72,7 @@ namespace Sudowin.Plugins.CredentialsCache.LocalServer
 		/// </summary>
 		private Mutex m_coll_mtx = new Mutex( false );
 
-		public bool GetCache( string userName, ref CredentialsCache credCache )
+		public override bool GetCache( string userName, ref CredentialsCache credCache )
 		{
 			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
 				"entering GetCache( string, ref CredentialsCache )" );
@@ -108,7 +108,7 @@ namespace Sudowin.Plugins.CredentialsCache.LocalServer
 			return ( is_passphrase_cached && is_cred_cache_cached );
 		}
 
-		public void SetCache( string userName, CredentialsCache credCache )
+		public override void SetCache( string userName, CredentialsCache credCache )
 		{
 			m_coll_mtx.WaitOne();
 
@@ -144,7 +144,7 @@ namespace Sudowin.Plugins.CredentialsCache.LocalServer
 			m_coll_mtx.ReleaseMutex();
 		}
 
-		public void ExpireCache( string userName, int seconds )
+		public override void ExpireCache( string userName, int seconds )
 		{
 			m_coll_mtx.WaitOne();
 

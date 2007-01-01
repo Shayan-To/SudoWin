@@ -30,14 +30,13 @@ using System;
 using System.IO;
 using System.Text;
 using System.Drawing;
-using System.Reflection;
 using Sudowin.Common;
-using Sudowin.Servers;
+using System.Reflection;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Runtime.Remoting;
-using System.Collections.Generic;
 using System.Security.Principal;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace Sudowin.Clients.Gui

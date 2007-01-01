@@ -27,8 +27,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
-using System.Text;
-using System.Collections.Generic;
 
 namespace Sudowin.Plugins.Authentication
 {
@@ -38,7 +36,7 @@ namespace Sudowin.Plugins.Authentication
 	///		The sudo server uses authentication plugins to verify the 
 	///		credentials of a user.
 	/// </summary>
-	public interface IAuthenticationPlugin
+	public interface IAuthenticationPlugin : Sudowin.Plugins.IPlugin
 	{
 		/// <summary>
 		///		Verifies the credentials of a user with a passphrase.

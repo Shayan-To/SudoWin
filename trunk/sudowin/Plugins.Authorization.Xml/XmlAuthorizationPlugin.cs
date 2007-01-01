@@ -27,6 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
+using System.IO;
 using System.Xml;
 using System.Data;
 using System.Text;
@@ -37,13 +38,13 @@ using System.Globalization;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Sudowin.AuthorizationPlugins.Xml
+namespace Sudowin.Plugins.Authorization.Xml
 {
 	/// <summary>
 	///		Used to access sudoer information stored in a xml
 	///		file that adheres to the XmlAuthorizationPlugin schema.
 	/// </summary>
-	public class XmlAuthorizationPlugin : IAuthorizationPlugin
+	public class XmlAuthorizationPlugin : AuthorizationPlugin
 	{
 		private struct FindCommandNodeSearchParameters
 		{
@@ -145,7 +146,7 @@ namespace Sudowin.AuthorizationPlugins.Xml
 		/// <param name="schemaFileUri">
 		///		Uri of schema file to use to validate the data.
 		/// </param>
-		public void Open( string connectionString, Uri schemaFileUri )
+		public override void Open( string connectionString, Uri schemaFileUri )
 		{
 			// throw an exception if the xml file is not found
 			if ( !System.IO.File.Exists( connectionString ) )
@@ -189,7 +190,7 @@ namespace Sudowin.AuthorizationPlugins.Xml
 		/// <summary>
 		///		Present for compliance with IAuthorizationPlugin.
 		/// </summary>
-		public void Close()
+		public override void Close()
 		{
 			// do nothing
 		}
@@ -209,7 +210,7 @@ namespace Sudowin.AuthorizationPlugins.Xml
 		///		True if the UserInfo struct is successfuly retrieved; 
 		///		false if otherwise.
 		/// </returns>
-		public bool GetUserInfo( string userName, ref UserInfo userInfo )
+		public override bool GetUserInfo( string userName, ref UserInfo userInfo )
 		{
 			// get the user node for this user
 			XmlNode unode = FindUserNode( userName );
@@ -269,7 +270,7 @@ namespace Sudowin.AuthorizationPlugins.Xml
 		///		True if the CommandInfo struct is successfuly retrieved; 
 		///		false if otherwise.
 		/// </returns>
-		public bool GetCommandInfo(
+		public override bool GetCommandInfo(
 			string username,
 			string commandPath,
 			string commandArguments,
@@ -412,7 +413,7 @@ namespace Sudowin.AuthorizationPlugins.Xml
 		/// <summary>
 		///		Present for compliance with IAuthorizationPlugin.
 		/// </summary>
-		public void Dispose()
+		public override void Dispose()
 		{
 			// do nothing
 		}
@@ -883,7 +884,7 @@ namespace Sudowin.AuthorizationPlugins.Xml
 			CommandInfo ci = new CommandInfo();
 
 			// declare this method's return value
-			bool isCommandVerified =
+			bool isCommandVerified = false;/*
 
 				!IsShellCommand( commandPath )
 
@@ -901,7 +902,7 @@ namespace Sudowin.AuthorizationPlugins.Xml
 
 				&&
 
-				ci.IsCommandAllowed;
+				ci.IsCommandAllowed;*/
 
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
 				"{0}, isCommandVerified={1}", userName, isCommandVerified );

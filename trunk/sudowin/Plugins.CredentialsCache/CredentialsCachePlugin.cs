@@ -30,8 +30,10 @@ using System;
 
 namespace Sudowin.Plugins.CredentialsCache
 {
-	public interface ICredentialsCachePlugin : Sudowin.Plugins.IPlugin
+	public class CredentialsCachePlugin : ICredentialsCachePlugin
 	{
+		#region ICredentialsCachePlugin Members
+
 		/// <summary>
 		///		Retrieves the given user's cached credentials.
 		/// </summary>
@@ -48,8 +50,10 @@ namespace Sudowin.Plugins.CredentialsCache
 		///		True and the user's cached credentials if found; 
 		///		otherwise false and an empty cached credentials set.
 		/// </returns>
-		bool GetCache( string userName, ref CredentialsCache credCache );
-
+		public virtual bool GetCache( string userName, ref CredentialsCache credCache )
+		{
+			throw ( new NotImplementedException( "This method must be overriden." ) );
+		}
 
 		/// <summary>
 		///		Set's the given user's cached credentials.
@@ -69,7 +73,10 @@ namespace Sudowin.Plugins.CredentialsCache
 		/// <param name="credCache">
 		///		The given user's cached credentials.
 		/// </param>
-		void SetCache( string userName, CredentialsCache credCache );
+		public virtual void SetCache( string userName, CredentialsCache credCache )
+		{
+			throw ( new NotImplementedException( "This method must be overriden." ) );
+		}
 
 		/// <summary>
 		///		Expire the given user's cached credentials in the 
@@ -84,6 +91,27 @@ namespace Sudowin.Plugins.CredentialsCache
 		/// <param name="seconds">
 		///		Number of seconds to wait until expiration.
 		/// </param>
-		void ExpireCache( string userName, int seconds );
+		public virtual void ExpireCache( string userName, int seconds )
+		{
+			throw ( new NotImplementedException( "This method must be overriden." ) );
+		}
+
+		#endregion
+
+		#region IPlugin Members
+
+		/// <summary>
+		///		Activates the plugin for first-time use.  This method is necessary
+		///		because not all plugins are activated with the 'new' keyword, instead
+		///		some are activated with 'Activator.GetObject' and a method is required
+		///		to force the plugin's construction in order to catch any exceptions that
+		///		may be associated with a plugin's construction.
+		/// </summary>
+		public virtual void Activate()
+		{
+			// do nothing
+		}
+
+		#endregion
 	}
 }

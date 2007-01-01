@@ -29,7 +29,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.Text;
 using Sudowin.Common;
-using Sudowin.Servers;
 using System.Reflection;
 using System.Diagnostics;
 using System.Globalization;
