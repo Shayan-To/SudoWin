@@ -63,11 +63,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataServer.cs" />
-    <Compile Include="ModuleSuppressions.cs" />
-    <Compile Include="PluginConfigurationSchema.cs">
-      <DependentUpon>PluginConfigurationSchema.xsd</DependentUpon>
+    <Compile Include="DataServer.cs">
+      <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ModuleSuppressions.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -83,7 +82,6 @@
     </Compile>
     <Compile Include="Service.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UserCache.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Plugins.Authentication\Plugins.Authentication.csproj">
@@ -116,12 +114,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="PluginConfigurationSchema.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="PluginConfigurationSchema.xsx">
-      <DependentUpon>PluginConfigurationSchema.xsd</DependentUpon>
-    </None>
     <None Include="sudowin.snk" />
   </ItemGroup>
   <ItemGroup>

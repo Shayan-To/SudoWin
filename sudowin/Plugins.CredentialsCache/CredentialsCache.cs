@@ -30,6 +30,7 @@ using System;
 
 namespace Sudowin.Plugins.CredentialsCache
 {
+	[Serializable]
 	public struct CredentialsCache
 	{
 		/// <summary>

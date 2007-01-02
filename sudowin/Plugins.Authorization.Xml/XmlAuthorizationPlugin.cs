@@ -93,7 +93,7 @@ namespace Sudowin.Plugins.Authorization.Xml
 		/// <summary>
 		///		Default constructor.
 		/// </summary>
-		public XmlAuthorizationPlugin()
+		public XmlAuthorizationPlugin() : base()
 		{
 			m_ts.TraceEvent( TraceEventType.Start, 10, "constructing XmlAuthorizationPlugin" );
 			m_ts.TraceEvent( TraceEventType.Stop, 10, "constructed XmlAuthorizationPlugin" );
@@ -197,10 +197,13 @@ namespace Sudowin.Plugins.Authorization.Xml
 
 		/// <summary>
 		///		Gets a Sudowin.Common.UserInfo structure
-		///		from the xml file for the given user name.
+		///		from the authorization source for the given user name.
 		/// </summary>
 		/// <param name="userName">
-		///		User name to get information for.
+		///		The name of the user to retrieve the information 
+		///		for.  This name should be in the format:
+		/// 
+		///			HOST_OR_DOMAIN\USERNAME
 		/// </param>
 		/// <param name="userInfo">
 		///		Sudowin.Common.UserInfo structure for
@@ -249,11 +252,14 @@ namespace Sudowin.Plugins.Authorization.Xml
 
 		/// <summary>
 		///		Gets a Sudowin.Common.CommandInfo structure
-		///		from the xml file for the given user name,
+		///		from the authorization source for the given user name,
 		///		command path, and command arguments.
 		/// </summary>
-		/// <param name="username">
-		///		User name to get information for.
+		/// <param name="userName">
+		///		The name of the user to retrieve the information 
+		///		for.  This name should be in the format:
+		/// 
+		///			HOST_OR_DOMAIN\USERNAME
 		/// </param>
 		/// <param name="commandPath">
 		///		Command path to get information for.
@@ -870,7 +876,29 @@ namespace Sudowin.Plugins.Authorization.Xml
 
 		#endregion
 
-		private bool VerifyCommand(
+		/// <summary>
+		///		Verifies the given user is allowed to execute
+		///		the given command with the given arguments.
+		/// </summary>
+		/// <param name="userName">
+		///		The name of the user to verify the command
+		///		for.  This name should be in the format:
+		/// 
+		///			HOST_OR_DOMAIN\USERNAME
+		/// </param>
+		/// <param name="commandPath">
+		///		The path of the command the user is attempting
+		///		to execute.
+		/// </param>
+		/// <param name="commandArguments">
+		///		The arguments to the command the user is
+		///		attempting to execute.
+		/// </param>
+		/// <returns>
+		///		True if the user is allowed to execute the command;
+		///		otherwise false.
+		/// </returns>
+		public override bool VerifyCommand(
 			string userName,
 			ref string commandPath,
 			string commandArguments )
@@ -884,7 +912,7 @@ namespace Sudowin.Plugins.Authorization.Xml
 			CommandInfo ci = new CommandInfo();
 
 			// declare this method's return value
-			bool isCommandVerified = false;/*
+			bool isCommandVerified = 
 
 				!IsShellCommand( commandPath )
 
@@ -894,7 +922,7 @@ namespace Sudowin.Plugins.Authorization.Xml
 
 				&&
 
-				m_data_server.GetCommandInfo(
+				GetCommandInfo(
 					userName,
 					commandPath,
 					commandArguments,
@@ -902,7 +930,7 @@ namespace Sudowin.Plugins.Authorization.Xml
 
 				&&
 
-				ci.IsCommandAllowed;*/
+				ci.IsCommandAllowed;
 
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
 				"{0}, isCommandVerified={1}", userName, isCommandVerified );

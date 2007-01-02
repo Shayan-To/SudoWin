@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Sudowin.Plugins.CredentialsCache;
 
 namespace Sudowin.Server
 {
@@ -57,12 +58,12 @@ namespace Sudowin.Server
 		private Sudowin.Plugins.Authorization.IAuthorizationPlugin m_auth_ds;
 
 		/// <summary>
-		///		Collection of UserCache structures used
+		///		Collection of CredentialsCache structures used
 		///		to track information about users when they
 		///		call Sudowin.
 		/// </summary>
-		private Dictionary<string, UserCache> m_ucs =
-			new Dictionary<string, UserCache>();
+		private Dictionary<string, CredentialsCache> m_ucs =
+			new Dictionary<string, CredentialsCache>();
 
 		/// <summary>
 		///		Collection of SecureStrings used to persist
@@ -159,50 +160,50 @@ namespace Sudowin.Server
 		}
 
 		/// <summary>
-		///		Gets the UserCache for the given
+		///		Gets the CredentialsCache for the given
 		///		user name.
 		/// </summary>
 		/// <param name="userName">
 		///		User name to look for.
 		/// </param>
-		/// <param name="userCache">
-		///		Reference to returned UserCache structure.
+		/// <param name="CredentialsCache">
+		///		Reference to returned CredentialsCache structure.
 		/// </param>
 		/// <returns>
-		///		If the UserCache structure for the given
+		///		If the CredentialsCache structure for the given
 		///		user name exists in the cache then this
 		///		method will return the information for that
 		///		user name.
 		/// 
-		///		If the UserCache structure for the given 
+		///		If the CredentialsCache structure for the given 
 		///		user name does not exist in the cache then this 
-		///		method will return a new UserCache structure.
+		///		method will return a new CredentialsCache structure.
 		/// </returns>
 		[DebuggerHidden]
-		public bool GetUserCache( string userName, ref UserCache userCache )
+		public bool GetCredentialsCache( string userName, ref CredentialsCache CredentialsCache )
 		{
 			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
-				"entering GetUserCache( string, ref UserCache )" );
+				"entering GetCredentialsCache( string, ref CredentialsCache )" );
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
-				"userName={0},userCache=", userName );
+				"userName={0},CredentialsCache=", userName );
 
 			m_coll_mtx.WaitOne();
-			bool isUserCacheCached = m_ucs.TryGetValue( userName, out userCache );
+			bool isCredentialsCacheCached = m_ucs.TryGetValue( userName, out CredentialsCache );
 			m_coll_mtx.ReleaseMutex();
 
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
-				"{0}, isUserCacheCached={1}", userName, isUserCacheCached );
+				"{0}, isCredentialsCacheCached={1}", userName, isCredentialsCacheCached );
 			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.ExitMethod,
-				"exiting GetUserCache( string, ref UserCache )" );
+				"exiting GetCredentialsCache( string, ref CredentialsCache )" );
 
-			return ( isUserCacheCached );
+			return ( isCredentialsCacheCached );
 		}
 
 		[DebuggerHidden]
-		public bool GetUserCache( string userName, ref string passphrase )
+		public bool GetCredentialsCache( string userName, ref string passphrase )
 		{
 			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
-				"entering GetUserCache( string, ref string )" );
+				"entering GetCredentialsCache( string, ref string )" );
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
 				"userName={0},passphrase=", userName );
 			
@@ -220,48 +221,48 @@ namespace Sudowin.Server
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
 				"{0}, ispassphraseCached={1}", userName, ispassphraseCached );
 			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.ExitMethod,
-				"exiting GetUserCache( string, ref string )" );
+				"exiting GetCredentialsCache( string, ref string )" );
 
 			return ( ispassphraseCached );
 		}
 
 		/// <summary>
-		///		If the UserCache for the given user name
-		///		does not already exist in the UserCache
+		///		If the CredentialsCache for the given user name
+		///		does not already exist in the CredentialsCache
 		///		collection then the it is added.
 		/// 
-		///		If the UserCache for the given user name
-		///		does already exist in the the UserCache
+		///		If the CredentialsCache for the given user name
+		///		does already exist in the the CredentialsCache
 		///		collection then the existing data is updated.
 		/// </summary>
 		/// <param name="userName">
-		///		User name to set the UserCache for.
+		///		User name to set the CredentialsCache for.
 		/// </param>
-		/// <param name="userCache">
-		///		UserCache to set.
+		/// <param name="CredentialsCache">
+		///		CredentialsCache to set.
 		/// </param>
 		[DebuggerHidden]
-		public void SetUserCache( 
+		public void SetCredentialsCache( 
 			string userName, 
-			UserCache userCache )
+			CredentialsCache CredentialsCache )
 		{
 			m_coll_mtx.WaitOne();
 			
-			// whether or not the userCache structure
+			// whether or not the CredentialsCache structure
 			// with the userName parameter for its key
 			// is already is the m_ucs collection
 			bool is_cached = m_ucs.ContainsKey( userName );
 			
 			if ( is_cached )
-				m_ucs[ userName ] = userCache;
+				m_ucs[ userName ] = CredentialsCache;
 			else
-				m_ucs.Add( userName, userCache );
+				m_ucs.Add( userName, CredentialsCache );
 
 			m_coll_mtx.ReleaseMutex();
 		}
 
 		/// <summary>
-		///		Expire the UserCache structure for the given userName
+		///		Expire the CredentialsCache structure for the given userName
 		///		in the number of seconds defined in secondsUntil.
 		/// </summary>
 		/// <param name="userName">
@@ -269,9 +270,9 @@ namespace Sudowin.Server
 		///		to remove.
 		/// </param>
 		/// <param name="secondsUntil">
-		///		Number of seconds to wait until the UserCache is expired.
+		///		Number of seconds to wait until the CredentialsCache is expired.
 		/// </param>
-		public void ExpireUserCache( string userName, int secondsUntil )
+		public void ExpireCredentialsCache( string userName, int secondsUntil )
 		{
 			m_coll_mtx.WaitOne();
 
@@ -286,7 +287,7 @@ namespace Sudowin.Server
 			else
 			{
 				m_tmrs.Add( userName, new Timer(
-					new TimerCallback( ExpireUserCacheCallback ),
+					new TimerCallback( ExpireCredentialsCacheCallback ),
 					userName, secondsUntil * 1000, Timeout.Infinite ) );
 			}
 
@@ -294,14 +295,14 @@ namespace Sudowin.Server
 		}
 
 		/// <summary>
-		///		Callback method that removes a UserCache structure
+		///		Callback method that removes a CredentialsCache structure
 		///		from m_ucs and a SecureString from m_passphrases.
 		/// </summary>
 		/// <param name="state">
 		///		User name that is the key to the m_passphrases and m_ucs
 		///		collections with the objects that are to be removed.
 		/// </param>
-		private void ExpireUserCacheCallback( object state )
+		private void ExpireCredentialsCacheCallback( object state )
 		{
 			m_coll_mtx.WaitOne();
 
@@ -309,7 +310,7 @@ namespace Sudowin.Server
 			// a user name string
 			string un = state as string;
 
-			// if the user has a UserCache structure
+			// if the user has a CredentialsCache structure
 			// in the collection then remove it
 			if ( m_ucs.ContainsKey( un ) )
 				m_ucs.Remove( un );
@@ -342,7 +343,7 @@ namespace Sudowin.Server
 		/// <param name="passphrase">
 		///		Plain-text passphrase to convert into a SecureString.
 		/// </param>
-		public void SetUserCache( string userName, string passphrase )
+		public void SetCredentialsCache( string userName, string passphrase )
 		{
 			m_coll_mtx.WaitOne();
 

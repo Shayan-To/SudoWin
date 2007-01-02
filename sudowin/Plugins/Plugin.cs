@@ -27,43 +27,29 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
-using System.Runtime.InteropServices;
 
-namespace Sudowin.Server
+namespace Sudowin.Plugins
 {
-	/// <summary>
-	///		Used to store persistent information about sa
-	///		access attempts made by the users.
-	/// </summary>
-	[Serializable]
-	public struct UserCache
+	public class Plugin : MarshalByRefObject, IPlugin
 	{
 		/// <summary>
-		///		Number of invalid logon attempts the 
-		///		user has made.
-		/// 
-		///		Each time a user executes sudo they 
-		///		get a number of chances during that
-		///		execution to enter their correct
-		///		passphrase.
-		/// 
-		///		The invalid logon attempts that occur
-		///		during a single execution of sudo get
-		///		totalled in this member.
+		///		This class is not meant to be directly instantiated.
 		/// </summary>
-		public int InvalidLogonCount;
-
+		protected Plugin()
+		{
+			// do nothing
+		}
+	
 		/// <summary>
-		///		Each time a user executes sudo they 
-		///		get a number of chances during that
-		///		execution to enter their correct
-		///		passphrase.  
-		/// 
-		///		This member represents the number of
-		///		times a user has exceeded their invalid
-		///		logon limit while attempting to execute
-		///		Sudowin.
+		///		Activates the plugin for first-time use.  This method is necessary
+		///		because not all plugins are activated with the 'new' keyword, instead
+		///		some are activated with 'Activator.GetObject' and a method is required
+		///		to force the plugin's construction in order to catch any exceptions that
+		///		may be associated with a plugin's construction.
 		/// </summary>
-		public int TimesExceededInvalidLogonCount;
+		public virtual void Activate()
+		{
+
+		}
 	}
 }

@@ -30,8 +30,16 @@ using System;
 
 namespace Sudowin.Plugins.Authentication
 {
-	public class AuthenticationPlugin : IAuthenticationPlugin
+	public class AuthenticationPlugin : Plugin, IAuthenticationPlugin
 	{
+		/// <summary>
+		///		This class is not meant to be directly instantiated.
+		/// </summary>
+		protected AuthenticationPlugin()
+		{
+			// do nothing
+		}
+		
 		#region IAuthenticationPlugin Members
 
 		/// <summary>
@@ -43,22 +51,6 @@ namespace Sudowin.Plugins.Authentication
 		public virtual bool VerifyCredentials( string domainOrComputerName, string userName, string passphrase )
 		{
 			throw new Exception( "The method must be overriden." );
-		}
-
-		#endregion
-
-		#region IPlugin Members
-
-		/// <summary>
-		///		Activates the plugin for first-time use.  This method is necessary
-		///		because not all plugins are activated with the 'new' keyword, instead
-		///		some are activated with 'Activator.GetObject' and a method is required
-		///		to force the plugin's construction in order to catch any exceptions that
-		///		may be associated with a plugin's construction.
-		/// </summary>
-		public virtual void Activate()
-		{
-			
 		}
 
 		#endregion

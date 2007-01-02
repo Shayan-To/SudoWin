@@ -27,11 +27,48 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
+using System.Diagnostics;
+using System.Configuration;
+using System.Text.RegularExpressions;
 
 namespace Sudowin.Plugins.Authorization
 {
-	public class AuthorizationPlugin : IAuthorizationPlugin
+	public class AuthorizationPlugin : Plugin, IAuthorizationPlugin
 	{
+		/// <summary>
+		///		Trace source that can be defined in the 
+		///		config file for Sudowin.Server.
+		/// </summary>
+		private TraceSource m_ts = new TraceSource( "traceSrc" );
+		
+		/// <summary>
+		///		This class is not meant to be directly instantiated.
+		/// </summary>
+		protected AuthorizationPlugin()
+		{
+			m_ts.TraceEvent( TraceEventType.Start, 10, "constructing AuthorizationPlugin" );
+			
+			// get this authorization plugin's index in the 
+			// plugin configuration file
+			string plgn_uri = System.Runtime.Remoting.RemotingServices.GetObjectUri( this );
+			string plgn_index = Regex.Match( plgn_uri, @"^.*(?<index>\d{2})\.rem$", 
+				RegexOptions.IgnoreCase ).Groups[ "index" ].Value;
+				
+			// read in the plugin configuration file
+			PluginConfigurationSchema pcs = new PluginConfigurationSchema();
+			pcs.ReadXml( ConfigurationManager.AppSettings[ "pluginConfigurationUri" ] );
+			
+			// get a reference to this plugin's entry in the file
+			PluginConfigurationSchema.authorizationPluginRow apr = 
+				pcs.authorizationPlugin.Rows[ Convert.ToInt32( plgn_index ) ] as
+					PluginConfigurationSchema.authorizationPluginRow;
+					
+			// open a connection to the data source
+			this.Open( apr.connectionString, new Uri( apr.schemaUri ) );
+
+			m_ts.TraceEvent( TraceEventType.Stop, 10, "constructed AuthorizationPlugin" );
+		}
+	
 		#region IAuthorizationPlugin Members
 
 		/// <summary>
@@ -64,7 +101,10 @@ namespace Sudowin.Plugins.Authorization
 		///		from the authorization source for the given user name.
 		/// </summary>
 		/// <param name="userName">
-		///		User name to get information for.
+		///		The name of the user to retrieve the information 
+		///		for.  This name should be in the format:
+		/// 
+		///			HOST_OR_DOMAIN\USERNAME
 		/// </param>
 		/// <param name="userInfo">
 		///		Sudowin.Common.UserInfo structure for
@@ -84,8 +124,11 @@ namespace Sudowin.Plugins.Authorization
 		///		from the authorization source for the given user name,
 		///		command path, and command arguments.
 		/// </summary>
-		/// <param name="username">
-		///		User name to get information for.
+		/// <param name="userName">
+		///		The name of the user to retrieve the information 
+		///		for.  This name should be in the format:
+		/// 
+		///			HOST_OR_DOMAIN\USERNAME
 		/// </param>
 		/// <param name="commandPath">
 		///		Command path to get information for.
@@ -107,20 +150,34 @@ namespace Sudowin.Plugins.Authorization
 			throw new Exception( "This method must be overriden." );
 		}
 
-		#endregion
-
-		#region IPlugin Members
-
 		/// <summary>
-		///		Activates the plugin for first-time use.  This method is necessary
-		///		because not all plugins are activated with the 'new' keyword, instead
-		///		some are activated with 'Activator.GetObject' and a method is required
-		///		to force the plugin's construction in order to catch any exceptions that
-		///		may be associated with a plugin's construction.
+		///		Verifies the given user is allowed to execute
+		///		the given command with the given arguments.
 		/// </summary>
-		public virtual void Activate()
+		/// <param name="userName">
+		///		The name of the user to verify the command
+		///		for.  This name should be in the format:
+		/// 
+		///			HOST_OR_DOMAIN\USERNAME
+		/// </param>
+		/// <param name="commandPath">
+		///		The path of the command the user is attempting
+		///		to execute.
+		/// </param>
+		/// <param name="commandArguments">
+		///		The arguments to the command the user is
+		///		attempting to execute.
+		/// </param>
+		/// <returns>
+		///		True if the user is allowed to execute the command;
+		///		otherwise false.
+		/// </returns>
+		public virtual bool VerifyCommand(
+			string userName,
+			ref string commandPath,
+			string commandArguments )
 		{
-			
+			throw new Exception( "This method must be overriden." );
 		}
 
 		#endregion
@@ -136,5 +193,22 @@ namespace Sudowin.Plugins.Authorization
 		}
 
 		#endregion
+
+		/// <summary>
+		///		Tests the given commandPath to see if
+		///		the command is a Windows shell command.
+		/// </summary>
+		/// <param name="commandPath">
+		///		Command to test.
+		/// </param>
+		/// <returns>
+		///		True if the command is a shell command, otherwise false.
+		/// </returns>
+		protected bool IsShellCommand( string commandPath )
+		{
+			return ( Regex.IsMatch( commandPath,
+				"(cd)|(dir)|(type)",
+				RegexOptions.IgnoreCase ) );
+		}
 	}
 }

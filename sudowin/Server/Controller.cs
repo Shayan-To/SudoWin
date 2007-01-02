@@ -169,9 +169,7 @@ namespace Sudowin.Server
 					throw new System.Configuration.ConfigurationErrorsException( msg );
 				}
 				
-				
 				bool plugin_enabled = Convert.ToBoolean( r[ "enabled" ] );
-				
 				if ( plugin_enabled )
 				{
 					//

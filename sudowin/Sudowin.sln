@@ -26,36 +26,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugins.Authentication", "P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugins.Authentication.NT", "Plugins.Authentication.NT\Plugins.Authentication.NT.csproj", "{A92EF75C-1853-4500-AEBC-2770DA2478CA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{D950EBA9-223B-41F8-A877-B20E5710BBF9}"
-	ProjectSection(SolutionItems) = preProject
-		Web\faq.html = Web\faq.html
-		Web\how.html = Web\how.html
-		Web\index.html = Web\index.html
-		Web\plugins.html = Web\plugins.html
-		Web\todo.html = Web\todo.html
-		Web\upload.sh = Web\upload.sh
-		Web\who.html = Web\who.html
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "img", "img", "{E0B442A2-4E7A-4A53-9E1E-7F9700B042FF}"
-	ProjectSection(SolutionItems) = preProject
-		Web\img\akutz-sm.jpg = Web\img\akutz-sm.jpg
-		Web\img\sudo_console_client.png = Web\img\sudo_console_client.png
-		Web\img\sudo_folder.png = Web\img\sudo_folder.png
-		Web\img\sudo_gui_client.png = Web\img\sudo_gui_client.png
-		Web\img\sudo_vs2k5.png = Web\img\sudo_vs2k5.png
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scr", "scr", "{CC3B9572-4802-4642-A73A-4040EE47616E}"
-	ProjectSection(SolutionItems) = preProject
-		Web\scr\default.js = Web\scr\default.js
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "css", "css", "{6F1030BF-FC49-497B-800C-253D18EBC54E}"
-	ProjectSection(SolutionItems) = preProject
-		Web\css\default.css = Web\css\default.css
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugins.CredentialsCache", "Plugins.CredentialsCache\Plugins.CredentialsCache.csproj", "{4B31AF27-E489-49A7-A705-DEC80D955A54}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugins.CredentialsCache.LocalServer", "Plugins.CredentialsCache.LocalServer\Plugins.CredentialsCache.LocalServer.csproj", "{A9F0B711-2022-4597-A1F8-A2992DEBC936}"
@@ -197,10 +167,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{E0B442A2-4E7A-4A53-9E1E-7F9700B042FF} = {D950EBA9-223B-41F8-A877-B20E5710BBF9}
-		{CC3B9572-4802-4642-A73A-4040EE47616E} = {D950EBA9-223B-41F8-A877-B20E5710BBF9}
-		{6F1030BF-FC49-497B-800C-253D18EBC54E} = {D950EBA9-223B-41F8-A877-B20E5710BBF9}
 	EndGlobalSection
 EndGlobal
