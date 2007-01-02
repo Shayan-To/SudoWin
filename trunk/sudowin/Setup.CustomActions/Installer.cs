@@ -55,7 +55,7 @@ namespace Sudowin.Setup.CustomActions
 			base.Install( stateSaver );
 
 			string target_dir = this.Context.Parameters[ "TargetDir" ];
-			string connectionString = string.Format( @"{0}Server\Sudowin.WindowsService.exe.config",
+			string connectionString = string.Format( @"{0}Server\Sudowin.Server.exe.config",
 				target_dir );
 
 			#region Create the sudoers group
@@ -95,7 +95,7 @@ namespace Sudowin.Setup.CustomActions
 				"translate({0},'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')";
 
 			string target_dir = this.Context.Parameters[ "TargetDir" ];
-			string connectionString = string.Format( @"{0}Server\Sudowin.WindowsService.exe.config",
+			string connectionString = string.Format( @"{0}Server\Sudowin.Server.exe.config",
 				target_dir );
 
 			// throw an exception if the xml file is not found

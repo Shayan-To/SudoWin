@@ -31,7 +31,6 @@ using Sudowin.Common;
 
 namespace Sudowin.Plugins.Authentication.NT
 {
-	
 	public class NTAuthenticationPlugin : AuthenticationPlugin
 	{
 		/// <summary>

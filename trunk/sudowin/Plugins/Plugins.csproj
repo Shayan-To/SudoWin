@@ -36,9 +36,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IPlugin.cs" />
+    <Compile Include="Plugin.cs" />
+    <Compile Include="PluginConfigurationSchema.cs">
+      <DependentUpon>PluginConfigurationSchema.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="PluginConfigurationSchema.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="PluginConfigurationSchema.xsx">
+      <DependentUpon>PluginConfigurationSchema.xsd</DependentUpon>
+    </None>
     <None Include="sudowin.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -49,7 +49,23 @@ namespace Sudowin.Plugins.CredentialsCache
 		///		otherwise false and an empty cached credentials set.
 		/// </returns>
 		bool GetCache( string userName, ref CredentialsCache credCache );
-
+		
+		/// <summary>
+		///		Retrieves the given user's cached passphrase.
+		/// </summary>
+		/// <param name="userName">
+		///		The name of the user to retrieve the cached credentials 
+		///		for.  This name should be in the format:
+		/// 
+		///			HOST_OR_DOMAIN\USERNAME
+		/// </param>
+		/// <param name="passphrase">
+		///		A reference to a string to contain the user's password.
+		/// </param>
+		/// <returns>
+		///		True and the user's passphrase if found; otherwise false.
+		/// </returns>
+		bool GetCache( string userName, ref string passphrase );
 
 		/// <summary>
 		///		Set's the given user's cached credentials.
@@ -70,6 +86,26 @@ namespace Sudowin.Plugins.CredentialsCache
 		///		The given user's cached credentials.
 		/// </param>
 		void SetCache( string userName, CredentialsCache credCache );
+		
+		/// <summary>
+		///		Set's the given user's passphrase.
+		/// 
+		///		If the given user's passphrase does not
+		///		already exist then it is added.
+		/// 
+		///		If the given user's passphrase already
+		///		exists then it is updated.
+		/// </summary>
+		/// <param name="userName">
+		///		The name of the user to set the passphrase.  
+		///		This name should be in the format:
+		/// 
+		///			HOST_OR_DOMAIN\USERNAME
+		/// </param>
+		/// <param name="passphrase">
+		///		The given user's passphrase.
+		/// </param>
+		void SetCache( string userName, string passphrase );
 
 		/// <summary>
 		///		Expire the given user's cached credentials in the 

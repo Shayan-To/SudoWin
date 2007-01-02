@@ -72,6 +72,22 @@ namespace Sudowin.Plugins.CredentialsCache.LocalServer
 		/// </summary>
 		private Mutex m_coll_mtx = new Mutex( false );
 
+		/// <summary>
+		///		Retrieves the given user's cached credentials.
+		/// </summary>
+		/// <param name="userName">
+		///		The name of the user to retrieve the cached credentials 
+		///		for.  This name should be in the format:
+		/// 
+		///			HOST_OR_DOMAIN\USERNAME
+		/// </param>
+		/// <param name="credCache">
+		///		A reference to a cached credentials structure.
+		/// </param>
+		/// <returns>
+		///		True and the user's cached credentials if found; 
+		///		otherwise false and an empty cached credentials set.
+		/// </returns>
 		public override bool GetCache( string userName, ref CredentialsCache credCache )
 		{
 			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
@@ -108,6 +124,65 @@ namespace Sudowin.Plugins.CredentialsCache.LocalServer
 			return ( is_passphrase_cached && is_cred_cache_cached );
 		}
 
+		/// <summary>
+		///		Retrieves the given user's cached passphrase.
+		/// </summary>
+		/// <param name="userName">
+		///		The name of the user to retrieve the cached credentials 
+		///		for.  This name should be in the format:
+		/// 
+		///			HOST_OR_DOMAIN\USERNAME
+		/// </param>
+		/// <param name="passphrase">
+		///		A reference to a string to contain the user's password.
+		/// </param>
+		/// <returns>
+		///		True and the user's passphrase if found; otherwise false.
+		/// </returns>
+		public override bool GetCache( string userName, ref string passphrase )
+		{
+			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
+				"entering GetUserCache( string, ref string )" );
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
+				"userName={0},passphrase=", userName );
+
+			m_coll_mtx.WaitOne();
+			bool ispassphraseCached;
+			if ( ispassphraseCached = m_passphrases.ContainsKey( userName ) )
+			{
+				SecureString ss = m_passphrases[ userName ];
+				IntPtr ps = Marshal.SecureStringToBSTR( ss );
+				passphrase = Marshal.PtrToStringBSTR( ps );
+				Marshal.FreeBSTR( ps );
+			}
+			m_coll_mtx.ReleaseMutex();
+
+			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+				"{0}, ispassphraseCached={1}", userName, ispassphraseCached );
+			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.ExitMethod,
+				"exiting GetUserCache( string, ref string )" );
+
+			return ( ispassphraseCached );
+		}
+
+		/// <summary>
+		///		Set's the given user's cached credentials.
+		/// 
+		///		If the given user's cached credentials do not
+		///		already exist then they are added.
+		/// 
+		///		If the given user's cached credentials already
+		///		exist then they are updated.
+		/// </summary>
+		/// <param name="userName">
+		///		The name of the user to set the cached credentials 
+		///		for.  This name should be in the format:
+		/// 
+		///			HOST_OR_DOMAIN\USERNAME
+		/// </param>
+		/// <param name="credCache">
+		///		The given user's cached credentials.
+		/// </param>
 		public override void SetCache( string userName, CredentialsCache credCache )
 		{
 			m_coll_mtx.WaitOne();
@@ -144,6 +219,53 @@ namespace Sudowin.Plugins.CredentialsCache.LocalServer
 			m_coll_mtx.ReleaseMutex();
 		}
 
+		/// <summary>
+		///		Creates a SecureString version of the given
+		///		plain-text passphrase in the m_passphrases collection
+		///		for the given userName.
+		/// </summary>
+		/// <param name="userName">
+		///		User name to create SecureString passphrase for
+		///		and to use as the key for the m_passphrases collection.
+		/// </param>
+		/// <param name="passphrase">
+		///		Plain-text passphrase to convert into a SecureString.
+		/// </param>
+		public override void SetCache( string userName, string passphrase )
+		{
+			m_coll_mtx.WaitOne();
+
+			SecureString ss = new SecureString();
+
+			for ( int x = 0; x < passphrase.Length; ++x )
+				ss.AppendChar( passphrase[ x ] );
+
+			if ( m_passphrases.ContainsKey( userName ) )
+			{
+				m_passphrases[ userName ].Clear();
+				m_passphrases[ userName ] = ss;
+			}
+			else
+			{
+				m_passphrases.Add( userName, ss );
+			}
+
+			m_coll_mtx.ReleaseMutex();
+		}
+
+		/// <summary>
+		///		Expire the given user's cached credentials in the 
+		///		given number of seconds.
+		/// </summary>
+		/// <param name="userName">
+		///		The name of the user to expire the cached credentials 
+		///		for.  This name should be in the format:
+		/// 
+		///			HOST_OR_DOMAIN\USERNAME
+		/// </param>
+		/// <param name="seconds">
+		///		Number of seconds to wait until expiration.
+		/// </param>
 		public override void ExpireCache( string userName, int seconds )
 		{
 			m_coll_mtx.WaitOne();
@@ -159,14 +281,14 @@ namespace Sudowin.Plugins.CredentialsCache.LocalServer
 			else
 			{
 				m_tmrs.Add( userName, new Timer(
-					new TimerCallback( ExpireUserCacheCallback ),
+					new TimerCallback( ExpireCacheCallback ),
 					userName, seconds * 1000, Timeout.Infinite ) );
 			}
 
 			m_coll_mtx.ReleaseMutex();
 		}
 
-		private void ExpireUserCacheCallback( object state )
+		private void ExpireCacheCallback( object state )
 		{
 			m_coll_mtx.WaitOne();
 

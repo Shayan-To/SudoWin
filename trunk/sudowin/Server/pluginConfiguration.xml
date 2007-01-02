@@ -5,8 +5,8 @@
   </authenticationPlugins>
   <authorizationPlugins>
     <authorizationPlugin  assemblyString="Sudowin.Plugins.Authorization.Xml.XmlAuthorizationPlugin, Sudowin.Plugins.Authorization.Xml" 
-                          connectionString="r:\projects\sudowin\trunk\sudo\authorizationplugins.xml\sudoers.xml" 
-                          schemaUri="r:\projects\sudowin\trunk\sudo\authorizationplugins.xml\XmlAuthorizationPluginSchema.xsd"
+                          connectionString="r:\projects\sudowin\trunk\sudo\plugins.authorization\sudoers.xml" 
+                          schemaUri="r:\projects\sudowin\trunk\sudo\plugins.authorization.xml\XmlAuthorizationPluginSchema.xsd"
     />
   </authorizationPlugins>
   <credentialsCachePlugins>

@@ -44,7 +44,8 @@ namespace Sudowin.Common
 
 		/// <summary>
 		///		Number of times the user has exceeded
-		///		their invalid logon attempt limit.
+		///		their invalid logon attempt limit before
+		///		the sudowin server will lock them out.
 		/// </summary>
 		public int TimesExceededInvalidLogons;
 
