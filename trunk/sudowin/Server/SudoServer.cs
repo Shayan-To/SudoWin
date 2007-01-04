@@ -49,6 +49,7 @@ using Sudowin.Plugins.Authentication;
 using Sudowin.Plugins.CredentialsCache;
 using System.Runtime.Remoting.Contexts;
 using System.Runtime.Remoting.Messaging;
+using Sudowin.Plugins;
 
 namespace Sudowin.Server
 {
@@ -68,12 +69,6 @@ namespace Sudowin.Server
 		/// </summary>
 		private TraceSource m_ts = new TraceSource( "traceSrc" );
 
-		/// <summary>
-		///		Data sa used by the sudo sa to
-		///		persist information between calls.
-		/// </summary>
-		//private DataServer m_data_server = null;
-		
 		/// <summary>
 		///		Used to persist user credentials and other
 		///		information between sudowin invocations.
@@ -196,39 +191,98 @@ namespace Sudowin.Server
 			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterConstructor,
 				"constructing SudoServer" );
 
-			//string dsuri = ConfigurationManager.AppSettings[ "dataServerUri" ];
-
-			//m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
-			//	"getting reference to SAO, m_data_server={0}", dsuri );
-			
 			// right now sudowin only supports one plugin of each type active
 			// at any given time.  in the future this will change, but for now,
 			// c'est la vie.
-			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
-				"activating ICredentialsCache plugins" );
-			m_plgn_cred_cache = Activator.GetObject( typeof( ICredentialsCachePlugin ), 
-				"ipc://sudowin/credentialsCachePlugin00.rem" ) as ICredentialsCachePlugin;
-			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
-				"activated ICredentialsCache plugins" );
-
-			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
-				"activating IAuthorizationPlugin plugins" );
-			m_plgn_authz = Activator.GetObject( typeof( IAuthorizationPlugin ),
-				"ipc://sudowin/authorizationPlugin00.rem" ) as IAuthorizationPlugin;
-			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
-				"activated IAuthorizationPlugin plugins" );
-
-			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
-				"activating IAuthenticationPlugin plugins" );
-			m_plgn_authn = Activator.GetObject( typeof( IAuthenticationPlugin ),
-				"ipc://sudowin/authenticationPlugin00.rem" ) as IAuthenticationPlugin;
-			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
-				"activated IAuthenticationPlugin plugins" );
+			LoadPlugins();
 			
-			//m_data_server = Activator.GetObject( typeof( DataServer ), dsuri ) as DataServer;
-
 			m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitConstructor,
 				"constructed SudoServer" );
+		}
+
+		private void LoadPlugins()
+		{
+			PluginConfigurationSchema pcs = new PluginConfigurationSchema();
+			pcs.ReadXml( ConfigurationManager.AppSettings[ "pluginConfigurationUri" ] );
+
+			int x = 0;
+
+			// activate the plugin assemblies
+			foreach ( PluginConfigurationSchema.pluginRow r in pcs.plugin.Rows )
+			{
+				string plugin_type = Convert.ToString( r[ "pluginType" ], CultureInfo.CurrentCulture );
+
+				bool plugin_enabled = r[ "enabled" ] is DBNull ? true :
+					bool.Parse( Convert.ToString( r[ "enabled" ], CultureInfo.CurrentCulture ) );
+
+				string plugin_server_type = r[ "serverType" ] is DBNull ? "SingleCall" :
+					Convert.ToString( r[ "serverType" ], CultureInfo.CurrentCulture );
+
+				string plugin_assem_str = Convert.ToString(
+					r[ "assemblyString" ], CultureInfo.CurrentCulture );
+
+				string plugin_cnxn_str = r[ "connectionString" ] is DBNull ? "" :
+					Convert.ToString( r[ "connectionString" ], CultureInfo.CurrentCulture );
+
+				string plugin_schema_uri = r[ "schemaUri" ] is DBNull ? "" :
+					Convert.ToString( r[ "schemaUri" ], CultureInfo.CurrentCulture );
+
+				string plugin_act_data = r[ "activationData" ] is DBNull ? "" :
+					Convert.ToString( r[ "activationData" ], CultureInfo.CurrentCulture );
+
+				if ( plugin_enabled )
+				{
+					//
+					// register the plugin as a remoting object -- the plugins
+					// will have the following uri formats:
+					//
+					// pluginTypeXX.rem 
+					// 
+					// where the XX is plugin index (0 based) in its section 
+					// in the plugin configuration file.  for example, the 2nd 
+					// plugin's uri would be:
+					//
+					// pluginType01.rem
+					//
+					Type t = Type.GetType( plugin_assem_str, true, true );
+					string uri = string.Format( "ipc://sudowin/{0}{1:d2}.rem", plugin_type, x );
+
+					Plugin plugin = Activator.GetObject( typeof( Plugin ), uri ) as Plugin;
+					
+					// activate the remoting object first before any of the sudo clients
+					// do so through a sudo invocation.  this will cause any exceptions
+					// that might get thrown in the plugin's construction to do so now,
+					// causing this service not to start.  it is better that the sudowin
+					// service fail outright than have a client application crash later
+					plugin.Activate( plugin_act_data );
+
+					switch ( plugin_type )
+					{
+						case "authenticationPlugin" :
+						{
+							m_plgn_authn = ( AuthenticationPlugin ) plugin;
+							break;
+						}
+						case "authorizationPlugin" :
+						{
+							m_plgn_authz = ( AuthorizationPlugin ) plugin;
+							break;
+						}
+						case "credentialsCachePlugin" :
+						{
+							m_plgn_cred_cache = ( CredentialsCachePlugin ) plugin;
+							break;
+						}
+						default :
+						{
+							// do nothing
+							break;
+						}
+					}
+				}
+
+				++x;
+			}
 		}
 
 		/// <summary>
@@ -564,42 +618,8 @@ namespace Sudowin.Server
 			string dn_part = m.Groups[ 1 ].Value;
 			string un_part = m.Groups[ 2 ].Value;
 
-			// get and parse the authentication plugin uri
-			string authn_plugin_uri;
-			Managed.GetConfigValue( "authenticationPluginAssembly", out authn_plugin_uri );
-			if ( authn_plugin_uri.Length == 0 )
-			{
-				string msg = "authenticationPluginAssembly must be a " +
-					"specified key in the appSettings section of the " +
-					"config file";
-				m_ts.TraceEvent( TraceEventType.Critical, 10, msg );
-				throw new System.Configuration.ConfigurationErrorsException( msg );
-			}
-			Regex rx_authn_plugin_uri = new Regex( "^(?<type>[^,]+),(?<assembly>.+)$", RegexOptions.IgnoreCase );
-			Match m_authn_plugin_uri = rx_authn_plugin_uri.Match( authn_plugin_uri );
-			if ( !m_authn_plugin_uri.Success )
-			{
-				string msg = "authenticationPluginAssembly is not " +
-					"properly formatted";
-				m_ts.TraceEvent( TraceEventType.Critical, 10, msg );
-				throw new System.Configuration.ConfigurationErrorsException( msg );
-			}
-
-			// load the authentication plugin
-			Assembly authn_plugin_assem = Assembly.Load( m_authn_plugin_uri.Groups[ "assembly" ].Value );
-			Sudowin.Plugins.Authentication.IAuthenticationPlugin authn_ds = 
-				authn_plugin_assem.CreateInstance( m_authn_plugin_uri.Groups[ "type" ].Value )
-				as Sudowin.Plugins.Authentication.IAuthenticationPlugin;
-			if ( authn_ds == null )
-			{
-				string msg = "there was an error in loading the specified " +
-					"authenticationPluginAssembly";
-				m_ts.TraceEvent( TraceEventType.Critical, 10, msg );
-				throw new System.Configuration.ConfigurationErrorsException( msg );
-			}
-
 			// verify the user's credentials
-			bool logonSuccessful = authn_ds.VerifyCredentials( dn_part, un_part, passphrase );
+			bool logonSuccessful = m_plgn_authn.VerifyCredentials( dn_part, un_part, passphrase );
 
 			if ( logonSuccessful )
 			{

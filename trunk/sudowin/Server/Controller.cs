@@ -85,26 +85,14 @@ namespace Sudowin.Server
 				
 			// configure remoting channels and objects
 			RemotingConfiguration.Configure( remote_config_uri, true );
+			
+			#if DEBUG
+			//System.Threading.Thread.Sleep( 10000 );
+			#endif
 
 			// load the plugins
-			PluginConfigurationSchema pcs = new PluginConfigurationSchema();
-			pcs.ReadXml( ConfigurationManager.AppSettings[ "pluginConfigurationUri" ] );
-			LoadPlugins( pcs, "authenticationPlugin" );
-			LoadPlugins( pcs, "authorizationPlugin" );
-			LoadPlugins( pcs, "credentialsCachePlugin" );
+			LoadPlugins();
 			
-			// create the sa object
-			//DataServer ds = Activator.GetObject( typeof( DataServer ),
-			//	System.Configuration.ConfigurationManager.AppSettings[ "dataServerUri" ] )
-			//	as DataServer;
-
-			// activate the data server object first before any of the
-			// sudo clients can do so.  this will cause any exceptions that
-			// might get thrown while reading the sudoers data source to
-			// cause the service not to start, rather than crashing a sudo
-			// client application.
-			// ds.Activate();
-
 			m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitMethod, 
 				"exiting OnStart" );
 		}
@@ -121,55 +109,36 @@ namespace Sudowin.Server
 				"exiting OnStop" );
 		}
 		
-		private void LoadPlugins( PluginConfigurationSchema pluginConfigSchema, string pluginType )
+		private void LoadPlugins()
 		{
-			// determine the plugin type
-			DataRowCollection drc = null;
-			switch ( pluginType )
-			{
-				case "authenticationPlugin" :
-				{
-					drc = pluginConfigSchema.authenticationPlugin.Rows;
-					break;
-				}
-				case "authorizationPlugin" :
-				{
-					drc = pluginConfigSchema.authorizationPlugin.Rows;
-					break;
-				}
-				case "credentialsCachePlugin" :
-				{
-					drc = pluginConfigSchema.credentialsCachePlugin.Rows;
-					break;
-				}
-				default:
-				{
-					// do nothing
-					break;
-				}
-			}
+			PluginConfigurationSchema pcs = new PluginConfigurationSchema();
+			pcs.ReadXml( ConfigurationManager.AppSettings[ "pluginConfigurationUri" ] );
 			
 			int x = 0;
-			
+
 			// activate the plugin assemblies
-			foreach ( DataRow r in drc )
-			{
-				string assem_str = Convert.ToString( 
+			foreach ( PluginConfigurationSchema.pluginRow r in pcs.plugin.Rows )
+			{	
+				string plugin_type = Convert.ToString( r[ "pluginType" ], CultureInfo.CurrentCulture );
+			
+				bool plugin_enabled = r[ "enabled" ] is DBNull ? true :
+					bool.Parse( Convert.ToString( r[ "enabled" ], CultureInfo.CurrentCulture ) );
+				
+				string plugin_server_type = r[ "serverType" ] is DBNull ? "SingleCall" :
+					Convert.ToString( r[ "serverType" ], CultureInfo.CurrentCulture );
+				
+				string plugin_assem_str = Convert.ToString( 
 					r[ "assemblyString" ], CultureInfo.CurrentCulture );
-				
-			 	Regex rx =
-					new Regex( @"^(?<assembly>.+)\.(?<class>[^,]+),(?<assemblyVersion>.+)$",
-					RegexOptions.IgnoreCase );
-				Match m = rx.Match( assem_str );
-				if ( !m.Success )
-				{
-					string msg = string.Format( CultureInfo.CurrentCulture,
-						"assemblyString is not properly formatted, {0}", assem_str );
-					m_ts.TraceEvent( TraceEventType.Critical, 10, msg );
-					throw new System.Configuration.ConfigurationErrorsException( msg );
-				}
-				
-				bool plugin_enabled = Convert.ToBoolean( r[ "enabled" ] );
+					
+				string plugin_cnxn_str = r[ "connectionString" ] is DBNull ? "" :
+					Convert.ToString( r[ "connectionString" ], CultureInfo.CurrentCulture );
+
+				string plugin_schema_uri = r[ "schemaUri" ] is DBNull ? "" :
+					Convert.ToString( r[ "schemaUri" ], CultureInfo.CurrentCulture );
+
+				string plugin_act_data = r[ "activationData" ] is DBNull ? "" :
+					Convert.ToString( r[ "activationData" ], CultureInfo.CurrentCulture );
+
 				if ( plugin_enabled )
 				{
 					//
@@ -180,25 +149,31 @@ namespace Sudowin.Server
 					// 
 					// where the XX is plugin index (0 based) in its section 
 					// in the plugin configuration file.  for example, the 2nd 
-					// authorization plugin's uri would be:
+					// plugin's uri would be:
 					//
-					// authorizationPlugin01.rem
+					// pluginType01.rem
 					//
-					Type t = Type.GetType( assem_str, true, true );
-					string uri = string.Format( "{0}{0:d2}.rem", pluginType, x );
+					Type t = Type.GetType( plugin_assem_str, true, true );
+					string uri = string.Format( "{0}{1:d2}.rem", plugin_type, x );
 					RemotingConfiguration.RegisterWellKnownServiceType( t, uri, 
 						( WellKnownObjectMode ) Enum.Parse( typeof( WellKnownObjectMode ),
-							Convert.ToString( r[ "serverType" ], CultureInfo.CurrentCulture ) ) );
+							Convert.ToString( plugin_server_type, CultureInfo.CurrentCulture ) ) );
 					
 					// get a reference to the remoting object we just created
-					IPlugin ip = Activator.GetObject( typeof( IPlugin ), uri ) as IPlugin;
+					uri = string.Format( "ipc://sudowin/{0}", uri );
+					Plugin plugin = Activator.GetObject( typeof( Plugin ), uri ) as Plugin;
 
 					// activate the remoting object first before any of the sudo clients
 					// do so through a sudo invocation.  this will cause any exceptions
 					// that might get thrown in the plugin's construction to do so now,
 					// causing this service not to start.  it is better that the sudowin
 					// service fail outright than have a client application crash later
-					ip.Activate();
+					plugin.Activate( plugin_act_data );
+
+					//if ( !plugin.IsConnectionOpen )
+					//{
+					//	plugin.Open( plugin_cnxn_str, new Uri( plugin_schema_uri ) );
+					//}
 				}
 
 				++x;

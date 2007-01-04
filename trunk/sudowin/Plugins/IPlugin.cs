@@ -40,5 +40,46 @@ namespace Sudowin.Plugins
 		///		may be associated with a plugin's construction.
 		/// </summary>
 		void Activate();
+
+		/// <summary>
+		///		Activates the plugin for first-time use.  This method is necessary
+		///		because not all plugins are activated with the 'new' keyword, instead
+		///		some are activated with 'Activator.GetObject' and a method is required
+		///		to force the plugin's construction in order to catch any exceptions that
+		///		may be associated with a plugin's construction.
+		/// </summary>
+		/// <param name="activationData">
+		///		A plugin designer can pass data into the plugin from the plugin configuration
+		///		file by passing the data into the plugin as a string formatted variable.
+		/// </param>
+		void Activate( string activationData );
+
+		/// <summary>
+		///		Opens a connection to the plugin data source 
+		///		and validates the data source with the given schema 
+		///		file.
+		/// </summary>
+		/// <param name="connectionString">
+		///		Connection string used to open a connection
+		///		to the plugin data source.
+		/// </param>
+		/// <param name="schemaFileUri">
+		///		Uri of schema file to use to validate the data source.
+		/// </param>
+		//void Open( string connectionString, Uri schemaFileUri );
+
+		/// <summary>
+		///		Closes the connection to the plugin data source.
+		/// </summary>
+		//void Close();
+		
+		/// <summary>
+		///		Returns true if the plugin has an active connection
+		///		to its data source; otherwise false.
+		/// </summary>
+		//bool IsConnectionOpen
+		//{
+		//	get;
+		//}
 	}
 }

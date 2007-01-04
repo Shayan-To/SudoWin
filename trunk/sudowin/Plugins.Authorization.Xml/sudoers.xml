@@ -49,6 +49,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 						<command path="c:\windows\system32\regedit.exe" />
 					</commands>
 				</user>
+				<user name="lostcreations\akutz" allowAllCommands="false" />
 			</users>
 			<commandGroupRefs>
 				<commandGroupRef commandGroupName="standard"/>
@@ -60,7 +61,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 			<!-- 
 				Windows XP SP2 files - checksums may vary per operating system, service pack
 			-->
-			<command path="c:\windows\system32\cmd.exe" md5Checksum="eeb024f2c81f0d55936fb825d21a91d6" />
+			<command path="c:\windows\system32\cmd.exe" md5Checksum="eeb024f2c81f0d55936fb825d21a91d6" argumentString="/^/K echo.*$/"/>
 			<command path="c:\windows\explorer.exe" md5Checksum="45757077a47c68a603a79b03a1a836ab" />
 			<command path="c:\windows\system32\notepad.exe" md5Checksum="388b8fbc36a8558587afc90fb23a3b99" />
 		</commandGroup>
