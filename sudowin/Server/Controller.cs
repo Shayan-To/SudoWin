@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2005, 2006, Schley Andrew Kutz <akutz@lostcreations.com>
+Copyright (c) 2005, 2006, 2007, Schley Andrew Kutz <akutz@lostcreations.com>
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -64,13 +64,22 @@ namespace Sudowin.Server
 		}
 
 		/// <summary>
-		///		
+		///		Callback when the service is started.
 		/// </summary>
 		/// <param name="args">
 		///		
 		/// </param>
 		protected override void OnStart( string[] args )
 		{
+			// let the SCM tell the service to sleep a certain amount of time when
+			// starting in order to give debuggers time to attach
+			if ( args.Length == 1 )
+			{
+				m_ts.TraceEvent(TraceEventType.Verbose, ( int ) EventIds.Verbose,
+					"sleeping start for {0} seconds", args[ 0 ] );
+				System.Threading.Thread.Sleep( Convert.ToInt32( args[ 0 ] ) * 1000 );
+			}
+			
 			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod, 
 				"entering OnStart" );
 			
@@ -86,10 +95,6 @@ namespace Sudowin.Server
 			// configure remoting channels and objects
 			RemotingConfiguration.Configure( remote_config_uri, true );
 			
-			#if DEBUG
-			//System.Threading.Thread.Sleep( 10000 );
-			#endif
-
 			// load the plugins
 			LoadPlugins();
 			
@@ -169,11 +174,6 @@ namespace Sudowin.Server
 					// causing this service not to start.  it is better that the sudowin
 					// service fail outright than have a client application crash later
 					plugin.Activate( plugin_act_data );
-
-					//if ( !plugin.IsConnectionOpen )
-					//{
-					//	plugin.Open( plugin_cnxn_str, new Uri( plugin_schema_uri ) );
-					//}
 				}
 
 				++x;
