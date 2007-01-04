@@ -31,12 +31,14 @@ using System.IO;
 using System.Xml;
 using System.Data;
 using System.Text;
+using Sudowin.Common;
 using System.Xml.Schema;
 using System.Diagnostics;
-using Sudowin.Common;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Runtime.Remoting.Lifetime;
+using System.Security.Cryptography;
 
 namespace Sudowin.Plugins.Authorization.Xml
 {
@@ -69,6 +71,24 @@ namespace Sudowin.Plugins.Authorization.Xml
 			True = 1,
 			Null = 2,
 		}
+		
+		/// <summary>
+		///		True if the sudoers file has been read;
+		///		otherwise false.
+		/// </summary>
+		private bool m_is_connection_open = false;
+
+		/// <summary>
+		///		True if the sudoers file has been read;
+		///		otherwise false.
+		/// </summary>
+		private bool IsConnectionOpen
+		{
+			get 
+			{ 
+				 return ( m_is_connection_open );
+			}
+		}
 
 		/// <summary>
 		///		Format for translating a value in an xpath
@@ -93,7 +113,7 @@ namespace Sudowin.Plugins.Authorization.Xml
 		/// <summary>
 		///		Default constructor.
 		/// </summary>
-		public XmlAuthorizationPlugin() : base()
+		public XmlAuthorizationPlugin()
 		{
 			m_ts.TraceEvent( TraceEventType.Start, 10, "constructing XmlAuthorizationPlugin" );
 			m_ts.TraceEvent( TraceEventType.Stop, 10, "constructed XmlAuthorizationPlugin" );
@@ -133,7 +153,15 @@ namespace Sudowin.Plugins.Authorization.Xml
 			return ( user_node );
 		}
 
-		#region IAuthorizationPlugin Members
+		/// <summary>
+		///		Opens a connection to the xml file
+		///		and validate the data with the given
+		///		schema file.
+		/// </summary>
+		private void Open()
+		{
+			this.Open( base.PluginConnectionString, new Uri( PluginSchemaUri ) );
+		}
 
 		/// <summary>
 		///		Opens a connection to the xml file
@@ -146,8 +174,10 @@ namespace Sudowin.Plugins.Authorization.Xml
 		/// <param name="schemaFileUri">
 		///		Uri of schema file to use to validate the data.
 		/// </param>
-		public override void Open( string connectionString, Uri schemaFileUri )
+		private void Open( string connectionString, Uri schemaFileUri )
 		{
+			m_ts.TraceEvent( TraceEventType.Start, 10, "opening XmlAuthorizationPlugin datasource connection" );
+			
 			// throw an exception if the xml file is not found
 			if ( !System.IO.File.Exists( connectionString ) )
 				throw new System.IO.FileNotFoundException(
@@ -185,15 +215,21 @@ namespace Sudowin.Plugins.Authorization.Xml
 			// add the default namespace
 			string default_ns = ns_m.Groups[ 1 ].Value;
 			m_namespace_mgr.AddNamespace( "d", default_ns );
+			
+			m_is_connection_open = true;
+
+			m_ts.TraceEvent( TraceEventType.Stop, 10, "opened XmlAuthorizationPlugin datasource connection" );
 		}
 
 		/// <summary>
 		///		Present for compliance with IAuthorizationPlugin.
 		/// </summary>
-		public override void Close()
+		private void Close()
 		{
-			// do nothing
+			m_is_connection_open = false;
 		}
+
+		#region IAuthorizationPlugin Members
 
 		/// <summary>
 		///		Gets a Sudowin.Common.UserInfo structure
@@ -215,6 +251,11 @@ namespace Sudowin.Plugins.Authorization.Xml
 		/// </returns>
 		public override bool GetUserInfo( string userName, ref UserInfo userInfo )
 		{
+			if ( !this.IsConnectionOpen )
+			{
+				this.Open();
+			}
+			
 			// get the user node for this user
 			XmlNode unode = FindUserNode( userName );
 
@@ -282,6 +323,11 @@ namespace Sudowin.Plugins.Authorization.Xml
 			string commandArguments,
 			ref CommandInfo commandInfo )
 		{
+			if ( !this.IsConnectionOpen )
+			{
+				this.Open();
+			}
+			
 			// find the user node
 			XmlNode u_node = FindUserNode( username );
 
@@ -309,6 +355,7 @@ namespace Sudowin.Plugins.Authorization.Xml
 			FindCommandNodeSearchParameters fnsp = new FindCommandNodeSearchParameters();
 			fnsp.Path = commandPath;
 			fnsp.Arguments = commandArguments;
+			fnsp.Md5Checksum = CalculateMd5Checksum( commandPath );
 			XmlNode c_node = FindCommandNode( u_node, fnsp );
 
 			if ( c_node == null )
@@ -324,6 +371,33 @@ namespace Sudowin.Plugins.Authorization.Xml
 		}
 
 		/// <summary>
+		///		Calculates an MD5 Checksum for a given command.
+		/// </summary>
+		/// <param name="commandPath">
+		///		The command to get the MD5 Checksum for.
+		/// </param>
+		/// <returns>
+		///		An MD5 Checksum for a given command if the command
+		///		exists; otherwise null.
+		/// </returns>
+		private string CalculateMd5Checksum( string commandPath )
+		{
+			if ( !File.Exists( commandPath ) )
+				return ( null );
+				
+			FileStream fs = new FileStream( commandPath, FileMode.Open, FileAccess.Read );
+			MD5 md5 = MD5.Create();
+			byte[] hash = md5.ComputeHash( fs );
+			StringBuilder sb = new StringBuilder( 32 );
+			for ( int x = 0; x < hash.Length; ++x )
+			{
+				sb.AppendFormat( "{0:x2}", hash[ x ] );
+			}
+			fs.Close();
+			return ( sb.ToString() );
+		}
+
+		/// <summary>
 		///		Checks to see if the user has the right
 		///		to execute the given command with Sudowin.
 		/// </summary>
@@ -331,21 +405,15 @@ namespace Sudowin.Plugins.Authorization.Xml
 		///		User node that represents the user that
 		///		invoked Sudowin.
 		/// </param>
-		/// <param name="commandPath">
-		///		Fully qualified path of the command being executed.
-		/// </param>
-		/// <param name="commandArguments">
-		///		Arguments of the command being executed.
+		/// <param name="searchParameters">
+		///		The search parameters.
 		/// </param>
 		/// <returns>
 		///		True if the command is allowed, false if it is not.
 		/// </returns>
 		private XmlNode FindCommandNode(
 			XmlNode userNode,
-			FindCommandNodeSearchParameters searchParameters,
-			params string[] args )
-			//string commandPath,
-			//string commandArguments )
+			FindCommandNodeSearchParameters searchParameters )
 		{
 			/*
 			 * if the user is not disabled we need to discover whether
@@ -374,7 +442,7 @@ namespace Sudowin.Plugins.Authorization.Xml
 			XmlNode local_cmds = userNode.SelectSingleNode(
 				"d:commands", m_namespace_mgr );
 			if ( local_cmds != null && local_cmds.HasChildNodes )
-				cmd_node = FindCommandNode( local_cmds, searchParameters );
+				cmd_node = FindCommandNode( searchParameters, local_cmds );
 			
 			// 2) commandGroupRefs node local to user
 			if ( cmd_node == null )
@@ -395,7 +463,7 @@ namespace Sudowin.Plugins.Authorization.Xml
 					"d:commands", m_namespace_mgr );
 
 				if ( parent_cmds != null && parent_cmds.HasChildNodes )
-					cmd_node = FindCommandNode( parent_cmds, searchParameters );
+					cmd_node = FindCommandNode( searchParameters, parent_cmds );
 			}
 
 			// 4) commandGroupRefs node local to user's parent user group
@@ -421,7 +489,7 @@ namespace Sudowin.Plugins.Authorization.Xml
 		/// </summary>
 		public override void Dispose()
 		{
-			// do nothing
+			this.Close();
 		}
 
 		#endregion
@@ -590,7 +658,7 @@ namespace Sudowin.Plugins.Authorization.Xml
 				// if the command group is found then search
 				// the command group for the command
 				if ( cmdgrp != null && cmdgrp.HasChildNodes )
-					cmd_node = FindCommandNode( cmdgrp, searchParameters );
+					cmd_node = FindCommandNode( searchParameters, cmdgrp );
 
 				// if the command is found determine if it is
 				// allowed to be executed
@@ -607,31 +675,69 @@ namespace Sudowin.Plugins.Authorization.Xml
 		///		of the command that the user is attempting
 		///		to execute with Sudowin.
 		/// </summary>
+		/// <param name="searchParameters">
+		///		The search parameters.
+		/// </param>
 		/// <param name="commandNodeParent">
 		///		Node that has command nodes as children.
 		/// </param>
-		/// <param name="commandPath">
-		///		Fully qualified path of the command being executed.
-		/// </param>
 		/// <returns></returns>
 		private XmlNode FindCommandNode(
-			XmlNode commandNodeParent,
-			FindCommandNodeSearchParameters searchParameters )
-			//string commandPath )
+			FindCommandNodeSearchParameters searchParameters,
+			XmlNode commandNodeParent )
 		{
 			// build the query used to look for the command node in
 			// the current node context with the given command path
+			// and md5 checksum (if one is defined)
 			string cmd_xpq = string.Format(
 				CultureInfo.CurrentCulture,
-				@"d:command[{0} = {1}]",
+				@"d:command[{0} = {1} and ( {2} = {3} or {2} = '' )]",
 				string.Format( CultureInfo.CurrentCulture,
 					XpathTranslateFormat, "@path" ),
 				string.Format( CultureInfo.CurrentCulture,
-					XpathTranslateFormat, "'" + searchParameters.Path + "'" ) );
+					XpathTranslateFormat, "'" + searchParameters.Path + "'" ),
+				string.Format( CultureInfo.CurrentCulture,
+					XpathTranslateFormat, "@md5Checksum" ),
+				string.Format( CultureInfo.CurrentCulture,
+					XpathTranslateFormat, "'" + searchParameters.Md5Checksum + "'" ) );
 
 			// look for the command node
 			XmlNode cmd_node = commandNodeParent.SelectSingleNode(
 				cmd_xpq, m_namespace_mgr );
+			
+			// check to see if the arguments match
+			if ( cmd_node != null )
+			{
+				string arg_string = cmd_node.Attributes[ "argumentString" ] == null ?
+					null : cmd_node.Attributes[ "argumentString" ].Value;
+					;
+				if ( arg_string != null )
+				{
+					Regex is_rx = new Regex( @"^/(?<rx>.*)/$" );
+					Match is_rx_m = is_rx.Match( arg_string );
+					// argument string is a regular expression
+					if ( is_rx_m.Success )
+					{
+						string rx_patt = is_rx_m.Groups[ "rx" ].Value;
+						if ( !Regex.IsMatch( searchParameters.Arguments, rx_patt ) )
+						{
+							// do not return the command node if the arguments do
+							// not match the pattern
+							cmd_node = null;
+						}
+					}
+					// argument string is not a regular expression
+					else
+					{
+						if ( searchParameters.Arguments != arg_string )
+						{
+							// do not return the command node if the arguments do
+							// not match the pattern
+							cmd_node = null;
+						}
+					}
+				}
+			}
 
 			return ( cmd_node );
 		}
@@ -908,6 +1014,11 @@ namespace Sudowin.Plugins.Authorization.Xml
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
 				"userName={0},commandPath={1},commandArguments={2}",
 				userName, commandPath, commandArguments );
+				
+			if ( !this.IsConnectionOpen )
+			{
+				this.Open();
+			}
 
 			CommandInfo ci = new CommandInfo();
 
@@ -981,9 +1092,11 @@ namespace Sudowin.Plugins.Authorization.Xml
 			{
 				string p = Environment.GetEnvironmentVariable( "PATH" );
 				string[] pdirs = p.Split( new char[] { ';' } );
-
+				
 				for ( int x = 0; x < pdirs.Length && !isValid; ++x )
 				{
+					string tmp_cmd_path = commandPath;
+					
 					string pd = pdirs[ x ];
 
 					// add a trailing slash to the path directory
@@ -998,12 +1111,15 @@ namespace Sudowin.Plugins.Authorization.Xml
 							pd += "/";
 					}
 
-					// check to see if commandPath exists with
+					// check to see if tmp_cmd_path exists with
 					// the current path directory prepended to it
-					commandPath = pd + commandPath;
+					tmp_cmd_path = pd + tmp_cmd_path;
 
-					commandPath = TestFileExtensions( commandPath );
-					isValid = commandPath.Length > 0;
+					tmp_cmd_path = TestFileExtensions( tmp_cmd_path );
+					if ( isValid = tmp_cmd_path.Length > 0 )
+					{
+						commandPath = tmp_cmd_path;
+					}
 				}
 			}
 

@@ -27,6 +27,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
+using System.Globalization;
+using System.Configuration;
+using System.Text.RegularExpressions;
+using System.Runtime.Remoting.Lifetime;
 
 namespace Sudowin.Plugins
 {
@@ -37,9 +41,220 @@ namespace Sudowin.Plugins
 		/// </summary>
 		protected Plugin()
 		{
-			// do nothing
+			
 		}
-	
+
+		/// <summary>
+		///		This will always return a lifetime lease for plugins
+		///		that operate as singletons.  Plugins that operate as
+		///		singlecall objects will simply ignore this.
+		/// </summary>
+		/// <returns>
+		///		This object's lease.
+		/// </returns>
+		/// <remarks>
+		///		See http://msdn2.microsoft.com/en-us/library/23bk23zc.aspx 
+		///		for more information on leases.
+		/// </remarks>
+		public override object InitializeLifetimeService()
+		{
+			// i have to talk with someone who knows more about remoting
+			// and leases than me.  for some reason this is not working.
+			//
+			/*if ( ServerType == "Singleton" )
+			{
+				ILease lease = base.InitializeLifetimeService() as ILease;
+				if ( lease.CurrentState == LeaseState.Initial )
+				{
+					lease.InitialLeaseTime = TimeSpan.FromSeconds( PluginServerLifetime );
+					//lease.SponsorshipTimeout = TimeSpan.FromMinutes( 2 );
+					//lease.RenewOnCallTime = TimeSpan.FromSeconds( 2 );
+				}
+				return ( lease );
+			}
+			else
+			{
+				return ( base.InitializeLifetimeService() );
+			}*/
+			
+			return ( null );
+		}
+		
+		/// <summary>
+		///		The sudowin service's plugin configuration.
+		/// </summary>
+		private PluginConfigurationSchema m_pcs = null;
+
+		/// <summary>
+		///		The sudowin service's plugin configuration.
+		/// </summary>
+		private PluginConfigurationSchema PluginConfigSchema
+		{
+			get
+			{
+				if ( m_pcs == null )
+				{
+					m_pcs = new PluginConfigurationSchema();
+					m_pcs.ReadXml( ConfigurationManager.AppSettings[ "pluginConfigurationUri" ] );
+				}
+				
+				return ( m_pcs );
+			}
+		}
+		
+		/// <summary>
+		///		Returns this plugin's configuration string if it
+		///		is defined in the plugin configuration file;
+		///		otherwise null.
+		/// </summary>
+		private string m_plugin_connection_string = null;
+
+		/// <summary>
+		///		Returns this plugin's configuration string if it
+		///		is defined in the plugin configuration file;
+		///		otherwise null.
+		/// </summary>
+		protected string PluginConnectionString
+		{
+			get
+			{
+				if ( m_plugin_connection_string == null )
+				{
+					m_plugin_connection_string = 
+						GetStringValue( PluginConfigSchema.plugin[ PluginIndex ][ "connectionString" ], null );
+				}
+				return ( m_plugin_connection_string );
+			}
+		}
+
+		/// <summary>
+		///		Returns this plugin's schema uri if it
+		///		is defined in the plugin configuration file;
+		///		otherwise null.
+		/// </summary>
+		private string m_plugin_schema_uri = null;
+
+		/// <summary>
+		///		Returns this plugin's schema uri if it
+		///		is defined in the plugin configuration file;
+		///		otherwise null.
+		/// </summary>
+		protected string PluginSchemaUri
+		{
+			get
+			{
+				if ( m_plugin_schema_uri == null )
+				{
+					m_plugin_schema_uri =
+						GetStringValue( PluginConfigSchema.plugin[ PluginIndex ][ "schemaUri" ], null );
+				}
+				return ( m_plugin_schema_uri );
+			}
+		}
+
+		/// <summary>
+		///		Returns this plugin's server type if it
+		///		is defined in the plugin configuration file;
+		///		otherwise SingleCall.
+		/// </summary>
+		private string m_server_type = null;
+
+		/// <summary>
+		///		Returns this plugin's server type if it
+		///		is defined in the plugin configuration file;
+		///		otherwise SingleCall.
+		/// </summary>
+		protected string ServerType
+		{
+			get
+			{
+				if ( m_server_type == null )
+				{
+					m_server_type =
+						GetStringValue( PluginConfigSchema.plugin[ PluginIndex ][ "serverType" ], "SingleCall" );
+				}
+				return ( m_server_type );
+			}
+		}
+
+		/// <summary>
+		///		Returns this plugin's server lifetime if it
+		///		is defined in the plugin configuration file;
+		///		otherwise 0.
+		/// </summary>
+		private int m_plugin_server_lifetime = -1;
+
+		/// <summary>
+		///		Returns this plugin's server lifetime if it
+		///		is defined in the plugin configuration file;
+		///		otherwise 0.
+		/// </summary>
+		protected int PluginServerLifetime
+		{
+			get
+			{
+				if ( m_plugin_server_lifetime == -1 )
+				{
+					m_plugin_server_lifetime =
+						GetInt32Value( PluginConfigSchema.plugin[ PluginIndex ][ "serverLifetime" ], 0 );
+				}
+				return ( m_plugin_server_lifetime );
+			}
+		}
+
+		/// <summary>
+		///		The 0-based index of the plugin in the plugin configuration file.
+		/// </summary>
+		private int m_plugin_index = -1;
+		
+		/// <summary>
+		///		The 0-based index of the plugin in the plugin configuration file.
+		/// </summary>
+		protected int PluginIndex
+		{
+			get
+			{
+				if ( m_plugin_index == -1 )
+				{
+					string uri = System.Runtime.Remoting.RemotingServices.GetObjectUri( this );
+					string index = Regex.Match( uri, @"^.*(?<index>\d{2})\.rem$", 
+						RegexOptions.IgnoreCase ).Groups[ "index" ].Value;
+					m_plugin_index = Convert.ToInt32( index );
+				}
+				return ( m_plugin_index );
+			}
+		}
+		
+		/// <summary>
+		///		Gets a string value from a DB value and returns the
+		///		given defaultValue if the give value is DBNull.
+		/// </summary>
+		/// <param name="value">The DB value to convert to a string.</param>
+		/// <param name="defaultValue">The value to return if the given value is DBNull.</param>
+		/// <returns>
+		///		If value is not DBNull then that value converted to a string;
+		///		otherwise defaultValue.
+		/// </returns>
+		private string GetStringValue( object value, string defaultValue )
+		{
+			return ( value is DBNull ? defaultValue : Convert.ToString( value, CultureInfo.CurrentCulture ) );
+		}
+
+		/// <summary>
+		///		Gets an integer value from a DB value and returns the
+		///		given defaultValue if the give value is DBNull.
+		/// </summary>
+		/// <param name="value">The DB value to convert to an integer.</param>
+		/// <param name="defaultValue">The value to return if the given value is DBNull.</param>
+		/// <returns>
+		///		If value is not DBNull then that value converted to an integer;
+		///		otherwise defaultValue.
+		/// </returns>
+		private int GetInt32Value( object value, int defaultValue )
+		{
+			return ( value is DBNull ? defaultValue : Convert.ToInt32( value ) );
+		}
+		
 		/// <summary>
 		///		Activates the plugin for first-time use.  This method is necessary
 		///		because not all plugins are activated with the 'new' keyword, instead
@@ -49,7 +264,23 @@ namespace Sudowin.Plugins
 		/// </summary>
 		public virtual void Activate()
 		{
+			this.Activate( string.Empty );
+		}
 
+		/// <summary>
+		///		Activates the plugin for first-time use.  This method is necessary
+		///		because not all plugins are activated with the 'new' keyword, instead
+		///		some are activated with 'Activator.GetObject' and a method is required
+		///		to force the plugin's construction in order to catch any exceptions that
+		///		may be associated with a plugin's construction.
+		/// </summary>
+		/// <param name="activationData">
+		///		A plugin designer can pass data into the plugin from the plugin configuration
+		///		file by passing the data into the plugin as a string formatted variable.
+		/// </param>
+		public virtual void Activate( string activationData )
+		{
+			
 		}
 	}
 }

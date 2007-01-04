@@ -91,37 +91,20 @@ namespace Sudowin.Plugins.CredentialsCache.LocalServer
 		public override bool GetCache( string userName, ref CredentialsCache credCache )
 		{
 			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
-				"entering GetCache( string, ref CredentialsCache )" );
+				"entering GetCredentialsCache( string, ref CredentialsCache )" );
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
 				"userName={0},credCache=", userName );
 
 			m_coll_mtx.WaitOne();
-			bool is_passphrase_cached;
-			string passphrase = string.Empty;
-			if ( is_passphrase_cached = m_passphrases.ContainsKey( userName ) )
-			{
-				SecureString ss = m_passphrases[ userName ];
-				IntPtr ps = Marshal.SecureStringToBSTR( ss );
-				passphrase = Marshal.PtrToStringBSTR( ps );
-				Marshal.FreeBSTR( ps );
-			}
+			bool isCredentialsCacheCached = m_ccs.TryGetValue( userName, out credCache );
 			m_coll_mtx.ReleaseMutex();
 
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
-				"{0}, is_passphrase_cached={1}", userName, is_passphrase_cached );
-		
-			m_coll_mtx.WaitOne();
-			bool is_cred_cache_cached = m_ccs.TryGetValue( userName, out credCache );
-			m_coll_mtx.ReleaseMutex();
+				"{0}, isCredentialsCacheCached={1}", userName, isCredentialsCacheCached );
+			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.ExitMethod,
+				"exiting GetCredentialsCache( string, ref CredentialsCache )" );
 
-			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
-				"{0}, is_cred_cache_cached={1}", userName, is_cred_cache_cached );
-
-			// put the retrieved passphrase back into the credentials 
-			// cache structure
-			credCache.Passphrase = passphrase;
-
-			return ( is_passphrase_cached && is_cred_cache_cached );
+			return ( isCredentialsCacheCached );
 		}
 
 		/// <summary>
@@ -187,27 +170,12 @@ namespace Sudowin.Plugins.CredentialsCache.LocalServer
 		{
 			m_coll_mtx.WaitOne();
 
-			// securely store the passphrase
-			SecureString ss = new SecureString();
-			for ( int x = 0; x < credCache.Passphrase.Length; ++x )
-				ss.AppendChar( credCache.Passphrase[ x ] );
+			// whether or not the CredentialsCache structure
+			// with the userName parameter for its key
+			// is already is the m_ucs collection
+			bool is_cached = m_ccs.ContainsKey( userName );
 
-			if ( m_passphrases.ContainsKey( userName ) )
-			{
-				m_passphrases[ userName ].Clear();
-				m_passphrases[ userName ] = ss;
-			}
-			else
-			{
-				m_passphrases.Add( userName, ss );
-			}
-
-			// remove the passphrase from the credentials cache 
-			// structure that is to be stored
-			credCache.Passphrase = string.Empty;
-
-			// store the credentials cache structure
-			if ( m_ccs.ContainsKey( userName ) )
+			if ( is_cached )
 			{
 				m_ccs[ userName ] = credCache;
 			}

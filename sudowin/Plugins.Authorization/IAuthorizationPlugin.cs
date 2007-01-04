@@ -40,25 +40,6 @@ namespace Sudowin.Plugins.Authorization
 	public interface IAuthorizationPlugin : IPlugin, IDisposable
 	{
 		/// <summary>
-		///		Opens a connection to the authorization data source 
-		///		and validates the data source with the given schema 
-		///		file.
-		/// </summary>
-		/// <param name="connectionString">
-		///		Connection string used to open a connection
-		///		to the authorization data source.
-		/// </param>
-		/// <param name="schemaFileUri">
-		///		Uri of schema file to use to validate the data source.
-		/// </param>
-		void Open( string connectionString, Uri schemaFileUri );
-
-		/// <summary>
-		///		Closes the connection to the authorization data source.
-		/// </summary>
-		void Close();
-
-		/// <summary>
 		///		Gets a Sudowin.Common.UserInfo structure
 		///		from the authorization source for the given user name.
 		/// </summary>
@@ -105,7 +86,7 @@ namespace Sudowin.Plugins.Authorization
 		///		false if otherwise.
 		/// </returns>
 		bool GetCommandInfo(
-			string username,
+			string userName,
 			string commandPath,
 			string commandArguments,
 			ref CommandInfo commandInfo );

@@ -29,59 +29,40 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 -->
 <xs:schema id="PluginConfigurationSchema" targetNamespace="http://sudowin.sourceforge.net/schemas/PluginConfiguration/" elementFormDefault="qualified" xmlns="http://sudowin.sourceforge.net/schemas/PluginConfiguration/" xmlns:mstns="http://sudowin.sourceforge.net/schemas/PluginConfiguration/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="0.2.0.0">
-	<xs:element name="plugins">
+	<xs:element name="pluginConfiguration">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="authenticationPlugins" type="authenticationPluginGroupType" minOccurs="1" maxOccurs="1" />
-				<xs:element name="authorizationPlugins" type="authorizationPluginGroupType" minOccurs="1" maxOccurs="1" />
-				<xs:element name="credentialsCachePlugins" type="credentialsCachePluginGroupType" minOccurs="1" maxOccurs="1" />
+				<xs:element name="plugins" minOccurs="1" maxOccurs="1" type="pluginsType" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:complexType name="authenticationPluginType">
+	<xs:complexType name="pluginType">
 		<xs:attribute name="assemblyString" type="xs:string" use="required" />
 		<xs:attribute name="serverType" type="serverTypeType" default="SingleCall" use="optional" />
 		<xs:attribute name="serverLifetime" type="xs:int" default="0" use="optional" />
-		<xs:attribute name="enabled" type="xs:boolean" default="true" use="optional" />
+		<xs:attribute name="connectionString" type="xs:string" use="optional" />
+		<xs:attribute name="schemaUri" type="xs:string" use="optional" />
+		<xs:attribute name="enabled" type="xs:boolean" use="optional" default="True" />
+		<xs:attribute name="activationData" type="xs:string" use="optional" />
+		<xs:attribute name="pluginType" type="pluginTypeType" use="required" />
 	</xs:complexType>
-	<xs:complexType name="authorizationPluginType">
-		<xs:attribute name="assemblyString" type="xs:string" use="required" />
-		<xs:attribute name="serverType" type="serverTypeType" default="SingleCall" use="optional" />
-		<xs:attribute name="serverLifetime" type="xs:int" default="0" use="optional" />
-		<xs:attribute name="connectionString" type="xs:string" use="required" />
-		<xs:attribute name="schemaUri" type="xs:string" use="required" />
-		<xs:attribute name="enabled" type="xs:boolean" use="optional" default="true" />
-	</xs:complexType>
-	<xs:complexType name="credentialsCachePluginType">
-		<xs:attribute name="assemblyString" type="xs:string" use="required" />
-		<xs:attribute name="serverType" type="serverTypeType" default="SingleCall" use="optional" />
-		<xs:attribute name="serverLifetime" type="xs:int" default="0" use="optional" />
-		<xs:attribute name="enabled" type="xs:boolean" use="optional" default="true" />
-	</xs:complexType>
-	<xs:simpleType name="serverTypeType">
+	<xs:simpleType name="pluginTypeType">
 		<xs:restriction base="xs:string">
-			<xs:enumeration value="Singleton" />
-			<xs:enumeration value="SingleCall" />
+			<xs:enumeration value="authenticationPlugin" />
+			<xs:enumeration value="authorizationPlugin" />
+			<xs:enumeration value="credentialsCachePlugin" />
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:complexType name="authenticationPluginGroupType">
+	<xs:simpleType name="serverTypeType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SingleCall" />
+			<xs:enumeration value="Singleton" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="pluginsType">
 		<xs:sequence>
 			<xs:sequence>
-				<xs:element name="authenticationPlugin" type="authenticationPluginType" minOccurs="1" maxOccurs="1" />
-			</xs:sequence>
-		</xs:sequence>
-	</xs:complexType>
-	<xs:complexType name="authorizationPluginGroupType">
-		<xs:sequence>
-			<xs:sequence>
-				<xs:element name="authorizationPlugin" type="authorizationPluginType" minOccurs="1" maxOccurs="1" />
-			</xs:sequence>
-		</xs:sequence>
-	</xs:complexType>
-	<xs:complexType name="credentialsCachePluginGroupType">
-		<xs:sequence>
-			<xs:sequence>
-				<xs:element name="credentialsCachePlugin" type="credentialsCachePluginType" minOccurs="1" maxOccurs="1" />
+				<xs:element name="plugin" type="pluginType" minOccurs="3" maxOccurs="unbounded" />
 			</xs:sequence>
 		</xs:sequence>
 	</xs:complexType>

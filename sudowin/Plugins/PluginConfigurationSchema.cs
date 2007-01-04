@@ -20,27 +20,15 @@ namespace Sudowin.Plugins {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.ComponentModel.ToolboxItem(true)]
     [System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedDataSetSchema")]
-    [System.Xml.Serialization.XmlRootAttribute("PluginConfigurationSchema")]
+	[System.Xml.Serialization.XmlRootAttribute( "PluginConfigurationSchema" )]
     [System.ComponentModel.Design.HelpKeywordAttribute("vs.data.DataSet")]
     public partial class PluginConfigurationSchema : System.Data.DataSet {
         
-        private authenticationPluginsDataTable tableauthenticationPlugins;
+        private pluginsDataTable tableplugins;
         
-        private authenticationPluginDataTable tableauthenticationPlugin;
+        private pluginDataTable tableplugin;
         
-        private authorizationPluginsDataTable tableauthorizationPlugins;
-        
-        private authorizationPluginDataTable tableauthorizationPlugin;
-        
-        private credentialsCachePluginsDataTable tablecredentialsCachePlugins;
-        
-        private credentialsCachePluginDataTable tablecredentialsCachePlugin;
-        
-        private System.Data.DataRelation relationauthenticationPlugins_authenticationPlugin;
-        
-        private System.Data.DataRelation relationauthorizationPlugins_authorizationPlugin;
-        
-        private System.Data.DataRelation relationcredentialsCachePlugins_credentialsCachePlugin;
+        private System.Data.DataRelation relationplugins_plugin;
         
         private System.Data.SchemaSerializationMode _schemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
         
@@ -68,23 +56,11 @@ namespace Sudowin.Plugins {
             if ((this.DetermineSchemaSerializationMode(info, context) == System.Data.SchemaSerializationMode.IncludeSchema)) {
                 System.Data.DataSet ds = new System.Data.DataSet();
                 ds.ReadXmlSchema(new System.Xml.XmlTextReader(new System.IO.StringReader(strSchema)));
-                if ((ds.Tables["authenticationPlugins"] != null)) {
-                    base.Tables.Add(new authenticationPluginsDataTable(ds.Tables["authenticationPlugins"]));
+                if ((ds.Tables["plugins"] != null)) {
+                    base.Tables.Add(new pluginsDataTable(ds.Tables["plugins"]));
                 }
-                if ((ds.Tables["authenticationPlugin"] != null)) {
-                    base.Tables.Add(new authenticationPluginDataTable(ds.Tables["authenticationPlugin"]));
-                }
-                if ((ds.Tables["authorizationPlugins"] != null)) {
-                    base.Tables.Add(new authorizationPluginsDataTable(ds.Tables["authorizationPlugins"]));
-                }
-                if ((ds.Tables["authorizationPlugin"] != null)) {
-                    base.Tables.Add(new authorizationPluginDataTable(ds.Tables["authorizationPlugin"]));
-                }
-                if ((ds.Tables["credentialsCachePlugins"] != null)) {
-                    base.Tables.Add(new credentialsCachePluginsDataTable(ds.Tables["credentialsCachePlugins"]));
-                }
-                if ((ds.Tables["credentialsCachePlugin"] != null)) {
-                    base.Tables.Add(new credentialsCachePluginDataTable(ds.Tables["credentialsCachePlugin"]));
+                if ((ds.Tables["plugin"] != null)) {
+                    base.Tables.Add(new pluginDataTable(ds.Tables["plugin"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -107,54 +83,18 @@ namespace Sudowin.Plugins {
         [System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [System.ComponentModel.Browsable(false)]
         [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Content)]
-        public authenticationPluginsDataTable authenticationPlugins {
+        public pluginsDataTable plugins {
             get {
-                return this.tableauthenticationPlugins;
+                return this.tableplugins;
             }
         }
         
         [System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [System.ComponentModel.Browsable(false)]
         [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Content)]
-        public authenticationPluginDataTable authenticationPlugin {
+        public pluginDataTable plugin {
             get {
-                return this.tableauthenticationPlugin;
-            }
-        }
-        
-        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [System.ComponentModel.Browsable(false)]
-        [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Content)]
-        public authorizationPluginsDataTable authorizationPlugins {
-            get {
-                return this.tableauthorizationPlugins;
-            }
-        }
-        
-        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [System.ComponentModel.Browsable(false)]
-        [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Content)]
-        public authorizationPluginDataTable authorizationPlugin {
-            get {
-                return this.tableauthorizationPlugin;
-            }
-        }
-        
-        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [System.ComponentModel.Browsable(false)]
-        [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Content)]
-        public credentialsCachePluginsDataTable credentialsCachePlugins {
-            get {
-                return this.tablecredentialsCachePlugins;
-            }
-        }
-        
-        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [System.ComponentModel.Browsable(false)]
-        [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Content)]
-        public credentialsCachePluginDataTable credentialsCachePlugin {
-            get {
-                return this.tablecredentialsCachePlugin;
+                return this.tableplugin;
             }
         }
         
@@ -217,23 +157,11 @@ namespace Sudowin.Plugins {
                 this.Reset();
                 System.Data.DataSet ds = new System.Data.DataSet();
                 ds.ReadXml(reader);
-                if ((ds.Tables["authenticationPlugins"] != null)) {
-                    base.Tables.Add(new authenticationPluginsDataTable(ds.Tables["authenticationPlugins"]));
+                if ((ds.Tables["plugins"] != null)) {
+                    base.Tables.Add(new pluginsDataTable(ds.Tables["plugins"]));
                 }
-                if ((ds.Tables["authenticationPlugin"] != null)) {
-                    base.Tables.Add(new authenticationPluginDataTable(ds.Tables["authenticationPlugin"]));
-                }
-                if ((ds.Tables["authorizationPlugins"] != null)) {
-                    base.Tables.Add(new authorizationPluginsDataTable(ds.Tables["authorizationPlugins"]));
-                }
-                if ((ds.Tables["authorizationPlugin"] != null)) {
-                    base.Tables.Add(new authorizationPluginDataTable(ds.Tables["authorizationPlugin"]));
-                }
-                if ((ds.Tables["credentialsCachePlugins"] != null)) {
-                    base.Tables.Add(new credentialsCachePluginsDataTable(ds.Tables["credentialsCachePlugins"]));
-                }
-                if ((ds.Tables["credentialsCachePlugin"] != null)) {
-                    base.Tables.Add(new credentialsCachePluginDataTable(ds.Tables["credentialsCachePlugin"]));
+                if ((ds.Tables["plugin"] != null)) {
+                    base.Tables.Add(new pluginDataTable(ds.Tables["plugin"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -265,132 +193,54 @@ namespace Sudowin.Plugins {
         
         [System.Diagnostics.DebuggerNonUserCodeAttribute()]
         internal void InitVars(bool initTable) {
-            this.tableauthenticationPlugins = ((authenticationPluginsDataTable)(base.Tables["authenticationPlugins"]));
+            this.tableplugins = ((pluginsDataTable)(base.Tables["plugins"]));
             if ((initTable == true)) {
-                if ((this.tableauthenticationPlugins != null)) {
-                    this.tableauthenticationPlugins.InitVars();
+                if ((this.tableplugins != null)) {
+                    this.tableplugins.InitVars();
                 }
             }
-            this.tableauthenticationPlugin = ((authenticationPluginDataTable)(base.Tables["authenticationPlugin"]));
+            this.tableplugin = ((pluginDataTable)(base.Tables["plugin"]));
             if ((initTable == true)) {
-                if ((this.tableauthenticationPlugin != null)) {
-                    this.tableauthenticationPlugin.InitVars();
+                if ((this.tableplugin != null)) {
+                    this.tableplugin.InitVars();
                 }
             }
-            this.tableauthorizationPlugins = ((authorizationPluginsDataTable)(base.Tables["authorizationPlugins"]));
-            if ((initTable == true)) {
-                if ((this.tableauthorizationPlugins != null)) {
-                    this.tableauthorizationPlugins.InitVars();
-                }
-            }
-            this.tableauthorizationPlugin = ((authorizationPluginDataTable)(base.Tables["authorizationPlugin"]));
-            if ((initTable == true)) {
-                if ((this.tableauthorizationPlugin != null)) {
-                    this.tableauthorizationPlugin.InitVars();
-                }
-            }
-            this.tablecredentialsCachePlugins = ((credentialsCachePluginsDataTable)(base.Tables["credentialsCachePlugins"]));
-            if ((initTable == true)) {
-                if ((this.tablecredentialsCachePlugins != null)) {
-                    this.tablecredentialsCachePlugins.InitVars();
-                }
-            }
-            this.tablecredentialsCachePlugin = ((credentialsCachePluginDataTable)(base.Tables["credentialsCachePlugin"]));
-            if ((initTable == true)) {
-                if ((this.tablecredentialsCachePlugin != null)) {
-                    this.tablecredentialsCachePlugin.InitVars();
-                }
-            }
-            this.relationauthenticationPlugins_authenticationPlugin = this.Relations["authenticationPlugins_authenticationPlugin"];
-            this.relationauthorizationPlugins_authorizationPlugin = this.Relations["authorizationPlugins_authorizationPlugin"];
-            this.relationcredentialsCachePlugins_credentialsCachePlugin = this.Relations["credentialsCachePlugins_credentialsCachePlugin"];
+            this.relationplugins_plugin = this.Relations["plugins_plugin"];
         }
         
         [System.Diagnostics.DebuggerNonUserCodeAttribute()]
         private void InitClass() {
-            this.DataSetName = "PluginConfigurationSchema";
+            this.DataSetName = "pluginConfiguration";
             this.Prefix = "";
             this.Namespace = "http://sudowin.sourceforge.net/schemas/PluginConfiguration/";
             this.EnforceConstraints = true;
             this.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
-            this.tableauthenticationPlugins = new authenticationPluginsDataTable();
-            base.Tables.Add(this.tableauthenticationPlugins);
-            this.tableauthenticationPlugin = new authenticationPluginDataTable();
-            base.Tables.Add(this.tableauthenticationPlugin);
-            this.tableauthorizationPlugins = new authorizationPluginsDataTable();
-            base.Tables.Add(this.tableauthorizationPlugins);
-            this.tableauthorizationPlugin = new authorizationPluginDataTable();
-            base.Tables.Add(this.tableauthorizationPlugin);
-            this.tablecredentialsCachePlugins = new credentialsCachePluginsDataTable();
-            base.Tables.Add(this.tablecredentialsCachePlugins);
-            this.tablecredentialsCachePlugin = new credentialsCachePluginDataTable();
-            base.Tables.Add(this.tablecredentialsCachePlugin);
+            this.tableplugins = new pluginsDataTable();
+            base.Tables.Add(this.tableplugins);
+            this.tableplugin = new pluginDataTable();
+            base.Tables.Add(this.tableplugin);
             System.Data.ForeignKeyConstraint fkc;
-            fkc = new System.Data.ForeignKeyConstraint("authenticationPlugins_authenticationPlugin", new System.Data.DataColumn[] {
-                        this.tableauthenticationPlugins.authenticationPlugins_IdColumn}, new System.Data.DataColumn[] {
-                        this.tableauthenticationPlugin.authenticationPlugins_IdColumn});
-            this.tableauthenticationPlugin.Constraints.Add(fkc);
+            fkc = new System.Data.ForeignKeyConstraint("plugins_plugin", new System.Data.DataColumn[] {
+                        this.tableplugins.plugins_IdColumn}, new System.Data.DataColumn[] {
+                        this.tableplugin.plugins_IdColumn});
+            this.tableplugin.Constraints.Add(fkc);
             fkc.AcceptRejectRule = System.Data.AcceptRejectRule.None;
             fkc.DeleteRule = System.Data.Rule.Cascade;
             fkc.UpdateRule = System.Data.Rule.Cascade;
-            fkc = new System.Data.ForeignKeyConstraint("authorizationPlugins_authorizationPlugin", new System.Data.DataColumn[] {
-                        this.tableauthorizationPlugins.authorizationPlugins_IdColumn}, new System.Data.DataColumn[] {
-                        this.tableauthorizationPlugin.authorizationPlugins_IdColumn});
-            this.tableauthorizationPlugin.Constraints.Add(fkc);
-            fkc.AcceptRejectRule = System.Data.AcceptRejectRule.None;
-            fkc.DeleteRule = System.Data.Rule.Cascade;
-            fkc.UpdateRule = System.Data.Rule.Cascade;
-            fkc = new System.Data.ForeignKeyConstraint("credentialsCachePlugins_credentialsCachePlugin", new System.Data.DataColumn[] {
-                        this.tablecredentialsCachePlugins.credentialsCachePlugins_IdColumn}, new System.Data.DataColumn[] {
-                        this.tablecredentialsCachePlugin.credentialsCachePlugins_IdColumn});
-            this.tablecredentialsCachePlugin.Constraints.Add(fkc);
-            fkc.AcceptRejectRule = System.Data.AcceptRejectRule.None;
-            fkc.DeleteRule = System.Data.Rule.Cascade;
-            fkc.UpdateRule = System.Data.Rule.Cascade;
-            this.relationauthenticationPlugins_authenticationPlugin = new System.Data.DataRelation("authenticationPlugins_authenticationPlugin", new System.Data.DataColumn[] {
-                        this.tableauthenticationPlugins.authenticationPlugins_IdColumn}, new System.Data.DataColumn[] {
-                        this.tableauthenticationPlugin.authenticationPlugins_IdColumn}, false);
-            this.relationauthenticationPlugins_authenticationPlugin.Nested = true;
-            this.Relations.Add(this.relationauthenticationPlugins_authenticationPlugin);
-            this.relationauthorizationPlugins_authorizationPlugin = new System.Data.DataRelation("authorizationPlugins_authorizationPlugin", new System.Data.DataColumn[] {
-                        this.tableauthorizationPlugins.authorizationPlugins_IdColumn}, new System.Data.DataColumn[] {
-                        this.tableauthorizationPlugin.authorizationPlugins_IdColumn}, false);
-            this.relationauthorizationPlugins_authorizationPlugin.Nested = true;
-            this.Relations.Add(this.relationauthorizationPlugins_authorizationPlugin);
-            this.relationcredentialsCachePlugins_credentialsCachePlugin = new System.Data.DataRelation("credentialsCachePlugins_credentialsCachePlugin", new System.Data.DataColumn[] {
-                        this.tablecredentialsCachePlugins.credentialsCachePlugins_IdColumn}, new System.Data.DataColumn[] {
-                        this.tablecredentialsCachePlugin.credentialsCachePlugins_IdColumn}, false);
-            this.relationcredentialsCachePlugins_credentialsCachePlugin.Nested = true;
-            this.Relations.Add(this.relationcredentialsCachePlugins_credentialsCachePlugin);
+            this.relationplugins_plugin = new System.Data.DataRelation("plugins_plugin", new System.Data.DataColumn[] {
+                        this.tableplugins.plugins_IdColumn}, new System.Data.DataColumn[] {
+                        this.tableplugin.plugins_IdColumn}, false);
+            this.relationplugins_plugin.Nested = true;
+            this.Relations.Add(this.relationplugins_plugin);
         }
         
         [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        private bool ShouldSerializeauthenticationPlugins() {
+        private bool ShouldSerializeplugins() {
             return false;
         }
         
         [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        private bool ShouldSerializeauthenticationPlugin() {
-            return false;
-        }
-        
-        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        private bool ShouldSerializeauthorizationPlugins() {
-            return false;
-        }
-        
-        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        private bool ShouldSerializeauthorizationPlugin() {
-            return false;
-        }
-        
-        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        private bool ShouldSerializecredentialsCachePlugins() {
-            return false;
-        }
-        
-        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        private bool ShouldSerializecredentialsCachePlugin() {
+        private bool ShouldSerializeplugin() {
             return false;
         }
         
@@ -414,35 +264,27 @@ namespace Sudowin.Plugins {
             return type;
         }
         
-        public delegate void authenticationPluginsRowChangeEventHandler(object sender, authenticationPluginsRowChangeEvent e);
+        public delegate void pluginsRowChangeEventHandler(object sender, pluginsRowChangeEvent e);
         
-        public delegate void authenticationPluginRowChangeEventHandler(object sender, authenticationPluginRowChangeEvent e);
-        
-        public delegate void authorizationPluginsRowChangeEventHandler(object sender, authorizationPluginsRowChangeEvent e);
-        
-        public delegate void authorizationPluginRowChangeEventHandler(object sender, authorizationPluginRowChangeEvent e);
-        
-        public delegate void credentialsCachePluginsRowChangeEventHandler(object sender, credentialsCachePluginsRowChangeEvent e);
-        
-        public delegate void credentialsCachePluginRowChangeEventHandler(object sender, credentialsCachePluginRowChangeEvent e);
+        public delegate void pluginRowChangeEventHandler(object sender, pluginRowChangeEvent e);
         
         [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
         [System.Serializable()]
         [System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class authenticationPluginsDataTable : System.Data.DataTable, System.Collections.IEnumerable {
+        public partial class pluginsDataTable : System.Data.DataTable, System.Collections.IEnumerable {
             
-            private System.Data.DataColumn columnauthenticationPlugins_Id;
+            private System.Data.DataColumn columnplugins_Id;
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authenticationPluginsDataTable() {
-                this.TableName = "authenticationPlugins";
+            public pluginsDataTable() {
+                this.TableName = "plugins";
                 this.BeginInit();
                 this.InitClass();
                 this.EndInit();
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            internal authenticationPluginsDataTable(System.Data.DataTable table) {
+            internal pluginsDataTable(System.Data.DataTable table) {
                 this.TableName = table.TableName;
                 if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
                     this.CaseSensitive = table.CaseSensitive;
@@ -458,15 +300,15 @@ namespace Sudowin.Plugins {
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected authenticationPluginsDataTable(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : 
+            protected pluginsDataTable(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : 
                     base(info, context) {
                 this.InitVars();
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public System.Data.DataColumn authenticationPlugins_IdColumn {
+            public System.Data.DataColumn plugins_IdColumn {
                 get {
-                    return this.columnauthenticationPlugins_Id;
+                    return this.columnplugins_Id;
                 }
             }
             
@@ -479,32 +321,32 @@ namespace Sudowin.Plugins {
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authenticationPluginsRow this[int index] {
+            public pluginsRow this[int index] {
                 get {
-                    return ((authenticationPluginsRow)(this.Rows[index]));
+                    return ((pluginsRow)(this.Rows[index]));
                 }
             }
             
-            public event authenticationPluginsRowChangeEventHandler authenticationPluginsRowChanging;
+            public event pluginsRowChangeEventHandler pluginsRowChanging;
             
-            public event authenticationPluginsRowChangeEventHandler authenticationPluginsRowChanged;
+            public event pluginsRowChangeEventHandler pluginsRowChanged;
             
-            public event authenticationPluginsRowChangeEventHandler authenticationPluginsRowDeleting;
+            public event pluginsRowChangeEventHandler pluginsRowDeleting;
             
-            public event authenticationPluginsRowChangeEventHandler authenticationPluginsRowDeleted;
+            public event pluginsRowChangeEventHandler pluginsRowDeleted;
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public void AddauthenticationPluginsRow(authenticationPluginsRow row) {
+            public void AddpluginsRow(pluginsRow row) {
                 this.Rows.Add(row);
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authenticationPluginsRow AddauthenticationPluginsRow() {
-                authenticationPluginsRow rowauthenticationPluginsRow = ((authenticationPluginsRow)(this.NewRow()));
-                rowauthenticationPluginsRow.ItemArray = new object[] {
+            public pluginsRow AddpluginsRow() {
+                pluginsRow rowpluginsRow = ((pluginsRow)(this.NewRow()));
+                rowpluginsRow.ItemArray = new object[] {
                         null};
-                this.Rows.Add(rowauthenticationPluginsRow);
-                return rowauthenticationPluginsRow;
+                this.Rows.Add(rowpluginsRow);
+                return rowpluginsRow;
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -514,81 +356,81 @@ namespace Sudowin.Plugins {
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public override System.Data.DataTable Clone() {
-                authenticationPluginsDataTable cln = ((authenticationPluginsDataTable)(base.Clone()));
+                pluginsDataTable cln = ((pluginsDataTable)(base.Clone()));
                 cln.InitVars();
                 return cln;
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             protected override System.Data.DataTable CreateInstance() {
-                return new authenticationPluginsDataTable();
+                return new pluginsDataTable();
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             internal void InitVars() {
-                this.columnauthenticationPlugins_Id = base.Columns["authenticationPlugins_Id"];
+                this.columnplugins_Id = base.Columns["plugins_Id"];
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             private void InitClass() {
-                this.columnauthenticationPlugins_Id = new System.Data.DataColumn("authenticationPlugins_Id", typeof(int), null, System.Data.MappingType.Hidden);
-                base.Columns.Add(this.columnauthenticationPlugins_Id);
+                this.columnplugins_Id = new System.Data.DataColumn("plugins_Id", typeof(int), null, System.Data.MappingType.Hidden);
+                base.Columns.Add(this.columnplugins_Id);
                 this.Constraints.Add(new System.Data.UniqueConstraint("Constraint1", new System.Data.DataColumn[] {
-                                this.columnauthenticationPlugins_Id}, true));
-                this.columnauthenticationPlugins_Id.AutoIncrement = true;
-                this.columnauthenticationPlugins_Id.AllowDBNull = false;
-                this.columnauthenticationPlugins_Id.Unique = true;
+                                this.columnplugins_Id}, true));
+                this.columnplugins_Id.AutoIncrement = true;
+                this.columnplugins_Id.AllowDBNull = false;
+                this.columnplugins_Id.Unique = true;
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authenticationPluginsRow NewauthenticationPluginsRow() {
-                return ((authenticationPluginsRow)(this.NewRow()));
+            public pluginsRow NewpluginsRow() {
+                return ((pluginsRow)(this.NewRow()));
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             protected override System.Data.DataRow NewRowFromBuilder(System.Data.DataRowBuilder builder) {
-                return new authenticationPluginsRow(builder);
+                return new pluginsRow(builder);
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             protected override System.Type GetRowType() {
-                return typeof(authenticationPluginsRow);
+                return typeof(pluginsRow);
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             protected override void OnRowChanged(System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanged(e);
-                if ((this.authenticationPluginsRowChanged != null)) {
-                    this.authenticationPluginsRowChanged(this, new authenticationPluginsRowChangeEvent(((authenticationPluginsRow)(e.Row)), e.Action));
+                if ((this.pluginsRowChanged != null)) {
+                    this.pluginsRowChanged(this, new pluginsRowChangeEvent(((pluginsRow)(e.Row)), e.Action));
                 }
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             protected override void OnRowChanging(System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanging(e);
-                if ((this.authenticationPluginsRowChanging != null)) {
-                    this.authenticationPluginsRowChanging(this, new authenticationPluginsRowChangeEvent(((authenticationPluginsRow)(e.Row)), e.Action));
+                if ((this.pluginsRowChanging != null)) {
+                    this.pluginsRowChanging(this, new pluginsRowChangeEvent(((pluginsRow)(e.Row)), e.Action));
                 }
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             protected override void OnRowDeleted(System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleted(e);
-                if ((this.authenticationPluginsRowDeleted != null)) {
-                    this.authenticationPluginsRowDeleted(this, new authenticationPluginsRowChangeEvent(((authenticationPluginsRow)(e.Row)), e.Action));
+                if ((this.pluginsRowDeleted != null)) {
+                    this.pluginsRowDeleted(this, new pluginsRowChangeEvent(((pluginsRow)(e.Row)), e.Action));
                 }
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             protected override void OnRowDeleting(System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleting(e);
-                if ((this.authenticationPluginsRowDeleting != null)) {
-                    this.authenticationPluginsRowDeleting(this, new authenticationPluginsRowChangeEvent(((authenticationPluginsRow)(e.Row)), e.Action));
+                if ((this.pluginsRowDeleting != null)) {
+                    this.pluginsRowDeleting(this, new pluginsRowChangeEvent(((pluginsRow)(e.Row)), e.Action));
                 }
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public void RemoveauthenticationPluginsRow(authenticationPluginsRow row) {
+            public void RemovepluginsRow(pluginsRow row) {
                 this.Rows.Remove(row);
             }
             
@@ -615,7 +457,7 @@ namespace Sudowin.Plugins {
                 type.Attributes.Add(attribute1);
                 System.Xml.Schema.XmlSchemaAttribute attribute2 = new System.Xml.Schema.XmlSchemaAttribute();
                 attribute2.Name = "tableTypeName";
-                attribute2.FixedValue = "authenticationPluginsDataTable";
+                attribute2.FixedValue = "pluginsDataTable";
                 type.Attributes.Add(attribute2);
                 type.Particle = sequence;
                 return type;
@@ -625,439 +467,7 @@ namespace Sudowin.Plugins {
         [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
         [System.Serializable()]
         [System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class authenticationPluginDataTable : System.Data.DataTable, System.Collections.IEnumerable {
-            
-            private System.Data.DataColumn columnassemblyString;
-            
-            private System.Data.DataColumn columnserverType;
-            
-            private System.Data.DataColumn columnserverLifetime;
-            
-            private System.Data.DataColumn columnauthenticationPlugins_Id;
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authenticationPluginDataTable() {
-                this.TableName = "authenticationPlugin";
-                this.BeginInit();
-                this.InitClass();
-                this.EndInit();
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            internal authenticationPluginDataTable(System.Data.DataTable table) {
-                this.TableName = table.TableName;
-                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
-                    this.CaseSensitive = table.CaseSensitive;
-                }
-                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
-                    this.Locale = table.Locale;
-                }
-                if ((table.Namespace != table.DataSet.Namespace)) {
-                    this.Namespace = table.Namespace;
-                }
-                this.Prefix = table.Prefix;
-                this.MinimumCapacity = table.MinimumCapacity;
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected authenticationPluginDataTable(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : 
-                    base(info, context) {
-                this.InitVars();
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public System.Data.DataColumn assemblyStringColumn {
-                get {
-                    return this.columnassemblyString;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public System.Data.DataColumn serverTypeColumn {
-                get {
-                    return this.columnserverType;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public System.Data.DataColumn serverLifetimeColumn {
-                get {
-                    return this.columnserverLifetime;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public System.Data.DataColumn authenticationPlugins_IdColumn {
-                get {
-                    return this.columnauthenticationPlugins_Id;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [System.ComponentModel.Browsable(false)]
-            public int Count {
-                get {
-                    return this.Rows.Count;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authenticationPluginRow this[int index] {
-                get {
-                    return ((authenticationPluginRow)(this.Rows[index]));
-                }
-            }
-            
-            public event authenticationPluginRowChangeEventHandler authenticationPluginRowChanging;
-            
-            public event authenticationPluginRowChangeEventHandler authenticationPluginRowChanged;
-            
-            public event authenticationPluginRowChangeEventHandler authenticationPluginRowDeleting;
-            
-            public event authenticationPluginRowChangeEventHandler authenticationPluginRowDeleted;
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public void AddauthenticationPluginRow(authenticationPluginRow row) {
-                this.Rows.Add(row);
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authenticationPluginRow AddauthenticationPluginRow(string assemblyString, string serverType, int serverLifetime, authenticationPluginsRow parentauthenticationPluginsRowByauthenticationPlugins_authenticationPlugin) {
-                authenticationPluginRow rowauthenticationPluginRow = ((authenticationPluginRow)(this.NewRow()));
-                rowauthenticationPluginRow.ItemArray = new object[] {
-                        assemblyString,
-                        serverType,
-                        serverLifetime,
-                        parentauthenticationPluginsRowByauthenticationPlugins_authenticationPlugin[0]};
-                this.Rows.Add(rowauthenticationPluginRow);
-                return rowauthenticationPluginRow;
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public virtual System.Collections.IEnumerator GetEnumerator() {
-                return this.Rows.GetEnumerator();
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public override System.Data.DataTable Clone() {
-                authenticationPluginDataTable cln = ((authenticationPluginDataTable)(base.Clone()));
-                cln.InitVars();
-                return cln;
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override System.Data.DataTable CreateInstance() {
-                return new authenticationPluginDataTable();
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            internal void InitVars() {
-                this.columnassemblyString = base.Columns["assemblyString"];
-                this.columnserverType = base.Columns["serverType"];
-                this.columnserverLifetime = base.Columns["serverLifetime"];
-                this.columnauthenticationPlugins_Id = base.Columns["authenticationPlugins_Id"];
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            private void InitClass() {
-                this.columnassemblyString = new System.Data.DataColumn("assemblyString", typeof(string), null, System.Data.MappingType.Attribute);
-                base.Columns.Add(this.columnassemblyString);
-                this.columnserverType = new System.Data.DataColumn("serverType", typeof(string), null, System.Data.MappingType.Attribute);
-                base.Columns.Add(this.columnserverType);
-                this.columnserverLifetime = new System.Data.DataColumn("serverLifetime", typeof(int), null, System.Data.MappingType.Attribute);
-                base.Columns.Add(this.columnserverLifetime);
-                this.columnauthenticationPlugins_Id = new System.Data.DataColumn("authenticationPlugins_Id", typeof(int), null, System.Data.MappingType.Hidden);
-                base.Columns.Add(this.columnauthenticationPlugins_Id);
-                this.columnassemblyString.AllowDBNull = false;
-                this.columnassemblyString.Namespace = "";
-                this.columnserverType.Namespace = "";
-                this.columnserverType.DefaultValue = ((string)("SingleCall"));
-                this.columnserverLifetime.Namespace = "";
-                this.columnserverLifetime.DefaultValue = ((int)(0));
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authenticationPluginRow NewauthenticationPluginRow() {
-                return ((authenticationPluginRow)(this.NewRow()));
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override System.Data.DataRow NewRowFromBuilder(System.Data.DataRowBuilder builder) {
-                return new authenticationPluginRow(builder);
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override System.Type GetRowType() {
-                return typeof(authenticationPluginRow);
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override void OnRowChanged(System.Data.DataRowChangeEventArgs e) {
-                base.OnRowChanged(e);
-                if ((this.authenticationPluginRowChanged != null)) {
-                    this.authenticationPluginRowChanged(this, new authenticationPluginRowChangeEvent(((authenticationPluginRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override void OnRowChanging(System.Data.DataRowChangeEventArgs e) {
-                base.OnRowChanging(e);
-                if ((this.authenticationPluginRowChanging != null)) {
-                    this.authenticationPluginRowChanging(this, new authenticationPluginRowChangeEvent(((authenticationPluginRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override void OnRowDeleted(System.Data.DataRowChangeEventArgs e) {
-                base.OnRowDeleted(e);
-                if ((this.authenticationPluginRowDeleted != null)) {
-                    this.authenticationPluginRowDeleted(this, new authenticationPluginRowChangeEvent(((authenticationPluginRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override void OnRowDeleting(System.Data.DataRowChangeEventArgs e) {
-                base.OnRowDeleting(e);
-                if ((this.authenticationPluginRowDeleting != null)) {
-                    this.authenticationPluginRowDeleting(this, new authenticationPluginRowChangeEvent(((authenticationPluginRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public void RemoveauthenticationPluginRow(authenticationPluginRow row) {
-                this.Rows.Remove(row);
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public static System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(System.Xml.Schema.XmlSchemaSet xs) {
-                System.Xml.Schema.XmlSchemaComplexType type = new System.Xml.Schema.XmlSchemaComplexType();
-                System.Xml.Schema.XmlSchemaSequence sequence = new System.Xml.Schema.XmlSchemaSequence();
-                PluginConfigurationSchema ds = new PluginConfigurationSchema();
-                xs.Add(ds.GetSchemaSerializable());
-                System.Xml.Schema.XmlSchemaAny any1 = new System.Xml.Schema.XmlSchemaAny();
-                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
-                any1.MinOccurs = new decimal(0);
-                any1.MaxOccurs = decimal.MaxValue;
-                any1.ProcessContents = System.Xml.Schema.XmlSchemaContentProcessing.Lax;
-                sequence.Items.Add(any1);
-                System.Xml.Schema.XmlSchemaAny any2 = new System.Xml.Schema.XmlSchemaAny();
-                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
-                any2.MinOccurs = new decimal(1);
-                any2.ProcessContents = System.Xml.Schema.XmlSchemaContentProcessing.Lax;
-                sequence.Items.Add(any2);
-                System.Xml.Schema.XmlSchemaAttribute attribute1 = new System.Xml.Schema.XmlSchemaAttribute();
-                attribute1.Name = "namespace";
-                attribute1.FixedValue = ds.Namespace;
-                type.Attributes.Add(attribute1);
-                System.Xml.Schema.XmlSchemaAttribute attribute2 = new System.Xml.Schema.XmlSchemaAttribute();
-                attribute2.Name = "tableTypeName";
-                attribute2.FixedValue = "authenticationPluginDataTable";
-                type.Attributes.Add(attribute2);
-                type.Particle = sequence;
-                return type;
-            }
-        }
-        
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
-        [System.Serializable()]
-        [System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class authorizationPluginsDataTable : System.Data.DataTable, System.Collections.IEnumerable {
-            
-            private System.Data.DataColumn columnauthorizationPlugins_Id;
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authorizationPluginsDataTable() {
-                this.TableName = "authorizationPlugins";
-                this.BeginInit();
-                this.InitClass();
-                this.EndInit();
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            internal authorizationPluginsDataTable(System.Data.DataTable table) {
-                this.TableName = table.TableName;
-                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
-                    this.CaseSensitive = table.CaseSensitive;
-                }
-                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
-                    this.Locale = table.Locale;
-                }
-                if ((table.Namespace != table.DataSet.Namespace)) {
-                    this.Namespace = table.Namespace;
-                }
-                this.Prefix = table.Prefix;
-                this.MinimumCapacity = table.MinimumCapacity;
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected authorizationPluginsDataTable(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : 
-                    base(info, context) {
-                this.InitVars();
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public System.Data.DataColumn authorizationPlugins_IdColumn {
-                get {
-                    return this.columnauthorizationPlugins_Id;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [System.ComponentModel.Browsable(false)]
-            public int Count {
-                get {
-                    return this.Rows.Count;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authorizationPluginsRow this[int index] {
-                get {
-                    return ((authorizationPluginsRow)(this.Rows[index]));
-                }
-            }
-            
-            public event authorizationPluginsRowChangeEventHandler authorizationPluginsRowChanging;
-            
-            public event authorizationPluginsRowChangeEventHandler authorizationPluginsRowChanged;
-            
-            public event authorizationPluginsRowChangeEventHandler authorizationPluginsRowDeleting;
-            
-            public event authorizationPluginsRowChangeEventHandler authorizationPluginsRowDeleted;
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public void AddauthorizationPluginsRow(authorizationPluginsRow row) {
-                this.Rows.Add(row);
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authorizationPluginsRow AddauthorizationPluginsRow() {
-                authorizationPluginsRow rowauthorizationPluginsRow = ((authorizationPluginsRow)(this.NewRow()));
-                rowauthorizationPluginsRow.ItemArray = new object[] {
-                        null};
-                this.Rows.Add(rowauthorizationPluginsRow);
-                return rowauthorizationPluginsRow;
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public virtual System.Collections.IEnumerator GetEnumerator() {
-                return this.Rows.GetEnumerator();
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public override System.Data.DataTable Clone() {
-                authorizationPluginsDataTable cln = ((authorizationPluginsDataTable)(base.Clone()));
-                cln.InitVars();
-                return cln;
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override System.Data.DataTable CreateInstance() {
-                return new authorizationPluginsDataTable();
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            internal void InitVars() {
-                this.columnauthorizationPlugins_Id = base.Columns["authorizationPlugins_Id"];
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            private void InitClass() {
-                this.columnauthorizationPlugins_Id = new System.Data.DataColumn("authorizationPlugins_Id", typeof(int), null, System.Data.MappingType.Hidden);
-                base.Columns.Add(this.columnauthorizationPlugins_Id);
-                this.Constraints.Add(new System.Data.UniqueConstraint("Constraint1", new System.Data.DataColumn[] {
-                                this.columnauthorizationPlugins_Id}, true));
-                this.columnauthorizationPlugins_Id.AutoIncrement = true;
-                this.columnauthorizationPlugins_Id.AllowDBNull = false;
-                this.columnauthorizationPlugins_Id.Unique = true;
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authorizationPluginsRow NewauthorizationPluginsRow() {
-                return ((authorizationPluginsRow)(this.NewRow()));
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override System.Data.DataRow NewRowFromBuilder(System.Data.DataRowBuilder builder) {
-                return new authorizationPluginsRow(builder);
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override System.Type GetRowType() {
-                return typeof(authorizationPluginsRow);
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override void OnRowChanged(System.Data.DataRowChangeEventArgs e) {
-                base.OnRowChanged(e);
-                if ((this.authorizationPluginsRowChanged != null)) {
-                    this.authorizationPluginsRowChanged(this, new authorizationPluginsRowChangeEvent(((authorizationPluginsRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override void OnRowChanging(System.Data.DataRowChangeEventArgs e) {
-                base.OnRowChanging(e);
-                if ((this.authorizationPluginsRowChanging != null)) {
-                    this.authorizationPluginsRowChanging(this, new authorizationPluginsRowChangeEvent(((authorizationPluginsRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override void OnRowDeleted(System.Data.DataRowChangeEventArgs e) {
-                base.OnRowDeleted(e);
-                if ((this.authorizationPluginsRowDeleted != null)) {
-                    this.authorizationPluginsRowDeleted(this, new authorizationPluginsRowChangeEvent(((authorizationPluginsRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override void OnRowDeleting(System.Data.DataRowChangeEventArgs e) {
-                base.OnRowDeleting(e);
-                if ((this.authorizationPluginsRowDeleting != null)) {
-                    this.authorizationPluginsRowDeleting(this, new authorizationPluginsRowChangeEvent(((authorizationPluginsRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public void RemoveauthorizationPluginsRow(authorizationPluginsRow row) {
-                this.Rows.Remove(row);
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public static System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(System.Xml.Schema.XmlSchemaSet xs) {
-                System.Xml.Schema.XmlSchemaComplexType type = new System.Xml.Schema.XmlSchemaComplexType();
-                System.Xml.Schema.XmlSchemaSequence sequence = new System.Xml.Schema.XmlSchemaSequence();
-                PluginConfigurationSchema ds = new PluginConfigurationSchema();
-                xs.Add(ds.GetSchemaSerializable());
-                System.Xml.Schema.XmlSchemaAny any1 = new System.Xml.Schema.XmlSchemaAny();
-                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
-                any1.MinOccurs = new decimal(0);
-                any1.MaxOccurs = decimal.MaxValue;
-                any1.ProcessContents = System.Xml.Schema.XmlSchemaContentProcessing.Lax;
-                sequence.Items.Add(any1);
-                System.Xml.Schema.XmlSchemaAny any2 = new System.Xml.Schema.XmlSchemaAny();
-                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
-                any2.MinOccurs = new decimal(1);
-                any2.ProcessContents = System.Xml.Schema.XmlSchemaContentProcessing.Lax;
-                sequence.Items.Add(any2);
-                System.Xml.Schema.XmlSchemaAttribute attribute1 = new System.Xml.Schema.XmlSchemaAttribute();
-                attribute1.Name = "namespace";
-                attribute1.FixedValue = ds.Namespace;
-                type.Attributes.Add(attribute1);
-                System.Xml.Schema.XmlSchemaAttribute attribute2 = new System.Xml.Schema.XmlSchemaAttribute();
-                attribute2.Name = "tableTypeName";
-                attribute2.FixedValue = "authorizationPluginsDataTable";
-                type.Attributes.Add(attribute2);
-                type.Particle = sequence;
-                return type;
-            }
-        }
-        
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
-        [System.Serializable()]
-        [System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class authorizationPluginDataTable : System.Data.DataTable, System.Collections.IEnumerable {
+        public partial class pluginDataTable : System.Data.DataTable, System.Collections.IEnumerable {
             
             private System.Data.DataColumn columnassemblyString;
             
@@ -1069,18 +479,24 @@ namespace Sudowin.Plugins {
             
             private System.Data.DataColumn columnschemaUri;
             
-            private System.Data.DataColumn columnauthorizationPlugins_Id;
+            private System.Data.DataColumn columnenabled;
+            
+            private System.Data.DataColumn columnactivationData;
+            
+            private System.Data.DataColumn columnpluginType;
+            
+            private System.Data.DataColumn columnplugins_Id;
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authorizationPluginDataTable() {
-                this.TableName = "authorizationPlugin";
+            public pluginDataTable() {
+                this.TableName = "plugin";
                 this.BeginInit();
                 this.InitClass();
                 this.EndInit();
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            internal authorizationPluginDataTable(System.Data.DataTable table) {
+            internal pluginDataTable(System.Data.DataTable table) {
                 this.TableName = table.TableName;
                 if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
                     this.CaseSensitive = table.CaseSensitive;
@@ -1096,7 +512,7 @@ namespace Sudowin.Plugins {
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected authorizationPluginDataTable(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : 
+            protected pluginDataTable(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : 
                     base(info, context) {
                 this.InitVars();
             }
@@ -1137,9 +553,30 @@ namespace Sudowin.Plugins {
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public System.Data.DataColumn authorizationPlugins_IdColumn {
+            public System.Data.DataColumn enabledColumn {
                 get {
-                    return this.columnauthorizationPlugins_Id;
+                    return this.columnenabled;
+                }
+            }
+            
+            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public System.Data.DataColumn activationDataColumn {
+                get {
+                    return this.columnactivationData;
+                }
+            }
+            
+            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public System.Data.DataColumn pluginTypeColumn {
+                get {
+                    return this.columnpluginType;
+                }
+            }
+            
+            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public System.Data.DataColumn plugins_IdColumn {
+                get {
+                    return this.columnplugins_Id;
                 }
             }
             
@@ -1152,37 +589,40 @@ namespace Sudowin.Plugins {
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authorizationPluginRow this[int index] {
+            public pluginRow this[int index] {
                 get {
-                    return ((authorizationPluginRow)(this.Rows[index]));
+                    return ((pluginRow)(this.Rows[index]));
                 }
             }
             
-            public event authorizationPluginRowChangeEventHandler authorizationPluginRowChanging;
+            public event pluginRowChangeEventHandler pluginRowChanging;
             
-            public event authorizationPluginRowChangeEventHandler authorizationPluginRowChanged;
+            public event pluginRowChangeEventHandler pluginRowChanged;
             
-            public event authorizationPluginRowChangeEventHandler authorizationPluginRowDeleting;
+            public event pluginRowChangeEventHandler pluginRowDeleting;
             
-            public event authorizationPluginRowChangeEventHandler authorizationPluginRowDeleted;
+            public event pluginRowChangeEventHandler pluginRowDeleted;
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public void AddauthorizationPluginRow(authorizationPluginRow row) {
+            public void AddpluginRow(pluginRow row) {
                 this.Rows.Add(row);
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authorizationPluginRow AddauthorizationPluginRow(string assemblyString, string serverType, int serverLifetime, string connectionString, string schemaUri, authorizationPluginsRow parentauthorizationPluginsRowByauthorizationPlugins_authorizationPlugin) {
-                authorizationPluginRow rowauthorizationPluginRow = ((authorizationPluginRow)(this.NewRow()));
-                rowauthorizationPluginRow.ItemArray = new object[] {
+            public pluginRow AddpluginRow(string assemblyString, string serverType, int serverLifetime, string connectionString, string schemaUri, bool enabled, string activationData, string pluginType, pluginsRow parentpluginsRowByplugins_plugin) {
+                pluginRow rowpluginRow = ((pluginRow)(this.NewRow()));
+                rowpluginRow.ItemArray = new object[] {
                         assemblyString,
                         serverType,
                         serverLifetime,
                         connectionString,
                         schemaUri,
-                        parentauthorizationPluginsRowByauthorizationPlugins_authorizationPlugin[0]};
-                this.Rows.Add(rowauthorizationPluginRow);
-                return rowauthorizationPluginRow;
+                        enabled,
+                        activationData,
+                        pluginType,
+                        parentpluginsRowByplugins_plugin[0]};
+                this.Rows.Add(rowpluginRow);
+                return rowpluginRow;
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1192,14 +632,14 @@ namespace Sudowin.Plugins {
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public override System.Data.DataTable Clone() {
-                authorizationPluginDataTable cln = ((authorizationPluginDataTable)(base.Clone()));
+                pluginDataTable cln = ((pluginDataTable)(base.Clone()));
                 cln.InitVars();
                 return cln;
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             protected override System.Data.DataTable CreateInstance() {
-                return new authorizationPluginDataTable();
+                return new pluginDataTable();
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1209,7 +649,10 @@ namespace Sudowin.Plugins {
                 this.columnserverLifetime = base.Columns["serverLifetime"];
                 this.columnconnectionString = base.Columns["connectionString"];
                 this.columnschemaUri = base.Columns["schemaUri"];
-                this.columnauthorizationPlugins_Id = base.Columns["authorizationPlugins_Id"];
+                this.columnenabled = base.Columns["enabled"];
+                this.columnactivationData = base.Columns["activationData"];
+                this.columnpluginType = base.Columns["pluginType"];
+                this.columnplugins_Id = base.Columns["plugins_Id"];
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1224,69 +667,78 @@ namespace Sudowin.Plugins {
                 base.Columns.Add(this.columnconnectionString);
                 this.columnschemaUri = new System.Data.DataColumn("schemaUri", typeof(string), null, System.Data.MappingType.Attribute);
                 base.Columns.Add(this.columnschemaUri);
-                this.columnauthorizationPlugins_Id = new System.Data.DataColumn("authorizationPlugins_Id", typeof(int), null, System.Data.MappingType.Hidden);
-                base.Columns.Add(this.columnauthorizationPlugins_Id);
+                this.columnenabled = new System.Data.DataColumn("enabled", typeof(bool), null, System.Data.MappingType.Attribute);
+                base.Columns.Add(this.columnenabled);
+                this.columnactivationData = new System.Data.DataColumn("activationData", typeof(string), null, System.Data.MappingType.Attribute);
+                base.Columns.Add(this.columnactivationData);
+                this.columnpluginType = new System.Data.DataColumn("pluginType", typeof(string), null, System.Data.MappingType.Attribute);
+                base.Columns.Add(this.columnpluginType);
+                this.columnplugins_Id = new System.Data.DataColumn("plugins_Id", typeof(int), null, System.Data.MappingType.Hidden);
+                base.Columns.Add(this.columnplugins_Id);
                 this.columnassemblyString.AllowDBNull = false;
                 this.columnassemblyString.Namespace = "";
                 this.columnserverType.Namespace = "";
                 this.columnserverType.DefaultValue = ((string)("SingleCall"));
                 this.columnserverLifetime.Namespace = "";
                 this.columnserverLifetime.DefaultValue = ((int)(0));
-                this.columnconnectionString.AllowDBNull = false;
                 this.columnconnectionString.Namespace = "";
-                this.columnschemaUri.AllowDBNull = false;
                 this.columnschemaUri.Namespace = "";
+                this.columnenabled.Namespace = "";
+                this.columnenabled.DefaultValue = ((bool)(true));
+                this.columnactivationData.Namespace = "";
+                this.columnpluginType.AllowDBNull = false;
+                this.columnpluginType.Namespace = "";
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authorizationPluginRow NewauthorizationPluginRow() {
-                return ((authorizationPluginRow)(this.NewRow()));
+            public pluginRow NewpluginRow() {
+                return ((pluginRow)(this.NewRow()));
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             protected override System.Data.DataRow NewRowFromBuilder(System.Data.DataRowBuilder builder) {
-                return new authorizationPluginRow(builder);
+                return new pluginRow(builder);
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             protected override System.Type GetRowType() {
-                return typeof(authorizationPluginRow);
+                return typeof(pluginRow);
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             protected override void OnRowChanged(System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanged(e);
-                if ((this.authorizationPluginRowChanged != null)) {
-                    this.authorizationPluginRowChanged(this, new authorizationPluginRowChangeEvent(((authorizationPluginRow)(e.Row)), e.Action));
+                if ((this.pluginRowChanged != null)) {
+                    this.pluginRowChanged(this, new pluginRowChangeEvent(((pluginRow)(e.Row)), e.Action));
                 }
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             protected override void OnRowChanging(System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanging(e);
-                if ((this.authorizationPluginRowChanging != null)) {
-                    this.authorizationPluginRowChanging(this, new authorizationPluginRowChangeEvent(((authorizationPluginRow)(e.Row)), e.Action));
+                if ((this.pluginRowChanging != null)) {
+                    this.pluginRowChanging(this, new pluginRowChangeEvent(((pluginRow)(e.Row)), e.Action));
                 }
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             protected override void OnRowDeleted(System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleted(e);
-                if ((this.authorizationPluginRowDeleted != null)) {
-                    this.authorizationPluginRowDeleted(this, new authorizationPluginRowChangeEvent(((authorizationPluginRow)(e.Row)), e.Action));
+                if ((this.pluginRowDeleted != null)) {
+                    this.pluginRowDeleted(this, new pluginRowChangeEvent(((pluginRow)(e.Row)), e.Action));
                 }
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             protected override void OnRowDeleting(System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleting(e);
-                if ((this.authorizationPluginRowDeleting != null)) {
-                    this.authorizationPluginRowDeleting(this, new authorizationPluginRowChangeEvent(((authorizationPluginRow)(e.Row)), e.Action));
+                if ((this.pluginRowDeleting != null)) {
+                    this.pluginRowDeleting(this, new pluginRowChangeEvent(((pluginRow)(e.Row)), e.Action));
                 }
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public void RemoveauthorizationPluginRow(authorizationPluginRow row) {
+            public void RemovepluginRow(pluginRow row) {
                 this.Rows.Remove(row);
             }
             
@@ -1313,7 +765,7 @@ namespace Sudowin.Plugins {
                 type.Attributes.Add(attribute1);
                 System.Xml.Schema.XmlSchemaAttribute attribute2 = new System.Xml.Schema.XmlSchemaAttribute();
                 attribute2.Name = "tableTypeName";
-                attribute2.FixedValue = "authorizationPluginDataTable";
+                attribute2.FixedValue = "pluginDataTable";
                 type.Attributes.Add(attribute2);
                 type.Particle = sequence;
                 return type;
@@ -1321,482 +773,50 @@ namespace Sudowin.Plugins {
         }
         
         [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
-        [System.Serializable()]
-        [System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class credentialsCachePluginsDataTable : System.Data.DataTable, System.Collections.IEnumerable {
+        public partial class pluginsRow : System.Data.DataRow {
             
-            private System.Data.DataColumn columncredentialsCachePlugins_Id;
+            private pluginsDataTable tableplugins;
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public credentialsCachePluginsDataTable() {
-                this.TableName = "credentialsCachePlugins";
-                this.BeginInit();
-                this.InitClass();
-                this.EndInit();
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            internal credentialsCachePluginsDataTable(System.Data.DataTable table) {
-                this.TableName = table.TableName;
-                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
-                    this.CaseSensitive = table.CaseSensitive;
-                }
-                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
-                    this.Locale = table.Locale;
-                }
-                if ((table.Namespace != table.DataSet.Namespace)) {
-                    this.Namespace = table.Namespace;
-                }
-                this.Prefix = table.Prefix;
-                this.MinimumCapacity = table.MinimumCapacity;
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected credentialsCachePluginsDataTable(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : 
-                    base(info, context) {
-                this.InitVars();
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public System.Data.DataColumn credentialsCachePlugins_IdColumn {
-                get {
-                    return this.columncredentialsCachePlugins_Id;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [System.ComponentModel.Browsable(false)]
-            public int Count {
-                get {
-                    return this.Rows.Count;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public credentialsCachePluginsRow this[int index] {
-                get {
-                    return ((credentialsCachePluginsRow)(this.Rows[index]));
-                }
-            }
-            
-            public event credentialsCachePluginsRowChangeEventHandler credentialsCachePluginsRowChanging;
-            
-            public event credentialsCachePluginsRowChangeEventHandler credentialsCachePluginsRowChanged;
-            
-            public event credentialsCachePluginsRowChangeEventHandler credentialsCachePluginsRowDeleting;
-            
-            public event credentialsCachePluginsRowChangeEventHandler credentialsCachePluginsRowDeleted;
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public void AddcredentialsCachePluginsRow(credentialsCachePluginsRow row) {
-                this.Rows.Add(row);
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public credentialsCachePluginsRow AddcredentialsCachePluginsRow() {
-                credentialsCachePluginsRow rowcredentialsCachePluginsRow = ((credentialsCachePluginsRow)(this.NewRow()));
-                rowcredentialsCachePluginsRow.ItemArray = new object[] {
-                        null};
-                this.Rows.Add(rowcredentialsCachePluginsRow);
-                return rowcredentialsCachePluginsRow;
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public virtual System.Collections.IEnumerator GetEnumerator() {
-                return this.Rows.GetEnumerator();
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public override System.Data.DataTable Clone() {
-                credentialsCachePluginsDataTable cln = ((credentialsCachePluginsDataTable)(base.Clone()));
-                cln.InitVars();
-                return cln;
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override System.Data.DataTable CreateInstance() {
-                return new credentialsCachePluginsDataTable();
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            internal void InitVars() {
-                this.columncredentialsCachePlugins_Id = base.Columns["credentialsCachePlugins_Id"];
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            private void InitClass() {
-                this.columncredentialsCachePlugins_Id = new System.Data.DataColumn("credentialsCachePlugins_Id", typeof(int), null, System.Data.MappingType.Hidden);
-                base.Columns.Add(this.columncredentialsCachePlugins_Id);
-                this.Constraints.Add(new System.Data.UniqueConstraint("Constraint1", new System.Data.DataColumn[] {
-                                this.columncredentialsCachePlugins_Id}, true));
-                this.columncredentialsCachePlugins_Id.AutoIncrement = true;
-                this.columncredentialsCachePlugins_Id.AllowDBNull = false;
-                this.columncredentialsCachePlugins_Id.Unique = true;
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public credentialsCachePluginsRow NewcredentialsCachePluginsRow() {
-                return ((credentialsCachePluginsRow)(this.NewRow()));
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override System.Data.DataRow NewRowFromBuilder(System.Data.DataRowBuilder builder) {
-                return new credentialsCachePluginsRow(builder);
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override System.Type GetRowType() {
-                return typeof(credentialsCachePluginsRow);
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override void OnRowChanged(System.Data.DataRowChangeEventArgs e) {
-                base.OnRowChanged(e);
-                if ((this.credentialsCachePluginsRowChanged != null)) {
-                    this.credentialsCachePluginsRowChanged(this, new credentialsCachePluginsRowChangeEvent(((credentialsCachePluginsRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override void OnRowChanging(System.Data.DataRowChangeEventArgs e) {
-                base.OnRowChanging(e);
-                if ((this.credentialsCachePluginsRowChanging != null)) {
-                    this.credentialsCachePluginsRowChanging(this, new credentialsCachePluginsRowChangeEvent(((credentialsCachePluginsRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override void OnRowDeleted(System.Data.DataRowChangeEventArgs e) {
-                base.OnRowDeleted(e);
-                if ((this.credentialsCachePluginsRowDeleted != null)) {
-                    this.credentialsCachePluginsRowDeleted(this, new credentialsCachePluginsRowChangeEvent(((credentialsCachePluginsRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override void OnRowDeleting(System.Data.DataRowChangeEventArgs e) {
-                base.OnRowDeleting(e);
-                if ((this.credentialsCachePluginsRowDeleting != null)) {
-                    this.credentialsCachePluginsRowDeleting(this, new credentialsCachePluginsRowChangeEvent(((credentialsCachePluginsRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public void RemovecredentialsCachePluginsRow(credentialsCachePluginsRow row) {
-                this.Rows.Remove(row);
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public static System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(System.Xml.Schema.XmlSchemaSet xs) {
-                System.Xml.Schema.XmlSchemaComplexType type = new System.Xml.Schema.XmlSchemaComplexType();
-                System.Xml.Schema.XmlSchemaSequence sequence = new System.Xml.Schema.XmlSchemaSequence();
-                PluginConfigurationSchema ds = new PluginConfigurationSchema();
-                xs.Add(ds.GetSchemaSerializable());
-                System.Xml.Schema.XmlSchemaAny any1 = new System.Xml.Schema.XmlSchemaAny();
-                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
-                any1.MinOccurs = new decimal(0);
-                any1.MaxOccurs = decimal.MaxValue;
-                any1.ProcessContents = System.Xml.Schema.XmlSchemaContentProcessing.Lax;
-                sequence.Items.Add(any1);
-                System.Xml.Schema.XmlSchemaAny any2 = new System.Xml.Schema.XmlSchemaAny();
-                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
-                any2.MinOccurs = new decimal(1);
-                any2.ProcessContents = System.Xml.Schema.XmlSchemaContentProcessing.Lax;
-                sequence.Items.Add(any2);
-                System.Xml.Schema.XmlSchemaAttribute attribute1 = new System.Xml.Schema.XmlSchemaAttribute();
-                attribute1.Name = "namespace";
-                attribute1.FixedValue = ds.Namespace;
-                type.Attributes.Add(attribute1);
-                System.Xml.Schema.XmlSchemaAttribute attribute2 = new System.Xml.Schema.XmlSchemaAttribute();
-                attribute2.Name = "tableTypeName";
-                attribute2.FixedValue = "credentialsCachePluginsDataTable";
-                type.Attributes.Add(attribute2);
-                type.Particle = sequence;
-                return type;
-            }
-        }
-        
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
-        [System.Serializable()]
-        [System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class credentialsCachePluginDataTable : System.Data.DataTable, System.Collections.IEnumerable {
-            
-            private System.Data.DataColumn columnassemblyString;
-            
-            private System.Data.DataColumn columnserverType;
-            
-            private System.Data.DataColumn columnserverLifetime;
-            
-            private System.Data.DataColumn columncredentialsCachePlugins_Id;
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public credentialsCachePluginDataTable() {
-                this.TableName = "credentialsCachePlugin";
-                this.BeginInit();
-                this.InitClass();
-                this.EndInit();
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            internal credentialsCachePluginDataTable(System.Data.DataTable table) {
-                this.TableName = table.TableName;
-                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
-                    this.CaseSensitive = table.CaseSensitive;
-                }
-                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
-                    this.Locale = table.Locale;
-                }
-                if ((table.Namespace != table.DataSet.Namespace)) {
-                    this.Namespace = table.Namespace;
-                }
-                this.Prefix = table.Prefix;
-                this.MinimumCapacity = table.MinimumCapacity;
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected credentialsCachePluginDataTable(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : 
-                    base(info, context) {
-                this.InitVars();
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public System.Data.DataColumn assemblyStringColumn {
-                get {
-                    return this.columnassemblyString;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public System.Data.DataColumn serverTypeColumn {
-                get {
-                    return this.columnserverType;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public System.Data.DataColumn serverLifetimeColumn {
-                get {
-                    return this.columnserverLifetime;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public System.Data.DataColumn credentialsCachePlugins_IdColumn {
-                get {
-                    return this.columncredentialsCachePlugins_Id;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [System.ComponentModel.Browsable(false)]
-            public int Count {
-                get {
-                    return this.Rows.Count;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public credentialsCachePluginRow this[int index] {
-                get {
-                    return ((credentialsCachePluginRow)(this.Rows[index]));
-                }
-            }
-            
-            public event credentialsCachePluginRowChangeEventHandler credentialsCachePluginRowChanging;
-            
-            public event credentialsCachePluginRowChangeEventHandler credentialsCachePluginRowChanged;
-            
-            public event credentialsCachePluginRowChangeEventHandler credentialsCachePluginRowDeleting;
-            
-            public event credentialsCachePluginRowChangeEventHandler credentialsCachePluginRowDeleted;
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public void AddcredentialsCachePluginRow(credentialsCachePluginRow row) {
-                this.Rows.Add(row);
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public credentialsCachePluginRow AddcredentialsCachePluginRow(string assemblyString, string serverType, int serverLifetime, credentialsCachePluginsRow parentcredentialsCachePluginsRowBycredentialsCachePlugins_credentialsCachePlugin) {
-                credentialsCachePluginRow rowcredentialsCachePluginRow = ((credentialsCachePluginRow)(this.NewRow()));
-                rowcredentialsCachePluginRow.ItemArray = new object[] {
-                        assemblyString,
-                        serverType,
-                        serverLifetime,
-                        parentcredentialsCachePluginsRowBycredentialsCachePlugins_credentialsCachePlugin[0]};
-                this.Rows.Add(rowcredentialsCachePluginRow);
-                return rowcredentialsCachePluginRow;
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public virtual System.Collections.IEnumerator GetEnumerator() {
-                return this.Rows.GetEnumerator();
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public override System.Data.DataTable Clone() {
-                credentialsCachePluginDataTable cln = ((credentialsCachePluginDataTable)(base.Clone()));
-                cln.InitVars();
-                return cln;
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override System.Data.DataTable CreateInstance() {
-                return new credentialsCachePluginDataTable();
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            internal void InitVars() {
-                this.columnassemblyString = base.Columns["assemblyString"];
-                this.columnserverType = base.Columns["serverType"];
-                this.columnserverLifetime = base.Columns["serverLifetime"];
-                this.columncredentialsCachePlugins_Id = base.Columns["credentialsCachePlugins_Id"];
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            private void InitClass() {
-                this.columnassemblyString = new System.Data.DataColumn("assemblyString", typeof(string), null, System.Data.MappingType.Attribute);
-                base.Columns.Add(this.columnassemblyString);
-                this.columnserverType = new System.Data.DataColumn("serverType", typeof(string), null, System.Data.MappingType.Attribute);
-                base.Columns.Add(this.columnserverType);
-                this.columnserverLifetime = new System.Data.DataColumn("serverLifetime", typeof(int), null, System.Data.MappingType.Attribute);
-                base.Columns.Add(this.columnserverLifetime);
-                this.columncredentialsCachePlugins_Id = new System.Data.DataColumn("credentialsCachePlugins_Id", typeof(int), null, System.Data.MappingType.Hidden);
-                base.Columns.Add(this.columncredentialsCachePlugins_Id);
-                this.columnassemblyString.AllowDBNull = false;
-                this.columnassemblyString.Namespace = "";
-                this.columnserverType.Namespace = "";
-                this.columnserverType.DefaultValue = ((string)("SingleCall"));
-                this.columnserverLifetime.Namespace = "";
-                this.columnserverLifetime.DefaultValue = ((int)(0));
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public credentialsCachePluginRow NewcredentialsCachePluginRow() {
-                return ((credentialsCachePluginRow)(this.NewRow()));
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override System.Data.DataRow NewRowFromBuilder(System.Data.DataRowBuilder builder) {
-                return new credentialsCachePluginRow(builder);
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override System.Type GetRowType() {
-                return typeof(credentialsCachePluginRow);
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override void OnRowChanged(System.Data.DataRowChangeEventArgs e) {
-                base.OnRowChanged(e);
-                if ((this.credentialsCachePluginRowChanged != null)) {
-                    this.credentialsCachePluginRowChanged(this, new credentialsCachePluginRowChangeEvent(((credentialsCachePluginRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override void OnRowChanging(System.Data.DataRowChangeEventArgs e) {
-                base.OnRowChanging(e);
-                if ((this.credentialsCachePluginRowChanging != null)) {
-                    this.credentialsCachePluginRowChanging(this, new credentialsCachePluginRowChangeEvent(((credentialsCachePluginRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override void OnRowDeleted(System.Data.DataRowChangeEventArgs e) {
-                base.OnRowDeleted(e);
-                if ((this.credentialsCachePluginRowDeleted != null)) {
-                    this.credentialsCachePluginRowDeleted(this, new credentialsCachePluginRowChangeEvent(((credentialsCachePluginRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            protected override void OnRowDeleting(System.Data.DataRowChangeEventArgs e) {
-                base.OnRowDeleting(e);
-                if ((this.credentialsCachePluginRowDeleting != null)) {
-                    this.credentialsCachePluginRowDeleting(this, new credentialsCachePluginRowChangeEvent(((credentialsCachePluginRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public void RemovecredentialsCachePluginRow(credentialsCachePluginRow row) {
-                this.Rows.Remove(row);
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public static System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(System.Xml.Schema.XmlSchemaSet xs) {
-                System.Xml.Schema.XmlSchemaComplexType type = new System.Xml.Schema.XmlSchemaComplexType();
-                System.Xml.Schema.XmlSchemaSequence sequence = new System.Xml.Schema.XmlSchemaSequence();
-                PluginConfigurationSchema ds = new PluginConfigurationSchema();
-                xs.Add(ds.GetSchemaSerializable());
-                System.Xml.Schema.XmlSchemaAny any1 = new System.Xml.Schema.XmlSchemaAny();
-                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
-                any1.MinOccurs = new decimal(0);
-                any1.MaxOccurs = decimal.MaxValue;
-                any1.ProcessContents = System.Xml.Schema.XmlSchemaContentProcessing.Lax;
-                sequence.Items.Add(any1);
-                System.Xml.Schema.XmlSchemaAny any2 = new System.Xml.Schema.XmlSchemaAny();
-                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
-                any2.MinOccurs = new decimal(1);
-                any2.ProcessContents = System.Xml.Schema.XmlSchemaContentProcessing.Lax;
-                sequence.Items.Add(any2);
-                System.Xml.Schema.XmlSchemaAttribute attribute1 = new System.Xml.Schema.XmlSchemaAttribute();
-                attribute1.Name = "namespace";
-                attribute1.FixedValue = ds.Namespace;
-                type.Attributes.Add(attribute1);
-                System.Xml.Schema.XmlSchemaAttribute attribute2 = new System.Xml.Schema.XmlSchemaAttribute();
-                attribute2.Name = "tableTypeName";
-                attribute2.FixedValue = "credentialsCachePluginDataTable";
-                type.Attributes.Add(attribute2);
-                type.Particle = sequence;
-                return type;
-            }
-        }
-        
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
-        public partial class authenticationPluginsRow : System.Data.DataRow {
-            
-            private authenticationPluginsDataTable tableauthenticationPlugins;
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            internal authenticationPluginsRow(System.Data.DataRowBuilder rb) : 
+            internal pluginsRow(System.Data.DataRowBuilder rb) : 
                     base(rb) {
-                this.tableauthenticationPlugins = ((authenticationPluginsDataTable)(this.Table));
+                this.tableplugins = ((pluginsDataTable)(this.Table));
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public int authenticationPlugins_Id {
+            public int plugins_Id {
                 get {
-                    return ((int)(this[this.tableauthenticationPlugins.authenticationPlugins_IdColumn]));
+                    return ((int)(this[this.tableplugins.plugins_IdColumn]));
                 }
                 set {
-                    this[this.tableauthenticationPlugins.authenticationPlugins_IdColumn] = value;
+                    this[this.tableplugins.plugins_IdColumn] = value;
                 }
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authenticationPluginRow[] GetauthenticationPluginRows() {
-                return ((authenticationPluginRow[])(base.GetChildRows(this.Table.ChildRelations["authenticationPlugins_authenticationPlugin"])));
+            public pluginRow[] GetpluginRows() {
+                return ((pluginRow[])(base.GetChildRows(this.Table.ChildRelations["plugins_plugin"])));
             }
         }
         
         [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
-        public partial class authenticationPluginRow : System.Data.DataRow {
+        public partial class pluginRow : System.Data.DataRow {
             
-            private authenticationPluginDataTable tableauthenticationPlugin;
+            private pluginDataTable tableplugin;
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            internal authenticationPluginRow(System.Data.DataRowBuilder rb) : 
+            internal pluginRow(System.Data.DataRowBuilder rb) : 
                     base(rb) {
-                this.tableauthenticationPlugin = ((authenticationPluginDataTable)(this.Table));
+                this.tableplugin = ((pluginDataTable)(this.Table));
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public string assemblyString {
                 get {
-                    return ((string)(this[this.tableauthenticationPlugin.assemblyStringColumn]));
+                    return ((string)(this[this.tableplugin.assemblyStringColumn]));
                 }
                 set {
-                    this[this.tableauthenticationPlugin.assemblyStringColumn] = value;
+                    this[this.tableplugin.assemblyStringColumn] = value;
                 }
             }
             
@@ -1804,14 +824,14 @@ namespace Sudowin.Plugins {
             public string serverType {
                 get {
                     try {
-                        return ((string)(this[this.tableauthenticationPlugin.serverTypeColumn]));
+                        return ((string)(this[this.tableplugin.serverTypeColumn]));
                     }
                     catch (System.InvalidCastException e) {
-                        throw new System.Data.StrongTypingException("The value for column \'serverType\' in table \'authenticationPlugin\' is DBNull.", e);
+                        throw new System.Data.StrongTypingException("The value for column \'serverType\' in table \'plugin\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableauthenticationPlugin.serverTypeColumn] = value;
+                    this[this.tableplugin.serverTypeColumn] = value;
                 }
             }
             
@@ -1819,380 +839,198 @@ namespace Sudowin.Plugins {
             public int serverLifetime {
                 get {
                     try {
-                        return ((int)(this[this.tableauthenticationPlugin.serverLifetimeColumn]));
+                        return ((int)(this[this.tableplugin.serverLifetimeColumn]));
                     }
                     catch (System.InvalidCastException e) {
-                        throw new System.Data.StrongTypingException("The value for column \'serverLifetime\' in table \'authenticationPlugin\' is DBNull.", e);
+                        throw new System.Data.StrongTypingException("The value for column \'serverLifetime\' in table \'plugin\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableauthenticationPlugin.serverLifetimeColumn] = value;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public int authenticationPlugins_Id {
-                get {
-                    try {
-                        return ((int)(this[this.tableauthenticationPlugin.authenticationPlugins_IdColumn]));
-                    }
-                    catch (System.InvalidCastException e) {
-                        throw new System.Data.StrongTypingException("The value for column \'authenticationPlugins_Id\' in table \'authenticationPlugin\' i" +
-                                "s DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableauthenticationPlugin.authenticationPlugins_IdColumn] = value;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authenticationPluginsRow authenticationPluginsRow {
-                get {
-                    return ((authenticationPluginsRow)(this.GetParentRow(this.Table.ParentRelations["authenticationPlugins_authenticationPlugin"])));
-                }
-                set {
-                    this.SetParentRow(value, this.Table.ParentRelations["authenticationPlugins_authenticationPlugin"]);
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public bool IsserverTypeNull() {
-                return this.IsNull(this.tableauthenticationPlugin.serverTypeColumn);
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public void SetserverTypeNull() {
-                this[this.tableauthenticationPlugin.serverTypeColumn] = System.Convert.DBNull;
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public bool IsserverLifetimeNull() {
-                return this.IsNull(this.tableauthenticationPlugin.serverLifetimeColumn);
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public void SetserverLifetimeNull() {
-                this[this.tableauthenticationPlugin.serverLifetimeColumn] = System.Convert.DBNull;
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public bool IsauthenticationPlugins_IdNull() {
-                return this.IsNull(this.tableauthenticationPlugin.authenticationPlugins_IdColumn);
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public void SetauthenticationPlugins_IdNull() {
-                this[this.tableauthenticationPlugin.authenticationPlugins_IdColumn] = System.Convert.DBNull;
-            }
-        }
-        
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
-        public partial class authorizationPluginsRow : System.Data.DataRow {
-            
-            private authorizationPluginsDataTable tableauthorizationPlugins;
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            internal authorizationPluginsRow(System.Data.DataRowBuilder rb) : 
-                    base(rb) {
-                this.tableauthorizationPlugins = ((authorizationPluginsDataTable)(this.Table));
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public int authorizationPlugins_Id {
-                get {
-                    return ((int)(this[this.tableauthorizationPlugins.authorizationPlugins_IdColumn]));
-                }
-                set {
-                    this[this.tableauthorizationPlugins.authorizationPlugins_IdColumn] = value;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authorizationPluginRow[] GetauthorizationPluginRows() {
-                return ((authorizationPluginRow[])(base.GetChildRows(this.Table.ChildRelations["authorizationPlugins_authorizationPlugin"])));
-            }
-        }
-        
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
-        public partial class authorizationPluginRow : System.Data.DataRow {
-            
-            private authorizationPluginDataTable tableauthorizationPlugin;
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            internal authorizationPluginRow(System.Data.DataRowBuilder rb) : 
-                    base(rb) {
-                this.tableauthorizationPlugin = ((authorizationPluginDataTable)(this.Table));
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public string assemblyString {
-                get {
-                    return ((string)(this[this.tableauthorizationPlugin.assemblyStringColumn]));
-                }
-                set {
-                    this[this.tableauthorizationPlugin.assemblyStringColumn] = value;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public string serverType {
-                get {
-                    try {
-                        return ((string)(this[this.tableauthorizationPlugin.serverTypeColumn]));
-                    }
-                    catch (System.InvalidCastException e) {
-                        throw new System.Data.StrongTypingException("The value for column \'serverType\' in table \'authorizationPlugin\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableauthorizationPlugin.serverTypeColumn] = value;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public int serverLifetime {
-                get {
-                    try {
-                        return ((int)(this[this.tableauthorizationPlugin.serverLifetimeColumn]));
-                    }
-                    catch (System.InvalidCastException e) {
-                        throw new System.Data.StrongTypingException("The value for column \'serverLifetime\' in table \'authorizationPlugin\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableauthorizationPlugin.serverLifetimeColumn] = value;
+                    this[this.tableplugin.serverLifetimeColumn] = value;
                 }
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public string connectionString {
                 get {
-                    return ((string)(this[this.tableauthorizationPlugin.connectionStringColumn]));
+                    try {
+                        return ((string)(this[this.tableplugin.connectionStringColumn]));
+                    }
+                    catch (System.InvalidCastException e) {
+                        throw new System.Data.StrongTypingException("The value for column \'connectionString\' in table \'plugin\' is DBNull.", e);
+                    }
                 }
                 set {
-                    this[this.tableauthorizationPlugin.connectionStringColumn] = value;
+                    this[this.tableplugin.connectionStringColumn] = value;
                 }
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public string schemaUri {
                 get {
-                    return ((string)(this[this.tableauthorizationPlugin.schemaUriColumn]));
-                }
-                set {
-                    this[this.tableauthorizationPlugin.schemaUriColumn] = value;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public int authorizationPlugins_Id {
-                get {
                     try {
-                        return ((int)(this[this.tableauthorizationPlugin.authorizationPlugins_IdColumn]));
+                        return ((string)(this[this.tableplugin.schemaUriColumn]));
                     }
                     catch (System.InvalidCastException e) {
-                        throw new System.Data.StrongTypingException("The value for column \'authorizationPlugins_Id\' in table \'authorizationPlugin\' is " +
-                                "DBNull.", e);
+                        throw new System.Data.StrongTypingException("The value for column \'schemaUri\' in table \'plugin\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableauthorizationPlugin.authorizationPlugins_IdColumn] = value;
+                    this[this.tableplugin.schemaUriColumn] = value;
                 }
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authorizationPluginsRow authorizationPluginsRow {
+            public bool enabled {
                 get {
-                    return ((authorizationPluginsRow)(this.GetParentRow(this.Table.ParentRelations["authorizationPlugins_authorizationPlugin"])));
+                    try {
+                        return ((bool)(this[this.tableplugin.enabledColumn]));
+                    }
+                    catch (System.InvalidCastException e) {
+                        throw new System.Data.StrongTypingException("The value for column \'enabled\' in table \'plugin\' is DBNull.", e);
+                    }
                 }
                 set {
-                    this.SetParentRow(value, this.Table.ParentRelations["authorizationPlugins_authorizationPlugin"]);
+                    this[this.tableplugin.enabledColumn] = value;
+                }
+            }
+            
+            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public string activationData {
+                get {
+                    try {
+                        return ((string)(this[this.tableplugin.activationDataColumn]));
+                    }
+                    catch (System.InvalidCastException e) {
+                        throw new System.Data.StrongTypingException("The value for column \'activationData\' in table \'plugin\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableplugin.activationDataColumn] = value;
+                }
+            }
+            
+            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public string pluginType {
+                get {
+                    return ((string)(this[this.tableplugin.pluginTypeColumn]));
+                }
+                set {
+                    this[this.tableplugin.pluginTypeColumn] = value;
+                }
+            }
+            
+            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public int plugins_Id {
+                get {
+                    try {
+                        return ((int)(this[this.tableplugin.plugins_IdColumn]));
+                    }
+                    catch (System.InvalidCastException e) {
+                        throw new System.Data.StrongTypingException("The value for column \'plugins_Id\' in table \'plugin\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableplugin.plugins_IdColumn] = value;
+                }
+            }
+            
+            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public pluginsRow pluginsRow {
+                get {
+                    return ((pluginsRow)(this.GetParentRow(this.Table.ParentRelations["plugins_plugin"])));
+                }
+                set {
+                    this.SetParentRow(value, this.Table.ParentRelations["plugins_plugin"]);
                 }
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public bool IsserverTypeNull() {
-                return this.IsNull(this.tableauthorizationPlugin.serverTypeColumn);
+                return this.IsNull(this.tableplugin.serverTypeColumn);
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public void SetserverTypeNull() {
-                this[this.tableauthorizationPlugin.serverTypeColumn] = System.Convert.DBNull;
+                this[this.tableplugin.serverTypeColumn] = System.Convert.DBNull;
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public bool IsserverLifetimeNull() {
-                return this.IsNull(this.tableauthorizationPlugin.serverLifetimeColumn);
+                return this.IsNull(this.tableplugin.serverLifetimeColumn);
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public void SetserverLifetimeNull() {
-                this[this.tableauthorizationPlugin.serverLifetimeColumn] = System.Convert.DBNull;
+                this[this.tableplugin.serverLifetimeColumn] = System.Convert.DBNull;
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public bool IsauthorizationPlugins_IdNull() {
-                return this.IsNull(this.tableauthorizationPlugin.authorizationPlugins_IdColumn);
+            public bool IsconnectionStringNull() {
+                return this.IsNull(this.tableplugin.connectionStringColumn);
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public void SetauthorizationPlugins_IdNull() {
-                this[this.tableauthorizationPlugin.authorizationPlugins_IdColumn] = System.Convert.DBNull;
+            public void SetconnectionStringNull() {
+                this[this.tableplugin.connectionStringColumn] = System.Convert.DBNull;
+            }
+            
+            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsschemaUriNull() {
+                return this.IsNull(this.tableplugin.schemaUriColumn);
+            }
+            
+            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetschemaUriNull() {
+                this[this.tableplugin.schemaUriColumn] = System.Convert.DBNull;
+            }
+            
+            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsenabledNull() {
+                return this.IsNull(this.tableplugin.enabledColumn);
+            }
+            
+            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetenabledNull() {
+                this[this.tableplugin.enabledColumn] = System.Convert.DBNull;
+            }
+            
+            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsactivationDataNull() {
+                return this.IsNull(this.tableplugin.activationDataColumn);
+            }
+            
+            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetactivationDataNull() {
+                this[this.tableplugin.activationDataColumn] = System.Convert.DBNull;
+            }
+            
+            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool Isplugins_IdNull() {
+                return this.IsNull(this.tableplugin.plugins_IdColumn);
+            }
+            
+            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void Setplugins_IdNull() {
+                this[this.tableplugin.plugins_IdColumn] = System.Convert.DBNull;
             }
         }
         
         [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
-        public partial class credentialsCachePluginsRow : System.Data.DataRow {
+        public class pluginsRowChangeEvent : System.EventArgs {
             
-            private credentialsCachePluginsDataTable tablecredentialsCachePlugins;
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            internal credentialsCachePluginsRow(System.Data.DataRowBuilder rb) : 
-                    base(rb) {
-                this.tablecredentialsCachePlugins = ((credentialsCachePluginsDataTable)(this.Table));
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public int credentialsCachePlugins_Id {
-                get {
-                    return ((int)(this[this.tablecredentialsCachePlugins.credentialsCachePlugins_IdColumn]));
-                }
-                set {
-                    this[this.tablecredentialsCachePlugins.credentialsCachePlugins_IdColumn] = value;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public credentialsCachePluginRow[] GetcredentialsCachePluginRows() {
-                return ((credentialsCachePluginRow[])(base.GetChildRows(this.Table.ChildRelations["credentialsCachePlugins_credentialsCachePlugin"])));
-            }
-        }
-        
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
-        public partial class credentialsCachePluginRow : System.Data.DataRow {
-            
-            private credentialsCachePluginDataTable tablecredentialsCachePlugin;
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            internal credentialsCachePluginRow(System.Data.DataRowBuilder rb) : 
-                    base(rb) {
-                this.tablecredentialsCachePlugin = ((credentialsCachePluginDataTable)(this.Table));
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public string assemblyString {
-                get {
-                    return ((string)(this[this.tablecredentialsCachePlugin.assemblyStringColumn]));
-                }
-                set {
-                    this[this.tablecredentialsCachePlugin.assemblyStringColumn] = value;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public string serverType {
-                get {
-                    try {
-                        return ((string)(this[this.tablecredentialsCachePlugin.serverTypeColumn]));
-                    }
-                    catch (System.InvalidCastException e) {
-                        throw new System.Data.StrongTypingException("The value for column \'serverType\' in table \'credentialsCachePlugin\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tablecredentialsCachePlugin.serverTypeColumn] = value;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public int serverLifetime {
-                get {
-                    try {
-                        return ((int)(this[this.tablecredentialsCachePlugin.serverLifetimeColumn]));
-                    }
-                    catch (System.InvalidCastException e) {
-                        throw new System.Data.StrongTypingException("The value for column \'serverLifetime\' in table \'credentialsCachePlugin\' is DBNull" +
-                                ".", e);
-                    }
-                }
-                set {
-                    this[this.tablecredentialsCachePlugin.serverLifetimeColumn] = value;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public int credentialsCachePlugins_Id {
-                get {
-                    try {
-                        return ((int)(this[this.tablecredentialsCachePlugin.credentialsCachePlugins_IdColumn]));
-                    }
-                    catch (System.InvalidCastException e) {
-                        throw new System.Data.StrongTypingException("The value for column \'credentialsCachePlugins_Id\' in table \'credentialsCachePlugi" +
-                                "n\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tablecredentialsCachePlugin.credentialsCachePlugins_IdColumn] = value;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public credentialsCachePluginsRow credentialsCachePluginsRow {
-                get {
-                    return ((credentialsCachePluginsRow)(this.GetParentRow(this.Table.ParentRelations["credentialsCachePlugins_credentialsCachePlugin"])));
-                }
-                set {
-                    this.SetParentRow(value, this.Table.ParentRelations["credentialsCachePlugins_credentialsCachePlugin"]);
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public bool IsserverTypeNull() {
-                return this.IsNull(this.tablecredentialsCachePlugin.serverTypeColumn);
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public void SetserverTypeNull() {
-                this[this.tablecredentialsCachePlugin.serverTypeColumn] = System.Convert.DBNull;
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public bool IsserverLifetimeNull() {
-                return this.IsNull(this.tablecredentialsCachePlugin.serverLifetimeColumn);
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public void SetserverLifetimeNull() {
-                this[this.tablecredentialsCachePlugin.serverLifetimeColumn] = System.Convert.DBNull;
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public bool IscredentialsCachePlugins_IdNull() {
-                return this.IsNull(this.tablecredentialsCachePlugin.credentialsCachePlugins_IdColumn);
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public void SetcredentialsCachePlugins_IdNull() {
-                this[this.tablecredentialsCachePlugin.credentialsCachePlugins_IdColumn] = System.Convert.DBNull;
-            }
-        }
-        
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
-        public class authenticationPluginsRowChangeEvent : System.EventArgs {
-            
-            private authenticationPluginsRow eventRow;
+            private pluginsRow eventRow;
             
             private System.Data.DataRowAction eventAction;
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authenticationPluginsRowChangeEvent(authenticationPluginsRow row, System.Data.DataRowAction action) {
+            public pluginsRowChangeEvent(pluginsRow row, System.Data.DataRowAction action) {
                 this.eventRow = row;
                 this.eventAction = action;
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authenticationPluginsRow Row {
+            public pluginsRow Row {
                 get {
                     return this.eventRow;
                 }
@@ -2207,132 +1045,20 @@ namespace Sudowin.Plugins {
         }
         
         [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
-        public class authenticationPluginRowChangeEvent : System.EventArgs {
+        public class pluginRowChangeEvent : System.EventArgs {
             
-            private authenticationPluginRow eventRow;
+            private pluginRow eventRow;
             
             private System.Data.DataRowAction eventAction;
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authenticationPluginRowChangeEvent(authenticationPluginRow row, System.Data.DataRowAction action) {
+            public pluginRowChangeEvent(pluginRow row, System.Data.DataRowAction action) {
                 this.eventRow = row;
                 this.eventAction = action;
             }
             
             [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authenticationPluginRow Row {
-                get {
-                    return this.eventRow;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public System.Data.DataRowAction Action {
-                get {
-                    return this.eventAction;
-                }
-            }
-        }
-        
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
-        public class authorizationPluginsRowChangeEvent : System.EventArgs {
-            
-            private authorizationPluginsRow eventRow;
-            
-            private System.Data.DataRowAction eventAction;
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authorizationPluginsRowChangeEvent(authorizationPluginsRow row, System.Data.DataRowAction action) {
-                this.eventRow = row;
-                this.eventAction = action;
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authorizationPluginsRow Row {
-                get {
-                    return this.eventRow;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public System.Data.DataRowAction Action {
-                get {
-                    return this.eventAction;
-                }
-            }
-        }
-        
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
-        public class authorizationPluginRowChangeEvent : System.EventArgs {
-            
-            private authorizationPluginRow eventRow;
-            
-            private System.Data.DataRowAction eventAction;
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authorizationPluginRowChangeEvent(authorizationPluginRow row, System.Data.DataRowAction action) {
-                this.eventRow = row;
-                this.eventAction = action;
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public authorizationPluginRow Row {
-                get {
-                    return this.eventRow;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public System.Data.DataRowAction Action {
-                get {
-                    return this.eventAction;
-                }
-            }
-        }
-        
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
-        public class credentialsCachePluginsRowChangeEvent : System.EventArgs {
-            
-            private credentialsCachePluginsRow eventRow;
-            
-            private System.Data.DataRowAction eventAction;
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public credentialsCachePluginsRowChangeEvent(credentialsCachePluginsRow row, System.Data.DataRowAction action) {
-                this.eventRow = row;
-                this.eventAction = action;
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public credentialsCachePluginsRow Row {
-                get {
-                    return this.eventRow;
-                }
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public System.Data.DataRowAction Action {
-                get {
-                    return this.eventAction;
-                }
-            }
-        }
-        
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
-        public class credentialsCachePluginRowChangeEvent : System.EventArgs {
-            
-            private credentialsCachePluginRow eventRow;
-            
-            private System.Data.DataRowAction eventAction;
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public credentialsCachePluginRowChangeEvent(credentialsCachePluginRow row, System.Data.DataRowAction action) {
-                this.eventRow = row;
-                this.eventAction = action;
-            }
-            
-            [System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public credentialsCachePluginRow Row {
+            public pluginRow Row {
                 get {
                     return this.eventRow;
                 }

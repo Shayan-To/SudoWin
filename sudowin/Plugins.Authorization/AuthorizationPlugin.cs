@@ -40,61 +40,16 @@ namespace Sudowin.Plugins.Authorization
 		///		config file for Sudowin.Server.
 		/// </summary>
 		private TraceSource m_ts = new TraceSource( "traceSrc" );
-		
+
 		/// <summary>
 		///		This class is not meant to be directly instantiated.
 		/// </summary>
 		protected AuthorizationPlugin()
 		{
-			m_ts.TraceEvent( TraceEventType.Start, 10, "constructing AuthorizationPlugin" );
 			
-			// get this authorization plugin's index in the 
-			// plugin configuration file
-			string plgn_uri = System.Runtime.Remoting.RemotingServices.GetObjectUri( this );
-			string plgn_index = Regex.Match( plgn_uri, @"^.*(?<index>\d{2})\.rem$", 
-				RegexOptions.IgnoreCase ).Groups[ "index" ].Value;
-				
-			// read in the plugin configuration file
-			PluginConfigurationSchema pcs = new PluginConfigurationSchema();
-			pcs.ReadXml( ConfigurationManager.AppSettings[ "pluginConfigurationUri" ] );
-			
-			// get a reference to this plugin's entry in the file
-			PluginConfigurationSchema.authorizationPluginRow apr = 
-				pcs.authorizationPlugin.Rows[ Convert.ToInt32( plgn_index ) ] as
-					PluginConfigurationSchema.authorizationPluginRow;
-					
-			// open a connection to the data source
-			this.Open( apr.connectionString, new Uri( apr.schemaUri ) );
-
-			m_ts.TraceEvent( TraceEventType.Stop, 10, "constructed AuthorizationPlugin" );
 		}
 	
 		#region IAuthorizationPlugin Members
-
-		/// <summary>
-		///		Opens a connection to the authorization data source 
-		///		and validates the data source with the given schema 
-		///		file.
-		/// </summary>
-		/// <param name="connectionString">
-		///		Connection string used to open a connection
-		///		to the authorization data source.
-		/// </param>
-		/// <param name="schemaFileUri">
-		///		Uri of schema file to use to validate the data source.
-		/// </param>
-		public virtual void Open( string connectionString, Uri schemaFileUri )
-		{
-			throw new Exception( "This method must be overriden." );
-		}
-
-		/// <summary>
-		///		Closes the connection to the authorization data source.
-		/// </summary>
-		public virtual void Close()
-		{
-			throw new Exception( "This method must be overriden." );
-		}
 
 		/// <summary>
 		///		Gets a Sudowin.Common.UserInfo structure
@@ -145,7 +100,11 @@ namespace Sudowin.Plugins.Authorization
 		///		True if the CommandInfo struct is successfuly retrieved; 
 		///		false if otherwise.
 		/// </returns>
-		public virtual bool GetCommandInfo( string username, string commandPath, string commandArguments, ref Sudowin.Common.CommandInfo commandInfo )
+		public virtual bool GetCommandInfo( 
+			string userName, 
+			string commandPath, 
+			string commandArguments, 
+			ref Sudowin.Common.CommandInfo commandInfo )
 		{
 			throw new Exception( "This method must be overriden." );
 		}
