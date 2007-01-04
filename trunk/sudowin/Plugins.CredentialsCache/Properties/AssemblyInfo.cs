@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2005, 2006, Schley Andrew Kutz <akutz@lostcreations.com>
+Copyright (c) 2005, 2006, 2007, Schley Andrew Kutz <akutz@lostcreations.com>
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
