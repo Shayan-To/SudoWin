@@ -28,7 +28,7 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 -->
-<xs:schema id="XmlAuthorizationPluginSchema_0.2.0.0" targetNamespace="http://sudowin.sourceforge.net/schemas/XmlAuthorizationPlugin/" xmlns="http://sudowin.sourceforge.net/schemas/XmlAuthorizationPlugin/" xmlns:mstns="http://sudowin.sourceforge.net/schemas/XmlAuthorizationPlugin/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" version="0.2.0.0" msdata:CaseSensitive="true" elementFormDefault="qualified">
+<xs:schema id="XmlAuthorizationPluginSchema" targetNamespace="http://sudowin.sourceforge.net/schemas/XmlAuthorizationPlugin/" xmlns="http://sudowin.sourceforge.net/schemas/XmlAuthorizationPlugin/" xmlns:mstns="http://sudowin.sourceforge.net/schemas/XmlAuthorizationPlugin/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" version="1.0" msdata:CaseSensitive="true" elementFormDefault="qualified">
 	<xs:element name="sudoers">
 		<xs:complexType>
 			<xs:sequence>
