@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 
 <!--
 /*
-Copyright (c) 2005, 2006, Schley Andrew Kutz <akutz@lostcreations.com>
+Copyright (c) 2005, 2006, 2007, Schley Andrew Kutz <akutz@lostcreations.com>
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -30,7 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 -->
 
-<sudoers	xmlns="http://sudowin.sourceforge.net/schemas/FileDataStoreSchema_v0.1/"
+<sudoers	xmlns="http://sudowin.sourceforge.net/schemas/XmlAuthorizationPlugin/"
 			privilegesGroup="Administrators" 
 			invalidLogons="3"
 			timesExceededInvalidLogons="3"
@@ -39,11 +39,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 			logonTimeout="180" 
 			startTime="00:00:00.00000" 
 			endTime="23:59:59.99999" 
-			loggingLevel="Both">
+			loggingLevel="Both" 
+			allowAllCommands="false">
 	<users>
 		<userGroup name="standard">
 			<users>
-				<user name="HOSTNAME\USERNAME" />
+				<user name="poppy\akutz" allowAllCommands ="true">
+					<commands>
+						<command path="c:\windows\system32\regedit.exe" />
+					</commands>
+				</user>
+				<user name="lostcreations\akutz" allowAllCommands="false" />
 			</users>
 			<commandGroupRefs>
 				<commandGroupRef commandGroupName="standard"/>
@@ -52,11 +58,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</users>
 	<commands>
 		<commandGroup name="standard">
-			<command path="c:\windows\system32\cmd.exe" />
-			<command path="C:\windows\notepad.exe" />
-			<command path="C:\windows\system32\notepad.exe" />
-			<command path="C:\windows\regedit.exe" />
-			<command path="C:\windows\explorer.exe" />
+			<!-- 
+				Windows XP SP2 files - checksums may vary per operating system, service pack
+			-->
+			<command path="c:\windows\system32\cmd.exe" md5Checksum="eeb024f2c81f0d55936fb825d21a91d6" argumentString="/^/K echo.*$/"/>
+			<command path="c:\windows\explorer.exe" md5Checksum="45757077a47c68a603a79b03a1a836ab" />
+			<command path="c:\windows\system32\notepad.exe" md5Checksum="388b8fbc36a8558587afc90fb23a3b99" />
 		</commandGroup>
 	</commands>
 </sudoers>

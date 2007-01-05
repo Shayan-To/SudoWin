@@ -27,6 +27,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 UPGRADING SUDO FOR WINDOWS
 --------------------------
 
+0.1.1-r95 to 0.2.0-r
+
+	- Make a copy of your sudoers.xml file.  This is located at INSTALLDIR\
+	Servers\sudoers.xml
+	
+	- Use "Add/Remove Programs" or the original installer to remove the
+	0.1.1-r95 version of Sudo for Windows.  Be sure to choose "No" when
+	the uninstaller asks if you would like to remove the old Sudoers group.
+	
+	- Install Sudo for Windows 0.2.0-r
+	
+	- Copy your old sudoers.xml file back to INSTALLDIR\Server\sudoers.xml.
+	
+	- Restart the Sudowin service.
+
 0.1.0-r76 to 0.1.1-r95
 	
 	- Make a copy of your sudoers.xml file.  This is located at INSTALLDIR\
@@ -52,8 +67,7 @@ UPGRADING SUDO FOR WINDOWS
 POST INSTALLATION STEPS
 -----------------------
 - You should edit the sudoers.xml file so that the users you want to have sudo
-privileges are in the file.  This file is located at INSTALLDIR\Server\sudoers.xml.  
-After you perform this step you will need to restart the Sudowin service.
+privileges are in the file.  This file is located at INSTALLDIR\Server\sudoers.xml.
 
 - You need to add the users you want to be able to communicatie with the sudo 
 server to the local user group "Sudoers".  These users will have log out and 

@@ -55,7 +55,7 @@ namespace Sudowin.Setup.CustomActions
 			base.Install( stateSaver );
 
 			string target_dir = this.Context.Parameters[ "TargetDir" ];
-			string connectionString = string.Format( @"{0}Server\Sudowin.Server.exe.config",
+			string server_config_path = string.Format( @"{0}Server\Sudowin.Server.exe.config",
 				target_dir );
 
 			#region Create the sudoers group
@@ -89,51 +89,47 @@ namespace Sudowin.Setup.CustomActions
 
 			// TODO: ask what users should be sudoers and add them to the group and sudoers.xml file
 
-			#region Edit the Sudowin.WindowsService.exe.config file
+			#region Edit the Sudowin.Server.exe.config file
 
 			const string XpathTranslateFormat =
 				"translate({0},'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')";
 
-			string target_dir = this.Context.Parameters[ "TargetDir" ];
-			string connectionString = string.Format( @"{0}Server\Sudowin.Server.exe.config",
-				target_dir );
-
 			// throw an exception if the xml file is not found
-			if ( !System.IO.File.Exists( connectionString ) )
+			if ( !System.IO.File.Exists( server_config_path ) )
 				throw new System.IO.FileNotFoundException(
-					"xml file not found", connectionString );
+					"xml file not found", server_config_path );
 
 			// create a xmlreadersettings object
 			// to specify how to read in the file
-			XmlReaderSettings xrs = new XmlReaderSettings();
-			xrs.CloseInput = true;
-			xrs.IgnoreComments = false;
+			XmlReaderSettings svr_cfg_xrs = new XmlReaderSettings();
+			svr_cfg_xrs.CloseInput = true;
+			svr_cfg_xrs.IgnoreComments = false;
 
 			// read in the file
-			XmlReader xr = XmlReader.Create( connectionString, xrs );
+			XmlReader svr_cfg_xr = XmlReader.Create( server_config_path, svr_cfg_xrs );
 
 			// load the xml reader into the xml document.
-			XmlDocument xml_doc = new XmlDocument();
-			xml_doc.Load( xr );
+			XmlDocument svr_cfg_xml_doc = new XmlDocument();
+			svr_cfg_xml_doc.Load( svr_cfg_xr );
 
 			// close the xmlreader
-			xr.Close();
+			svr_cfg_xr.Close();
 
 			// create the namespace manager using the xml file name table
-			XmlNamespaceManager xml_ns_mgr = new XmlNamespaceManager( xml_doc.NameTable );
+			XmlNamespaceManager svr_cfg_xml_ns_mgr = new XmlNamespaceManager( svr_cfg_xml_doc.NameTable );
 
 			// if there is a default namespace specified in the
 			// xml file then it needs to be added to the namespace
 			// manager so the xpath queries will work
-			Regex ns_rx = new Regex(
+			Regex svr_ns_rx = new Regex(
 				@"xmlns\s{0,}=\s{0,}""([\w\d\.\:\/\\]{0,})""",
 				RegexOptions.Multiline | RegexOptions.IgnoreCase );
-			Match ns_m = ns_rx.Match( xml_doc.InnerXml );
+			Match svr_ns_m = svr_ns_rx.Match( svr_cfg_xml_doc.InnerXml );
 
 			// add the default namespace
-			string default_ns = ns_m.Groups[ 1 ].Value;
-			xml_ns_mgr.AddNamespace( "d", default_ns );
-
+			string svr_default_ns = svr_ns_m.Groups[ 1 ].Value;
+			svr_cfg_xml_ns_mgr.AddNamespace( "d", svr_default_ns );
+			
 			// build the query, find the node, set the value
 			string user_xpq = string.Format(
 				CultureInfo.CurrentCulture,
@@ -141,11 +137,73 @@ namespace Sudowin.Setup.CustomActions
 				string.Format( CultureInfo.CurrentCulture,
 					XpathTranslateFormat, "@key" ),
 				string.Format( CultureInfo.CurrentCulture,
-					XpathTranslateFormat, "'authorizationPluginConnectionString'" ) );
-			XmlNode node = xml_doc.SelectSingleNode( user_xpq, xml_ns_mgr );
+					XpathTranslateFormat, "'pluginConfigurationUri'" ) );
+			XmlNode node = svr_cfg_xml_doc.SelectSingleNode( user_xpq, svr_cfg_xml_ns_mgr );
 			if ( node != null )
-				node.Attributes[ "value" ].Value = string.Format( @"{0}Server\sudoers.xml",
-					target_dir );
+			{
+				string plugin_config_path = string.Format( @"{0}Server\pluginConfiguration.xml", target_dir );
+				node.Attributes[ "value" ].Value = plugin_config_path;
+
+				//
+				// in the next part we scrub the plugin configuration file
+				// so that any paths it contains are rewritten to coincide with
+				// this particular installation
+				//
+				
+				// create a xmlreadersettings object
+				// to specify how to read in the file
+				XmlReaderSettings plugin_cfg_xrs = new XmlReaderSettings();
+				plugin_cfg_xrs.CloseInput = true;
+				plugin_cfg_xrs.IgnoreComments = false;
+
+				// read in the file
+				XmlReader plugin_cfg_xr = XmlReader.Create( plugin_config_path, plugin_cfg_xrs );
+
+				// load the xml reader into the xml document.
+				XmlDocument plugin_cfg_xml_doc = new XmlDocument();
+				plugin_cfg_xml_doc.Load( plugin_cfg_xr );
+
+				// close the xmlreader
+				plugin_cfg_xr.Close();
+
+				// create the namespace manager using the xml file name table
+				XmlNamespaceManager plugin_cfg_xml_ns_mgr = new XmlNamespaceManager( plugin_cfg_xml_doc.NameTable );
+
+				// if there is a default namespace specified in the
+				// xml file then it needs to be added to the namespace
+				// manager so the xpath queries will work
+				Regex plugin_ns_rx = new Regex(
+					@"xmlns\s{0,}=\s{0,}""([\w\d\.\:\/\\]{0,})""",
+					RegexOptions.Multiline | RegexOptions.IgnoreCase );
+				Match plugin_ns_m = plugin_ns_rx.Match( plugin_cfg_xml_doc.InnerXml );
+
+				// add the default namespace
+				string plugin_default_ns = plugin_ns_m.Groups[ 1 ].Value;
+				plugin_cfg_xml_ns_mgr.AddNamespace( "d", plugin_default_ns );
+				
+				user_xpq = string.Format(
+					CultureInfo.CurrentCulture,
+					@"//d:plugin[{0} = {1}]",
+					string.Format( CultureInfo.CurrentCulture,
+						XpathTranslateFormat, "@pluginType" ),
+				string.Format( CultureInfo.CurrentCulture,
+					XpathTranslateFormat, "'authorizationPlugin'" ) );
+				node = plugin_cfg_xml_doc.SelectSingleNode( user_xpq, plugin_cfg_xml_ns_mgr );
+				if ( node != null )
+				{
+					node.Attributes[ "connectionString" ].Value = string.Format(
+						CultureInfo.CurrentCulture, 
+						@"{0}Server\sudoers.xml",
+						target_dir );
+					node.Attributes[ "schemaUri" ].Value = string.Format(
+						CultureInfo.CurrentCulture,
+						@"{0}Server\XmlAuthorizationPluginSchema.xsd",
+						target_dir );
+				}
+
+				// save it back to the file
+				plugin_cfg_xml_doc.Save( plugin_config_path );
+			}
 
 			// build the query, find the node, set the value
 			user_xpq = string.Format(
@@ -154,10 +212,10 @@ namespace Sudowin.Setup.CustomActions
 				string.Format( CultureInfo.CurrentCulture,
 					XpathTranslateFormat, "@key" ),
 				string.Format( CultureInfo.CurrentCulture,
-					XpathTranslateFormat, "'authorizationPluginSchemaFileUri'" ) );
-			node = xml_doc.SelectSingleNode( user_xpq, xml_ns_mgr );
+					XpathTranslateFormat, "'pluginConfigurationSchemaUri'" ) );
+			node = svr_cfg_xml_doc.SelectSingleNode( user_xpq, svr_cfg_xml_ns_mgr );
 			if ( node != null )
-				node.Attributes[ "value" ].Value = string.Format( @"{0}Server\XmlAuthorizationPluginSchema_v0.1.xsd",
+				node.Attributes[ "value" ].Value = string.Format( @"{0}Server\PluginConfigurationSchema.xsd",
 					target_dir );
 
 			// build the query, find the node, set the value
@@ -168,12 +226,11 @@ namespace Sudowin.Setup.CustomActions
 					XpathTranslateFormat, "@key" ),
 				string.Format( CultureInfo.CurrentCulture,
 					XpathTranslateFormat, "'callbackApplicationPath'" ) );
-			node = xml_doc.SelectSingleNode( user_xpq, xml_ns_mgr );
+			node = svr_cfg_xml_doc.SelectSingleNode( user_xpq, svr_cfg_xml_ns_mgr );
 			if ( node != null )
 				node.Attributes[ "value" ].Value = string.Format( @"{0}Callback\Sudowin.CallbackApplication.exe",
 					target_dir );
 
-			// <source name="traceSrc" switchValue="ActivityTracing, Verbose">
 			// build the query, find the node, set the value
 			user_xpq = string.Format(
 				CultureInfo.CurrentCulture,
@@ -182,7 +239,7 @@ namespace Sudowin.Setup.CustomActions
 					XpathTranslateFormat, "@name" ),
 				string.Format( CultureInfo.CurrentCulture,
 					XpathTranslateFormat, "'traceSrc'" ) );
-			node = xml_doc.SelectSingleNode( user_xpq, xml_ns_mgr );
+			node = svr_cfg_xml_doc.SelectSingleNode( user_xpq, svr_cfg_xml_ns_mgr );
 			if ( node != null )
 				node.Attributes[ "switchValue" ].Value = "Error";
 
@@ -194,13 +251,13 @@ namespace Sudowin.Setup.CustomActions
 					XpathTranslateFormat, "@name" ),
 				string.Format( CultureInfo.CurrentCulture,
 					XpathTranslateFormat, "'traceListener'" ) );
-			node = xml_doc.SelectSingleNode( user_xpq, xml_ns_mgr );
+			node = svr_cfg_xml_doc.SelectSingleNode( user_xpq, svr_cfg_xml_ns_mgr );
 			if ( node != null )
 				node.Attributes[ "initializeData" ].Value = string.Format( @"{0}Server\service.log",
 					target_dir );
 
 			// save it back to the file
-			xml_doc.Save( connectionString );
+			svr_cfg_xml_doc.Save( server_config_path );
 
 			#endregion
 
@@ -231,7 +288,7 @@ namespace Sudowin.Setup.CustomActions
 
 			// if the sudoers file already exists then delete the stock one 
 			// that comes with the installer
-			if ( File.Exists( sudoers_file_path ) )
+			if ( File.Exists( sudoers_new_file_path ) )
 			{
 				m_sudoers_file_already_exists = true;
 				File.Delete( sudoers_old_file_path );
@@ -242,9 +299,8 @@ namespace Sudowin.Setup.CustomActions
 			// directory
 			else
 			{
-				File.Move( sudoers_old_file_path, sudoers_file_path );
+				File.Move( sudoers_old_file_path, sudoers_new_file_path );
 			}
-
 
 			#endregion
 		}
@@ -279,7 +335,7 @@ namespace Sudowin.Setup.CustomActions
 				}
 				de.Close();
 			}
-
+			
 			#endregion
 
 			#region Remove sudo.exe and remove directory from system path
@@ -294,9 +350,9 @@ namespace Sudowin.Setup.CustomActions
 
 			string path = Environment.GetEnvironmentVariable( "PATH" );
 			string rem_path_patt = string.Format( @"(.*)({0}Clients\\Console)(.*)" );
-			if ( Regex.IsMatch( path, rem_path_patt ) )
+			if ( Regex.IsMatch( path, rem_path_patt, RegexOptions.IgnoreCase ) )
 			{
-				path = Regex.Replace( path, rem_path_patt, "$1$2" );
+				path = Regex.Replace( path, rem_path_patt, "$1$3", RegexOptions.IgnoreCase );
 				path.Replace( ";;", ";" );
 				Environment.SetEnvironmentVariable( "PATH", path, EnvironmentVariableTarget.Machine );
 			}
@@ -318,7 +374,7 @@ namespace Sudowin.Setup.CustomActions
 			string target_dir = this.Context.Parameters[ "TargetDir" ];
 
 			base.Uninstall( savedState );
-
+			
 			#region Remove the Sudoers group
 
 			DialogResult dr = MessageBox.Show(
@@ -376,12 +432,13 @@ namespace Sudowin.Setup.CustomActions
 				File.Delete( exe_new_path );
 			if ( File.Exists( cfg_new_path ) )
 				File.Delete( cfg_new_path );
-
+			
 			string path = Environment.GetEnvironmentVariable( "PATH" );
-			string rem_path_patt = string.Format( @"(.*)({0}Clients\\Console)(.*)" );
-			if ( Regex.IsMatch( path, rem_path_patt ) )
+			string rem_path_patt = string.Format( @"(.*)({0}Clients\\Console)(.*)",
+				target_dir.Replace( @"\", @"\\" ) );
+			if ( Regex.IsMatch( path, rem_path_patt, RegexOptions.IgnoreCase ) )
 			{
-				path = Regex.Replace( path, rem_path_patt, "$1$2" );
+				path = Regex.Replace( path, rem_path_patt, "$1$3", RegexOptions.IgnoreCase );
 				path.Replace( ";;", ";" );
 				Environment.SetEnvironmentVariable( "PATH", path, EnvironmentVariableTarget.Machine );
 			}

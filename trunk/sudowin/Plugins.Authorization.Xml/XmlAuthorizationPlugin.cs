@@ -36,9 +36,9 @@ using System.Xml.Schema;
 using System.Diagnostics;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Runtime.Remoting.Lifetime;
-using System.Security.Cryptography;
 
 namespace Sudowin.Plugins.Authorization.Xml
 {

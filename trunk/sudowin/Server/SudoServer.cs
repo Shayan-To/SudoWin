@@ -50,6 +50,7 @@ using Sudowin.Plugins.CredentialsCache;
 using System.Runtime.Remoting.Contexts;
 using System.Runtime.Remoting.Messaging;
 using Sudowin.Plugins;
+using System.Data;
 
 namespace Sudowin.Server
 {
@@ -202,13 +203,29 @@ namespace Sudowin.Server
 
 		private void LoadPlugins()
 		{
-			PluginConfigurationSchema pcs = new PluginConfigurationSchema();
-			pcs.ReadXml( ConfigurationManager.AppSettings[ "pluginConfigurationUri" ] );
+			string plugin_config_uri = ConfigurationManager.AppSettings[
+				"pluginConfigurationUri" ];
+			string plugin_config_schema_uri = ConfigurationManager.AppSettings[
+				"pluginConfigurationSchemaUri" ];
+			DataSet plugin_ds = new DataSet();
+			try
+			{
+				plugin_ds.ReadXmlSchema( plugin_config_schema_uri );
+				plugin_ds.ReadXml( plugin_config_uri );
+			}
+			catch ( Exception e )
+			{
+				string error = string.Format( CultureInfo.CurrentCulture,
+					"the plugin config file, {0}, does not contain a valid schema according " +
+					"to the given schema file, {1}", plugin_config_uri, plugin_config_schema_uri );
+				m_ts.TraceEvent( TraceEventType.Critical, ( int ) EventIds.CriticalError, error );
+				throw ( new Exception( error, e ) );
+			}
 
 			int x = 0;
 
 			// activate the plugin assemblies
-			foreach ( PluginConfigurationSchema.pluginRow r in pcs.plugin.Rows )
+			foreach ( DataRow r in plugin_ds.Tables[ "plugin" ].Rows )
 			{
 				string plugin_type = Convert.ToString( r[ "pluginType" ], CultureInfo.CurrentCulture );
 

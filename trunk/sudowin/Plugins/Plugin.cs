@@ -27,6 +27,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
+using System.Data;
+using Sudowin.Common;
+using System.Diagnostics;
 using System.Globalization;
 using System.Configuration;
 using System.Text.RegularExpressions;
@@ -36,6 +39,12 @@ namespace Sudowin.Plugins
 {
 	public class Plugin : MarshalByRefObject, IPlugin
 	{
+		/// <summary>
+		///		Trace source that can be defined in the 
+		///		config file for Sudowin.Server.
+		/// </summary>
+		private TraceSource m_ts = new TraceSource( "traceSrc" );
+		
 		/// <summary>
 		///		This class is not meant to be directly instantiated.
 		/// </summary>
@@ -83,22 +92,38 @@ namespace Sudowin.Plugins
 		/// <summary>
 		///		The sudowin service's plugin configuration.
 		/// </summary>
-		private PluginConfigurationSchema m_pcs = null;
+		private DataSet m_plugin_config_file = null;
 
 		/// <summary>
 		///		The sudowin service's plugin configuration.
 		/// </summary>
-		private PluginConfigurationSchema PluginConfigSchema
+		private DataSet PluginConfigFile
 		{
 			get
 			{
-				if ( m_pcs == null )
+				if ( m_plugin_config_file == null )
 				{
-					m_pcs = new PluginConfigurationSchema();
-					m_pcs.ReadXml( ConfigurationManager.AppSettings[ "pluginConfigurationUri" ] );
+					string plugin_config_uri = ConfigurationManager.AppSettings[
+						"pluginConfigurationUri" ];
+					string plugin_config_schema_uri = ConfigurationManager.AppSettings[
+						"pluginConfigurationSchemaUri" ];
+					m_plugin_config_file = new DataSet();
+					try
+					{
+						m_plugin_config_file.ReadXmlSchema( plugin_config_schema_uri );
+						m_plugin_config_file.ReadXml( plugin_config_uri );
+					}
+					catch ( Exception e )
+					{
+						string error = string.Format( CultureInfo.CurrentCulture,
+							"the plugin config file, {0}, does not contain a valid schema according " +
+							"to the given schema file, {1}", plugin_config_uri, plugin_config_schema_uri );
+						m_ts.TraceEvent( TraceEventType.Critical, ( int ) EventIds.CriticalError, error );
+						throw ( new Exception( error, e ) );
+					}
 				}
 				
-				return ( m_pcs );
+				return ( m_plugin_config_file );
 			}
 		}
 		
@@ -121,7 +146,7 @@ namespace Sudowin.Plugins
 				if ( m_plugin_connection_string == null )
 				{
 					m_plugin_connection_string = 
-						GetStringValue( PluginConfigSchema.plugin[ PluginIndex ][ "connectionString" ], null );
+						GetStringValue( PluginConfigFile.Tables[ "plugin" ].Rows[ PluginIndex ][ "connectionString" ], null );
 				}
 				return ( m_plugin_connection_string );
 			}
@@ -146,7 +171,7 @@ namespace Sudowin.Plugins
 				if ( m_plugin_schema_uri == null )
 				{
 					m_plugin_schema_uri =
-						GetStringValue( PluginConfigSchema.plugin[ PluginIndex ][ "schemaUri" ], null );
+						GetStringValue( PluginConfigFile.Tables[ "plugin" ].Rows[ PluginIndex ][ "schemaUri" ], null );
 				}
 				return ( m_plugin_schema_uri );
 			}
@@ -171,7 +196,7 @@ namespace Sudowin.Plugins
 				if ( m_server_type == null )
 				{
 					m_server_type =
-						GetStringValue( PluginConfigSchema.plugin[ PluginIndex ][ "serverType" ], "SingleCall" );
+						GetStringValue( PluginConfigFile.Tables[ "plugin" ].Rows[ PluginIndex ][ "serverType" ], "SingleCall" );
 				}
 				return ( m_server_type );
 			}
@@ -196,7 +221,7 @@ namespace Sudowin.Plugins
 				if ( m_plugin_server_lifetime == -1 )
 				{
 					m_plugin_server_lifetime =
-						GetInt32Value( PluginConfigSchema.plugin[ PluginIndex ][ "serverLifetime" ], 0 );
+						GetInt32Value( PluginConfigFile.Tables[ "plugin" ].Rows[ PluginIndex ][ "serverLifetime" ], 0 );
 				}
 				return ( m_plugin_server_lifetime );
 			}
