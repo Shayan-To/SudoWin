@@ -6,8 +6,11 @@
 
 		<plugin pluginType="authorizationPlugin" 
 						assemblyString="Sudowin.Plugins.Authorization.Xml.XmlAuthorizationPlugin, Sudowin.Plugins.Authorization.Xml" 
-						connectionString="r:\projects\sudowin\trunk\sudowin\plugins.authorization.xml\sudoers.xml" 
-						schemaUri="r:\projects\sudowin\trunk\sudowin\plugins.authorization.xml\XmlAuthorizationPluginSchema.xsd"
+						dataSourceConnectionString="r:\projects\sudowin\trunk\sudowin\plugins.authorization.xml\sudoers.xml" 
+						dataSourceSchemaUri="r:\projects\sudowin\trunk\sudowin\plugins.authorization.xml\XmlAuthorizationPluginSchema.xsd" 
+						dataSourceCacheFilePath="r:\projects\sudowin\trunk\sudowin\server\sudoers.xml.cache"
+						dataSourceCacheFrequency="00:05"
+						dataSourceCacheEnabled="true"
 		/>
 
 		<plugin pluginType="credentialsCachePlugin" 

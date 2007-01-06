@@ -161,29 +161,147 @@ namespace Sudowin.Plugins.Authorization.Xml
 		/// </summary>
 		private void Open()
 		{
-			this.Open( base.PluginConnectionString, new Uri( PluginSchemaUri ) );
+			m_ts.TraceEvent( TraceEventType.Start, 10, "opening XmlAuthorizationPlugin datasource connection" );
+
+			// the sudoers cache file is the primary data source
+			if ( DataSourceCacheUseAsPrimary )
+			{
+				// the sudoers cache file exists
+				if ( File.Exists( DataSourceCacheFilePath ) )
+				{
+					// the sudoers cache file needs to be updated
+					// from the sudoers file
+					if ( ( DateTime.Now - File.GetLastWriteTime( DataSourceCacheFilePath ) ) >
+						DataSourceCacheUpdateFrequency )
+					{
+						// the sudoers file exists
+						if ( File.Exists( DataSourceConnectionString ) )
+						{
+							LoadFromDataSource( DataSourceConnectionString, DataSourceSchemaUri );
+							m_xml_doc.Save( DataSourceCacheFilePath );
+						}
+
+						// the sudoers file does not exist
+						else
+						{
+							if ( DataSourceCacheUseStaleCache )
+							{
+								LoadFromDataSource( DataSourceCacheFilePath, DataSourceSchemaUri );
+							}
+							else
+							{
+								throw ( new FileNotFoundException( "sudoers file not found" ) );
+							}
+						}
+					}
+
+					// load the sudoers cache file into m_xml_doc
+					else
+					{
+						LoadFromDataSource( DataSourceCacheFilePath, DataSourceSchemaUri );
+					}
+				}
+
+				// cache does not exist, create it
+				else
+				{
+					// the sudoers file exists
+					if ( File.Exists( DataSourceConnectionString ) )
+					{
+						LoadFromDataSource( DataSourceConnectionString, DataSourceSchemaUri );
+						m_xml_doc.Save( DataSourceCacheFilePath );
+					}
+
+					// the sudoers file does not exist
+					else
+					{
+						throw ( new FileNotFoundException( "sudoers file not found" ) );
+					}
+				}
+			}
+			
+			// the sudoers cache file is not the primary source
+			else
+			{
+				// the sudoers file exists
+				if ( File.Exists( DataSourceConnectionString ) )
+				{
+					// load the sudoers file
+					LoadFromDataSource( DataSourceConnectionString, DataSourceSchemaUri );
+
+					// the sudoers cache is enabled
+					if ( DataSourceCacheEnabled )
+					{
+						// the sudoers cache file exists
+						if ( File.Exists( DataSourceCacheFilePath ) )
+						{
+							// the sudoers cache file needs to be updated
+							// from the sudoers file
+							if ( ( DateTime.Now - File.GetLastWriteTime( DataSourceCacheFilePath ) ) >
+								DataSourceCacheUpdateFrequency )
+							{
+								m_xml_doc.Save( DataSourceCacheFilePath );
+							}
+						}
+
+						// the sudoers cache file does not exist
+						else
+						{
+							// create the sudoers cache file
+							m_xml_doc.Save( DataSourceCacheFilePath );
+						}
+					}
+				}
+
+				// the sudoers file does not exist
+				else
+				{
+					// use the sudoers cache file
+					if ( DataSourceCacheEnabled )
+					{
+						// the sudoers cache file exists
+						if ( File.Exists( DataSourceCacheFilePath ) )
+						{
+							// the sudoers cache file needs to be updated
+							// from the sudoers file
+							if ( ( DateTime.Now - File.GetLastWriteTime( DataSourceCacheFilePath ) ) >
+								DataSourceCacheUpdateFrequency )
+							{
+								if ( DataSourceCacheUseStaleCache )
+								{
+									LoadFromDataSource( DataSourceCacheFilePath, DataSourceSchemaUri );
+								}
+								else
+								{
+									throw ( new Exception( "DataSourceCacheUseStaleCache not enabled" ) );
+								}
+							}
+
+							// the sudoers cache is up to date so load it
+							else
+							{
+								LoadFromDataSource( DataSourceCacheFilePath, DataSourceSchemaUri );
+							}
+						}
+
+						// the sudoers cache file does not exist
+						else
+						{
+							throw ( new FileNotFoundException( "sudoers cache file not found" ) );
+						}
+					}
+					else
+					{
+						throw ( new Exception( "DataSourceCacheEnabled is false" ) );
+					}
+				}
+			}
+
+			m_ts.TraceEvent( TraceEventType.Stop, 10, "opened XmlAuthorizationPlugin datasource connection" );
 		}
 
-		/// <summary>
-		///		Opens a connection to the xml file
-		///		and validate the data with the given
-		///		schema file.
-		/// </summary>
-		/// <param name="connectionString">
-		///		The uri of the xml file to open.
-		/// </param>
-		/// <param name="schemaFileUri">
-		///		Uri of schema file to use to validate the data.
-		/// </param>
-		private void Open( string connectionString, Uri schemaFileUri )
+		private void LoadFromDataSource( string connectionString, Uri schemaFileUri )
 		{
-			m_ts.TraceEvent( TraceEventType.Start, 10, "opening XmlAuthorizationPlugin datasource connection" );
-			
-			// throw an exception if the xml file is not found
-			if ( !System.IO.File.Exists( connectionString ) )
-				throw new System.IO.FileNotFoundException(
-					"xml file not found", connectionString );
-			
 			// create a xmlreadersettings object
 			// to specify how to read in the file
 			XmlReaderSettings xrs = new XmlReaderSettings();
@@ -192,10 +310,10 @@ namespace Sudowin.Plugins.Authorization.Xml
 
 			xrs.Schemas.Add( null, schemaFileUri.AbsoluteUri );
 			xrs.ValidationType = ValidationType.Schema;
-			
+
 			// read in the file
 			XmlReader xr = XmlReader.Create( connectionString, xrs );
-			
+
 			// load the xml reader into the xml document.
 			m_xml_doc.Load( xr );
 
@@ -216,10 +334,8 @@ namespace Sudowin.Plugins.Authorization.Xml
 			// add the default namespace
 			string default_ns = ns_m.Groups[ 1 ].Value;
 			m_namespace_mgr.AddNamespace( "d", default_ns );
-			
-			m_is_connection_open = true;
 
-			m_ts.TraceEvent( TraceEventType.Stop, 10, "opened XmlAuthorizationPlugin datasource connection" );
+			m_is_connection_open = true;
 		}
 
 		/// <summary>

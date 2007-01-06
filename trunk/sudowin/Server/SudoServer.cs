@@ -238,12 +238,6 @@ namespace Sudowin.Server
 				string plugin_assem_str = Convert.ToString(
 					r[ "assemblyString" ], CultureInfo.CurrentCulture );
 
-				string plugin_cnxn_str = r[ "connectionString" ] is DBNull ? "" :
-					Convert.ToString( r[ "connectionString" ], CultureInfo.CurrentCulture );
-
-				string plugin_schema_uri = r[ "schemaUri" ] is DBNull ? "" :
-					Convert.ToString( r[ "schemaUri" ], CultureInfo.CurrentCulture );
-
 				string plugin_act_data = r[ "activationData" ] is DBNull ? "" :
 					Convert.ToString( r[ "activationData" ], CultureInfo.CurrentCulture );
 

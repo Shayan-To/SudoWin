@@ -92,26 +92,26 @@ namespace Sudowin.Plugins
 		/// <summary>
 		///		The sudowin service's plugin configuration.
 		/// </summary>
-		private DataSet m_plugin_config_file = null;
+		private DataSet m_config_file = null;
 
 		/// <summary>
 		///		The sudowin service's plugin configuration.
 		/// </summary>
-		private DataSet PluginConfigFile
+		private DataSet ConfigFile
 		{
 			get
 			{
-				if ( m_plugin_config_file == null )
+				if ( m_config_file == null )
 				{
 					string plugin_config_uri = ConfigurationManager.AppSettings[
 						"pluginConfigurationUri" ];
 					string plugin_config_schema_uri = ConfigurationManager.AppSettings[
 						"pluginConfigurationSchemaUri" ];
-					m_plugin_config_file = new DataSet();
+					m_config_file = new DataSet();
 					try
 					{
-						m_plugin_config_file.ReadXmlSchema( plugin_config_schema_uri );
-						m_plugin_config_file.ReadXml( plugin_config_uri );
+						m_config_file.ReadXmlSchema( plugin_config_schema_uri );
+						m_config_file.ReadXml( plugin_config_uri );
 					}
 					catch ( Exception e )
 					{
@@ -123,71 +123,189 @@ namespace Sudowin.Plugins
 					}
 				}
 				
-				return ( m_plugin_config_file );
+				return ( m_config_file );
 			}
 		}
 		
-		/// <summary>
-		///		Returns this plugin's configuration string if it
-		///		is defined in the plugin configuration file;
-		///		otherwise null.
-		/// </summary>
-		private string m_plugin_connection_string = null;
+		private string m_data_source_connection_string = null;
 
 		/// <summary>
-		///		Returns this plugin's configuration string if it
-		///		is defined in the plugin configuration file;
-		///		otherwise null.
+		///		The connection string used to connect to this
+		///		plugin's data source.  If it is not defined
+		///		in the plugin configuration file then this 
+		///		property will return null.
 		/// </summary>
-		protected string PluginConnectionString
+		protected string DataSourceConnectionString
 		{
 			get
 			{
-				if ( m_plugin_connection_string == null )
+				if ( m_data_source_connection_string == null )
 				{
-					m_plugin_connection_string = 
-						GetStringValue( PluginConfigFile.Tables[ "plugin" ].Rows[ PluginIndex ][ "connectionString" ], null );
+					m_data_source_connection_string = 
+						GetStringValue( ConfigFile.Tables[ "plugin" ].Rows[ 
+						Index ][ "dataSourceConnectionString" ], null );
 				}
-				return ( m_plugin_connection_string );
+				return ( m_data_source_connection_string );
 			}
 		}
 
-		/// <summary>
-		///		Returns this plugin's schema uri if it
-		///		is defined in the plugin configuration file;
-		///		otherwise null.
-		/// </summary>
-		private string m_plugin_schema_uri = null;
+		private Uri m_data_source_schema_uri = null;
 
 		/// <summary>
-		///		Returns this plugin's schema uri if it
-		///		is defined in the plugin configuration file;
-		///		otherwise null.
+		///		The Uri of the schema file used to validate
+		///		this plugin's data source.  If it is not defined
+		///		in the plugin configuration file then this 
+		///		property will return null.
 		/// </summary>
-		protected string PluginSchemaUri
+		protected Uri DataSourceSchemaUri
 		{
 			get
 			{
-				if ( m_plugin_schema_uri == null )
+				if ( m_data_source_schema_uri == null )
 				{
-					m_plugin_schema_uri =
-						GetStringValue( PluginConfigFile.Tables[ "plugin" ].Rows[ PluginIndex ][ "schemaUri" ], null );
+					string uri_string =
+						GetStringValue( ConfigFile.Tables[ "plugin" ].Rows[ 
+						Index ][ "dataSourceSchemaUri" ], null );
+					if ( uri_string != null )
+					{
+						m_data_source_schema_uri = new Uri( uri_string );
+					}
 				}
-				return ( m_plugin_schema_uri );
+				return ( m_data_source_schema_uri );
 			}
 		}
 
+		private string m_data_source_cache_file_path = null;
+
 		/// <summary>
-		///		Returns this plugin's server type if it
-		///		is defined in the plugin configuration file;
-		///		otherwise SingleCall.
+		///		A file path that will be used to store a cached
+		///		copy of this plugin's data source.  If it is not
+		///		defined in the plugin configuration file then this
+		///		property will return null.
 		/// </summary>
+		protected string DataSourceCacheFilePath
+		{
+			get
+			{
+				if ( m_data_source_cache_file_path == null )
+				{
+					m_data_source_cache_file_path =
+						GetStringValue( ConfigFile.Tables[ "plugin" ].Rows[ 
+						Index ][ "dataSourceCacheFilePath" ], null );
+				}
+				return ( m_data_source_cache_file_path );
+			}
+		}
+
+		private TimeSpan m_data_source_cache_update_frequency = TimeSpan.MinValue;
+
+		/// <summary>
+		///		The amount of time that should elapse before the plugin's 
+		///		data source cache file is updated with data from the 
+		///		original data source.  If it is not defined in the plugin 
+		///		configuration file then this property will return "5 minutes."
+		/// </summary>
+		protected TimeSpan DataSourceCacheUpdateFrequency
+		{
+			get
+			{
+				if ( m_data_source_cache_update_frequency == TimeSpan.MinValue )
+				{
+					string frequency =
+						GetStringValue( ConfigFile.Tables[ "plugin" ].Rows[
+						Index ][ "dataSourceCacheUpdateFrequency" ], "00:05" );
+					if ( m_data_source_cache_update_frequency != null )
+					{
+						m_data_source_cache_update_frequency = TimeSpan.Parse(
+							frequency );
+					}
+				}
+				return ( m_data_source_cache_update_frequency );
+			}
+		}
+
+		private bool m_data_source_cache_use_as_primary = false;
+		private bool m_data_source_cache_use_as_primary_set = false;
+
+		/// <summary>
+		///		Whether or not to use this plugin's data source
+		///		cache file as the primary data source and only
+		///		reference the originating data source on cache updates.
+		///		If it is not defined in the plugin configuration file 
+		///		then this property will return false.
+		/// </summary>
+		protected bool DataSourceCacheUseAsPrimary
+		{
+			get
+			{
+				if ( !m_data_source_cache_use_as_primary_set )
+				{
+					m_data_source_cache_use_as_primary =
+						GetBoolValue( ConfigFile.Tables[ "plugin" ].Rows[
+						Index ][ "dataSourceCacheUseAsPrimary" ], false );
+					m_data_source_cache_use_as_primary_set = true;
+				}
+				return ( m_data_source_cache_use_as_primary );
+			}
+		}
+
+		private bool m_data_source_cache_use_stale_cache = false;
+		private bool m_data_source_cache_use_stale_cache_set = false;
+
+		/// <summary>
+		///		Whether or not to use a data source cache file that
+		///		has not been updated in the given update frequency
+		///		interval if the originating data source cannot be
+		///		contacted.  If it is not defined in the plugin configuration
+		///		file then this property will return false.
+		/// </summary>
+		protected bool DataSourceCacheUseStaleCache
+		{
+			get
+			{
+				if ( !m_data_source_cache_use_stale_cache_set )
+				{
+					m_data_source_cache_use_stale_cache =
+						GetBoolValue( ConfigFile.Tables[ "plugin" ].Rows[
+						Index ][ "dataSourceCacheUseStaleCache" ], false );
+					m_data_source_cache_use_stale_cache_set = true;
+				}
+				return ( m_data_source_cache_use_stale_cache );
+			}
+		}
+
+		private bool m_data_source_cache_enabled = false;
+		private bool m_data_source_cache_enabled_set = false;
+
+		/// <summary>
+		///		Whether or not to cache the plugin's data source locally
+		///		and use it in the event that the originating data source
+		///		cannot be contacted.  If it is not defined in the plugin
+		///		configuration file then this property will return false.
+		/// </summary>
+		protected bool DataSourceCacheEnabled
+		{
+			get
+			{
+				if ( !m_data_source_cache_enabled_set )
+				{
+					m_data_source_cache_enabled =
+						GetBoolValue( ConfigFile.Tables[ "plugin" ].Rows[
+						Index ][ "dataSourceCacheEnabled" ], false );
+					m_data_source_cache_enabled_set = true;
+				}
+				return ( m_data_source_cache_enabled );
+			}
+		}
+		
 		private string m_server_type = null;
 
 		/// <summary>
-		///		Returns this plugin's server type if it
-		///		is defined in the plugin configuration file;
-		///		otherwise SingleCall.
+		///		The type of remoting object this plugin
+		///		should function as.  Returns either "SingleCall"
+		///		or "Singleton."  If it is not defined in the
+		///		plugin configuration file then this property will
+		///		return "SingleCall."
 		/// </summary>
 		protected string ServerType
 		{
@@ -196,57 +314,58 @@ namespace Sudowin.Plugins
 				if ( m_server_type == null )
 				{
 					m_server_type =
-						GetStringValue( PluginConfigFile.Tables[ "plugin" ].Rows[ PluginIndex ][ "serverType" ], "SingleCall" );
+						GetStringValue( ConfigFile.Tables[ "plugin" ].Rows[ 
+						Index ][ "serverType" ], "SingleCall" );
 				}
 				return ( m_server_type );
 			}
 		}
 
-		/// <summary>
+		/*/// <summary>
 		///		Returns this plugin's server lifetime if it
 		///		is defined in the plugin configuration file;
 		///		otherwise 0.
 		/// </summary>
-		private int m_plugin_server_lifetime = -1;
+		private int m_server_lifetime = -1;
 
 		/// <summary>
 		///		Returns this plugin's server lifetime if it
 		///		is defined in the plugin configuration file;
 		///		otherwise 0.
 		/// </summary>
-		protected int PluginServerLifetime
+		protected int ServerLifetime
 		{
 			get
 			{
-				if ( m_plugin_server_lifetime == -1 )
+				if ( m_server_lifetime == -1 )
 				{
-					m_plugin_server_lifetime =
-						GetInt32Value( PluginConfigFile.Tables[ "plugin" ].Rows[ PluginIndex ][ "serverLifetime" ], 0 );
+					m_server_lifetime =
+						GetInt32Value( ConfigFile.Tables[ "plugin" ].Rows[ Index ][ "serverLifetime" ], 0 );
 				}
-				return ( m_plugin_server_lifetime );
+				return ( m_server_lifetime );
 			}
-		}
+		}*/
 
 		/// <summary>
 		///		The 0-based index of the plugin in the plugin configuration file.
 		/// </summary>
-		private int m_plugin_index = -1;
+		private int m_index = -1;
 		
 		/// <summary>
 		///		The 0-based index of the plugin in the plugin configuration file.
 		/// </summary>
-		protected int PluginIndex
+		protected int Index
 		{
 			get
 			{
-				if ( m_plugin_index == -1 )
+				if ( m_index == -1 )
 				{
 					string uri = System.Runtime.Remoting.RemotingServices.GetObjectUri( this );
 					string index = Regex.Match( uri, @"^.*(?<index>\d{2})\.rem$", 
 						RegexOptions.IgnoreCase ).Groups[ "index" ].Value;
-					m_plugin_index = Convert.ToInt32( index );
+					m_index = Convert.ToInt32( index );
 				}
-				return ( m_plugin_index );
+				return ( m_index );
 			}
 		}
 		
@@ -278,6 +397,22 @@ namespace Sudowin.Plugins
 		private int GetInt32Value( object value, int defaultValue )
 		{
 			return ( value is DBNull ? defaultValue : Convert.ToInt32( value ) );
+		}
+
+		/// <summary>
+		///		Gets a boolean value from a DB value and returns the
+		///		given defaultValue if the give value is DBNull.
+		/// </summary>
+		/// <param name="value">The DB value to convert to a boolean.</param>
+		/// <param name="defaultValue">The value to return if the given value is DBNull.</param>
+		/// <returns>
+		///		If value is not DBNull then that value converted to a boolean;
+		///		otherwise defaultValue.
+		/// </returns>
+		private bool GetBoolValue( object value, bool defaultValue )
+		{
+			return ( value is DBNull ? defaultValue : bool.Parse(
+				Convert.ToString( value, CultureInfo.CurrentCulture ) ) );
 		}
 		
 		/// <summary>
