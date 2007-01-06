@@ -39,6 +39,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Runtime.Remoting.Lifetime;
+using System.Net;
 
 namespace Sudowin.Plugins.Authorization.Xml
 {
@@ -565,38 +566,65 @@ namespace Sudowin.Plugins.Authorization.Xml
 			//
 			// check to see if the command is being executed on an 
 			// allowed host or network
-			/*
 			string allwd_nets = string.Empty;
 			GetCommandAttributeValue(
 				userNode, true, commandNode, "allowedNetworks", out allwd_nets );
 			if ( allwd_nets.Length > 0 )
 			{
-				// TODO: Create a regex to validate the allowedNetworks value
-
+				IPHostEntry host_entry = Dns.GetHostEntry( Dns.GetHostName() );
+				
 				string[] allwd_nets_vals = allwd_nets.Split( new char[] { ',' } );
 				bool host_exists_in_allwd_nets = false;
 				Array.ForEach<string>( allwd_nets_vals, delegate( string anv )
 				{
-					// host name
-					if ( Regex.IsMatch( anv, @"(\w*\.?)+", RegexOptions.IgnoreCase ) )
+					// match * for all networks and match 127.0.0.1 since 
+					// it will always resolve to the local host
+					if ( Regex.IsMatch( anv, @"^(\*|(127\.0\.0\.1)|(localhost))$", 
+						RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace ) )
 					{
-						
+						host_exists_in_allwd_nets = true;
+						return;
+					}
+
+					// hostname
+					if ( Regex.IsMatch( host_entry.HostName, anv,
+						RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace ) )
+					{
+						host_exists_in_allwd_nets = true;
+						return;
 					}
 
 					// ip address
-					else if ( Regex.IsMatch( anv, @"(\d{1,3}\.){3}\d{1,3}" ) )
+					Array.ForEach<IPAddress>( host_entry.AddressList, delegate( IPAddress host_ip )
 					{
+						if ( Regex.IsMatch( host_ip.ToString(), anv,
+							RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace ) )
+						{
+							host_exists_in_allwd_nets = true;
+							return;
+						}
+					} );
 
+					if ( host_exists_in_allwd_nets )
+					{
+						return;
 					}
-
+					
+					/*
 					// ip range
-					else if ( Regex.IsMatch( anv, @"(\d{1,3}\.){2}\d{1,3}(\?" ) )
+					else if ( Regex.IsMatch( anv, @"^(\d{1,3}\.){2}(\d{1,3}\.?)(\d{1,3})?/(\d{1,2}|((\d{1,3}\.){3}\d{1,3}))$" ) )
 					{
-
+						// TODO: write an network calculator to handle this case
 					}
+					*/
 				} );
+
+				if ( !host_exists_in_allwd_nets )
+				{
+					return ( false );
+				}
 			}
-			*/
+			
 			//**********************************************************
 			// !!! RETURN RETURN RETURN !!!
 			//

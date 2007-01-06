@@ -45,6 +45,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 			<xs:attribute name="lockoutTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="required" />
 			<xs:attribute name="loggingLevel" type="loggingLevelType" use="required" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" />
 			<xs:attribute name="allowAllCommands" type="xs:boolean" use="required" />
+			<xs:attribute name="allowedNetworks" type="xs:string" default="*" use="optional" />
 		</xs:complexType>
 	</xs:element>
 	<xs:complexType name="userType">
@@ -68,6 +69,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		<xs:attribute name="invalidLogonTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
 		<xs:attribute name="lockoutTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
 		<xs:attribute name="loggingLevel" type="loggingLevelType" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" use="optional" />
+		<xs:attribute name="allowedNetworks" type="xs:string" use="optional" />
 	</xs:complexType>
 	<xs:complexType name="commandType">
 		<xs:sequence>
@@ -79,6 +81,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		<xs:attribute name="loggingLevel" type="loggingLevelType" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
 		<xs:attribute name="md5Checksum" type="xs:string" use="optional" />
 		<xs:attribute name="argumentString" type="xs:string" use="optional" />
+		<xs:attribute name="allowedNetworks" type="xs:string" use="optional" />
 	</xs:complexType>
 	<xs:complexType name="usersType">
 		<xs:sequence>
@@ -123,12 +126,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		<xs:attribute name="startTime" type="xs:time" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
 		<xs:attribute name="endTime" type="xs:time" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
 		<xs:attribute name="loggingLevel" type="loggingLevelType" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
-	</xs:complexType>
-	<xs:complexType name="argumentType">
-		<xs:sequence>
-		</xs:sequence>
-		<xs:attribute name="name" type="xs:string" use="required" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" />
-		<xs:attribute name="description" type="xs:string" use="optional" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" />
+		<xs:attribute name="allowedNetworks" type="xs:string" use="optional" />
 	</xs:complexType>
 	<xs:complexType name="userGroupsType">
 		<xs:sequence>
@@ -161,6 +159,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		<xs:attribute name="invalidLogonTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
 		<xs:attribute name="lockoutTimeout" type="xs:int" msdata:AutoIncrement="false" msdata:ReadOnly="false" msprop:nullValue="_throw" use="optional" />
 		<xs:attribute name="loggingLevel" type="loggingLevelType" msdata:ReadOnly="false" msprop:nullValue="_throw" msdata:AutoIncrement="false" use="optional" />
+		<xs:attribute name="allowedNetworks" type="xs:string" use="optional" />
 	</xs:complexType>
 	<xs:complexType name="userGroupUsersType">
 		<xs:sequence>
