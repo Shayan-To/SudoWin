@@ -28,7 +28,7 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 -->
-<xs:schema id="PluginConfigurationSchema" targetNamespace="http://sudowin.sourceforge.net/schemas/PluginConfiguration/" elementFormDefault="qualified" xmlns="http://sudowin.sourceforge.net/schemas/PluginConfiguration/" xmlns:mstns="http://sudowin.sourceforge.net/schemas/PluginConfiguration/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0">
+<xs:schema id="PluginConfigurationSchema" targetNamespace="http://sudowin.sourceforge.net/schemas/PluginConfiguration/" elementFormDefault="qualified" xmlns="http://sudowin.sourceforge.net/schemas/PluginConfiguration/" xmlns:mstns="http://sudowin.sourceforge.net/schemas/PluginConfiguration/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.1">
 	<xs:element name="pluginConfiguration">
 		<xs:complexType>
 			<xs:sequence>
@@ -40,11 +40,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		<xs:attribute name="assemblyString" type="xs:string" use="required" />
 		<xs:attribute name="serverType" type="serverTypeType" default="SingleCall" use="optional" />
 		<xs:attribute name="serverLifetime" type="xs:int" default="0" use="optional" />
-		<xs:attribute name="connectionString" type="xs:string" use="optional" />
-		<xs:attribute name="schemaUri" type="xs:string" use="optional" />
+		<xs:attribute name="dataSourceConnectionString" type="xs:string" use="optional" />
+		<xs:attribute name="dataSourceSchemaUri" type="xs:string" use="optional" />
 		<xs:attribute name="enabled" type="xs:boolean" use="optional" default="true" />
 		<xs:attribute name="activationData" type="xs:string" use="optional" />
 		<xs:attribute name="pluginType" type="pluginTypeType" use="required" />
+		<xs:attribute name="dataSourceCacheFilePath" type="xs:string" use="optional" />
+		<xs:attribute name="dataSourceCacheUpdateFrequency" type="xs:string" use="optional" default="00:05" />
+		<xs:attribute name="dataSourceCacheEnabled" type="xs:boolean" use="optional" default="false" />
+		<xs:attribute name="dataSourceCacheUseAsPrimary" type="xs:boolean" use="optional" default="false" />
+		<xs:attribute name="dataSourceCacheUseStaleCache" type="xs:boolean" use="optional" default="true" />
 	</xs:complexType>
 	<xs:simpleType name="pluginTypeType">
 		<xs:restriction base="xs:string">

@@ -191,13 +191,17 @@ namespace Sudowin.Setup.CustomActions
 				node = plugin_cfg_xml_doc.SelectSingleNode( user_xpq, plugin_cfg_xml_ns_mgr );
 				if ( node != null )
 				{
-					node.Attributes[ "connectionString" ].Value = string.Format(
+					node.Attributes[ "dataSourceConnectionString" ].Value = string.Format(
 						CultureInfo.CurrentCulture, 
 						@"{0}Server\sudoers.xml",
 						target_dir );
-					node.Attributes[ "schemaUri" ].Value = string.Format(
+					node.Attributes[ "dataSourceSchemaUri" ].Value = string.Format(
 						CultureInfo.CurrentCulture,
 						@"{0}Server\XmlAuthorizationPluginSchema.xsd",
+						target_dir );
+					node.Attributes[ "dataSourceCacheFilePath" ].Value = string.Format(
+						CultureInfo.CurrentCulture,
+						@"{0}Server\sudoers.xml.cache",
 						target_dir );
 				}
 
