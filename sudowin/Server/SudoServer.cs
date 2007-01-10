@@ -534,7 +534,7 @@ namespace Sudowin.Server
 			// get the user's logon token
 			IntPtr hUser = IntPtr.Zero;
 			QueryUserToken( userName, ref hUser );
-
+			
 			// add the user to the group and record if they
 			// were already a member of the group
 			bool am = AddRemoveUser( userName, 1, privilegesGroup );
@@ -549,7 +549,9 @@ namespace Sudowin.Server
 
 			// remove the user from the group if they were not already a member
 			if ( !am )
+			{
 				AddRemoveUser( userName, 0, privilegesGroup );
+			}
 
 			m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitMethod,
 				"exiting Sudo( string, string, string, string, string )" );
