@@ -268,7 +268,7 @@ assigned privileges group
 			System.Text.StringBuilder pwd =
 				new System.Text.StringBuilder( 100 );
 			System.Console.WriteLine();
-			System.Console.Write( "Password:" );
+			System.Console.Write( "Passphrase: " );
 			ConsoleKeyInfo cki;
 			do
 			{

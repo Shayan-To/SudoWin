@@ -26,6 +26,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 CHANGELOG
 
+2006/01/10
+----------
+- Released Sudo for Windows version 0.3.1-r143
+
+- Bugfix - Minor - Corrects the problem where the console client would not 
+accept a zero-length password
+
+- Bugfix - Major - Corrects the problem where any account in the Sudoers 
+group could create a remoting client and access the data source that stored 
+encrypted credentials.  The credentials in question ARE encrypted, but a sudo 
+user could still gain access to them.  This has now been restricted to the 
+builtin account "NT AUTHORITY\SYSTEM".
+
+- Changed the console client's prompt from "Please enter your passphrase: " to "Passphrase: ".
+
 2006/01/06
 ----------
 - Released Sudo for Windows version 0.3.0-r139
