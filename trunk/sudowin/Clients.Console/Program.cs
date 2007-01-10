@@ -268,12 +268,15 @@ assigned privileges group
 			System.Text.StringBuilder pwd =
 				new System.Text.StringBuilder( 100 );
 			System.Console.WriteLine();
-			System.Console.Write( "Please enter your password: " );
-			ConsoleKeyInfo cki = System.Console.ReadKey( true );
+			System.Console.Write( "Password:" );
+			ConsoleKeyInfo cki;
 			do
 			{
-				pwd.Append( cki.KeyChar );
 				cki = System.Console.ReadKey( true );
+				if ( cki.Key != ConsoleKey.Enter )
+				{
+					pwd.Append( cki.KeyChar );
+				}
 			} while ( cki.Key != ConsoleKey.Enter );
 			password = pwd.ToString();
 					
