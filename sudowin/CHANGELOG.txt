@@ -26,6 +26,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 CHANGELOG
 
+2006/01/15
+----------
+- Released Sudo for Windows version 0.3.2-r147
+
+- Bugfix - Moderate - Corrects exception that gets thrown when any locale 
+other than en-US invokes sudowin.  This exception was occuring because
+there was a principal permission check for "NT AUTHORITY\SYSTEM" in the
+Plugins.CredentialsCache.LocalServer assembly in order to restrict 
+security sensitive methods to the SYSTEM user.  The rub is of course that
+the SYSTEM account is not spelled the same way in all languages.
+
+This bug was discovered by Lourival Neto.  Thanks Lourival!
+
 2006/01/10
 ----------
 - Released Sudo for Windows version 0.3.1-r143
@@ -39,7 +52,8 @@ encrypted credentials.  The credentials in question ARE encrypted, but a sudo
 user could still gain access to them.  This has now been restricted to the 
 builtin account "NT AUTHORITY\SYSTEM".
 
-- Changed the console client's prompt from "Please enter your passphrase: " to "Passphrase: ".
+- Changed the console client's prompt from "Please enter your passphrase: 
+" to "Passphrase: ".
 
 2006/01/06
 ----------
