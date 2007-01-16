@@ -11,8 +11,8 @@ REM   and renames the setup files, zips them,
 REM   and finally ftp's them to sourceforge
 REM
 
-set VERSION=%1%
-set REVISION=%2%
+set /p VERSION=ver: 
+set /p REVISION=rev: 
 
 REM
 REM do not proceed if arguments are missing
