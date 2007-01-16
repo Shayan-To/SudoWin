@@ -1,0 +1,8 @@
+anonymous
+akutz@lostcreations.com
+cd incoming
+bi
+lcd r:\projects\sudowin\releases
+prompt
+mput *
+quit
