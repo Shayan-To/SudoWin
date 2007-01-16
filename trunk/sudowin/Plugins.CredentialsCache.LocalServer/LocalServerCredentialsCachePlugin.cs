@@ -31,10 +31,12 @@ using System.Text;
 using Sudowin.Common;
 using System.Security;
 using System.Threading;
+using System.Resources;
 using System.Diagnostics;
+using System.Security.Principal;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Security.Permissions;
+using System.Runtime.InteropServices;
 
 namespace Sudowin.Plugins.CredentialsCache.LocalServer
 {
@@ -89,9 +91,13 @@ namespace Sudowin.Plugins.CredentialsCache.LocalServer
 		///		True and the user's cached credentials if found; 
 		///		otherwise false and an empty cached credentials set.
 		/// </returns>
-		[PrincipalPermission( SecurityAction.Demand, Name=@"NT AUTHORITY\SYSTEM" )]
 		public override bool GetCache( string userName, ref CredentialsCache credCache )
 		{
+			if ( !WindowsIdentity.GetCurrent().IsSystem )
+			{
+				throw ( new SecurityException( "Restricted to the SYSTEM account." ) );
+			}
+
 			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
 				"entering GetCredentialsCache( string, ref CredentialsCache )" );
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
@@ -124,9 +130,13 @@ namespace Sudowin.Plugins.CredentialsCache.LocalServer
 		/// <returns>
 		///		True and the user's passphrase if found; otherwise false.
 		/// </returns>
-		[PrincipalPermission( SecurityAction.Demand, Name = @"NT AUTHORITY\SYSTEM" )]
 		public override bool GetCache( string userName, ref string passphrase )
 		{
+			if ( !WindowsIdentity.GetCurrent().IsSystem )
+			{
+				throw ( new SecurityException( "Restricted to the SYSTEM account." ) );
+			}
+
 			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.EnterMethod,
 				"entering GetUserCache( string, ref string )" );
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.ParemeterValues,
@@ -169,9 +179,13 @@ namespace Sudowin.Plugins.CredentialsCache.LocalServer
 		/// <param name="credCache">
 		///		The given user's cached credentials.
 		/// </param>
-		[PrincipalPermission( SecurityAction.Demand, Name = @"NT AUTHORITY\SYSTEM" )]
 		public override void SetCache( string userName, CredentialsCache credCache )
 		{
+			if ( !WindowsIdentity.GetCurrent().IsSystem )
+			{
+				throw ( new SecurityException( "Restricted to the SYSTEM account." ) );
+			}
+
 			m_coll_mtx.WaitOne();
 
 			// whether or not the CredentialsCache structure
@@ -203,9 +217,13 @@ namespace Sudowin.Plugins.CredentialsCache.LocalServer
 		/// <param name="passphrase">
 		///		Plain-text passphrase to convert into a SecureString.
 		/// </param>
-		[PrincipalPermission( SecurityAction.Demand, Name = @"NT AUTHORITY\SYSTEM" )]
 		public override void SetCache( string userName, string passphrase )
 		{
+			if ( !WindowsIdentity.GetCurrent().IsSystem )
+			{
+				throw ( new SecurityException( "Restricted to the SYSTEM account." ) );
+			}
+
 			m_coll_mtx.WaitOne();
 
 			SecureString ss = new SecureString();
