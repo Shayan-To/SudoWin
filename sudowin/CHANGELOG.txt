@@ -28,7 +28,7 @@ CHANGELOG
 
 2006/01/30
 ----------
-- Released Sudo for Windows version 0.4.0-r152
+- Released Sudo for Windows version 0.4.0-r153
 
 - Added support for authorizing users based on local and domain group affiliation.
 
