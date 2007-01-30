@@ -205,7 +205,7 @@ namespace Sudowin.Plugins.Authorization.Xml
 							CultureInfo.CurrentCulture,
 							"WinNT://{0},computer",
 							Environment.MachineName ) );
-						DirectoryEntry group = localhost.Children.Find( ug_name );
+						DirectoryEntry group = localhost.Children.Find( grp_gn_part );
 
 						// used for asdi calls
 						object[] user_path = null;
