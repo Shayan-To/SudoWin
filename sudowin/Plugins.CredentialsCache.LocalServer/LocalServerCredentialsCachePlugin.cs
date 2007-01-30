@@ -37,6 +37,8 @@ using System.Security.Principal;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
+using System.Configuration;
 
 namespace Sudowin.Plugins.CredentialsCache.LocalServer
 {

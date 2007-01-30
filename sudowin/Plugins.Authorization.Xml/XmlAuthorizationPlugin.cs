@@ -28,6 +28,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 using System.IO;
+using System.Net;
 using System.Xml;
 using System.Data;
 using System.Text;
@@ -35,11 +36,11 @@ using Sudowin.Common;
 using System.Xml.Schema;
 using System.Diagnostics;
 using System.Globalization;
+using System.DirectoryServices;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Runtime.Remoting.Lifetime;
-using System.Net;
 
 namespace Sudowin.Plugins.Authorization.Xml
 {
@@ -135,6 +136,11 @@ namespace Sudowin.Plugins.Authorization.Xml
 		/// </returns>
 		private XmlNode FindUserNode( string userName )
 		{
+			return ( FindUserNode( userName, false ) );
+		}
+
+		private XmlNode FindUserNode( string userName, bool searchGroups )
+		{
 			// find the user in the xml file.  to do this
 			// we first build a xpath query which will look for
 			// the user with the given user name
@@ -151,7 +157,146 @@ namespace Sudowin.Plugins.Authorization.Xml
 			XmlNode user_node = m_xml_doc.SelectSingleNode(
 				user_xpq, m_namespace_mgr );
 
+			if ( searchGroups && user_node == null )
+			{
+				// get the domain/host name and user name parts
+				// of the user name
+				string[] un_split = userName.Split( new char[] { '\\' } );
+				string usr_dhn_part = un_split[ 0 ];
+				string usr_un_part = un_split[ 1 ];
+
+				// get a list of all the userGroup nodes in the sudoers file
+				XmlNodeList ug_node_list = FindUserGroupNodes();
+				foreach ( XmlNode ug_node in ug_node_list )
+				{
+					string ug_name = ug_node.Attributes[ "name" ].Value;
+
+					// determine if this is a local group or a domain group
+					bool is_local_group = false;
+					Regex grp_parts_rx = new Regex( @"(?<dhp>[^\\]+)\\(?<np>.*)", RegexOptions.IgnoreCase );
+					Match grp_parts_m = grp_parts_rx.Match( ug_name );
+					string grp_dhn_part = string.Empty;
+					string grp_gn_part = string.Empty;
+
+					if ( !grp_parts_m.Success )
+					{
+						is_local_group = true;
+					}
+					else
+					{
+						// domain or host name part / name part of group
+						grp_dhn_part = grp_parts_m.Groups[ "dhp" ].Value;
+						grp_gn_part = grp_parts_m.Groups[ "np" ].Value;
+
+						if ( string.Compare( grp_dhn_part, Environment.MachineName, true ) == 0 )
+						{
+							is_local_group = true;
+						}
+					}
+
+					// gets set to true if the user is a member of the current group
+					bool is_member = false;
+
+					if ( is_local_group )
+					{
+						// get the directory entries for the localhost and the current group
+						DirectoryEntry localhost = new DirectoryEntry(
+							string.Format(
+							CultureInfo.CurrentCulture,
+							"WinNT://{0},computer",
+							Environment.MachineName ) );
+						DirectoryEntry group = localhost.Children.Find( ug_name );
+
+						// used for asdi calls
+						object[] user_path = null;
+
+						// local user
+						if ( Regex.IsMatch( usr_dhn_part, Environment.MachineName, RegexOptions.IgnoreCase ) )
+						{
+							// find the user instead of building the path.  this is 
+							// in case this machine belongs to a workgroup or a domain.  
+							//  it is easier to search for the user and get their path that 
+							// way than it is to get the computer's workgroup
+							DirectoryEntry user = localhost.Children.Find( usr_un_part, "user" );
+
+							user_path = new object[] 
+						{
+							user.Path
+						};
+
+							user.Close();
+						}
+
+						// ad user
+						else
+						{
+							user_path = new object[] 
+						{
+							string.Format(
+								CultureInfo.CurrentCulture,
+								"WinNT://{0}/{1}",
+								usr_dhn_part, usr_un_part )
+						};
+						}
+
+						is_member = bool.Parse( Convert.ToString(
+							group.Invoke( "IsMember", user_path ),
+							CultureInfo.CurrentCulture ) );
+						group.Close();
+						localhost.Close();
+					}
+					else
+					{
+						DirectoryEntry domain = new DirectoryEntry();
+
+						DirectorySearcher dsrchr = new DirectorySearcher(
+							domain, "samAccountName=" + grp_gn_part, null, SearchScope.Subtree );
+						SearchResult sr = dsrchr.FindOne();
+						if ( sr == null )
+						{
+							break;
+						}
+						DirectoryEntry group = sr.GetDirectoryEntry();
+
+						dsrchr = new DirectorySearcher(
+							domain, "samAccountName=" + usr_un_part, null, SearchScope.Subtree );
+						sr = dsrchr.FindOne();
+						if ( sr == null )
+						{
+							break;
+						}
+						DirectoryEntry user = sr.GetDirectoryEntry();
+
+						is_member = bool.Parse( Convert.ToString(
+							group.Invoke( "IsMember", user.Path ),
+							CultureInfo.CurrentCulture ) );
+						
+						user.Close();
+						group.Close();
+						domain.Close();
+					}
+
+					// if the user belongs to this user group then return
+					// the user group node as if it was the user node
+					if ( is_member )
+					{
+						user_node = ug_node;
+
+						// set this node's name attribute to be the 
+						// name of the user, not the name of the group
+						user_node.Attributes[ "name" ].Value = userName;
+
+						break;
+					}
+				}
+			}
+
 			return ( user_node );
+		}
+
+		private XmlNodeList FindUserGroupNodes()
+		{
+			return ( m_xml_doc.GetElementsByTagName( "userGroup" ) );
 		}
 
 		/// <summary>
@@ -372,10 +517,11 @@ namespace Sudowin.Plugins.Authorization.Xml
 			{
 				this.Open();
 			}
-			
-			// get the user node for this user
-			XmlNode unode = FindUserNode( userName );
 
+			// get the user node for this user
+			XmlNode unode = FindUserNode( userName, true );
+
+			// if we cannot find the user then return false
 			if ( unode == null )
 				return ( false );
 
@@ -446,7 +592,7 @@ namespace Sudowin.Plugins.Authorization.Xml
 			}
 			
 			// find the user node
-			XmlNode u_node = FindUserNode( username );
+			XmlNode u_node = FindUserNode( username, true );
 
 			if ( u_node == null )
 				return ( false );

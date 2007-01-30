@@ -168,12 +168,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 			</xs:sequence>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:simpleType name="uiModeType">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="CommandLine" />
-			<xs:enumeration value="Gui" />
-		</xs:restriction>
-	</xs:simpleType>
 	<xs:simpleType name="loggingLevelType">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="None" />

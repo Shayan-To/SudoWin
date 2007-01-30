@@ -42,14 +42,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 			loggingLevel="Both" 
 			allowAllCommands="false">
 	<users>
-		<userGroup name="standard">
+		<userGroup name="sudoers" allowAllCommands="true">
 			<users>
 				<user name="poppy\akutz" allowAllCommands ="true">
 					<commands>
 						<command path="c:\windows\system32\regedit.exe" />
 					</commands>
 				</user>
-				<user name="lostcreations\akutz" allowAllCommands="false" />
 			</users>
 			<commandGroupRefs>
 				<commandGroupRef commandGroupName="standard"/>
