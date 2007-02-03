@@ -30,13 +30,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugins.CredentialsCache", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugins.CredentialsCache.LocalServer", "Plugins.CredentialsCache.LocalServer\Plugins.CredentialsCache.LocalServer.csproj", "{A9F0B711-2022-4597-A1F8-A2992DEBC936}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{F6890706-60DE-4FD5-834D-F4313CAAEBB1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Servers.FrontEnd", "Servers.FrontEnd\Servers.FrontEnd.csproj", "{F6890706-60DE-4FD5-834D-F4313CAAEBB1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugins", "Plugins\Plugins.csproj", "{E5CBBCD1-A264-427E-9A5D-261E1AA06F49}"
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{94381724-9D98-4F4B-B69E-BAC4BAA66999}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Setup.CustomActions", "Setup.CustomActions\Setup.CustomActions.csproj", "{82E5CCD5-7C49-48FD-997C-DF045D6E6A21}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Servers.BackEnd", "Servers.BackEnd\Servers.BackEnd.csproj", "{1592BB36-0ADA-4768-82C7-7E6F6A273D20}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -190,6 +192,16 @@ Global
 		{82E5CCD5-7C49-48FD-997C-DF045D6E6A21}.Release|Any CPU.Build.0 = Release|Any CPU
 		{82E5CCD5-7C49-48FD-997C-DF045D6E6A21}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{82E5CCD5-7C49-48FD-997C-DF045D6E6A21}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{1592BB36-0ADA-4768-82C7-7E6F6A273D20}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{1592BB36-0ADA-4768-82C7-7E6F6A273D20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1592BB36-0ADA-4768-82C7-7E6F6A273D20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1592BB36-0ADA-4768-82C7-7E6F6A273D20}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{1592BB36-0ADA-4768-82C7-7E6F6A273D20}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{1592BB36-0ADA-4768-82C7-7E6F6A273D20}.Release|.NET.ActiveCfg = Release|Any CPU
+		{1592BB36-0ADA-4768-82C7-7E6F6A273D20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1592BB36-0ADA-4768-82C7-7E6F6A273D20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1592BB36-0ADA-4768-82C7-7E6F6A273D20}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{1592BB36-0ADA-4768-82C7-7E6F6A273D20}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

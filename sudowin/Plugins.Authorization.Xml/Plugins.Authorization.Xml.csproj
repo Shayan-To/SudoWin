@@ -53,7 +53,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="sudoers.xml" />
+    <None Include="sudoers.xml" />
     <Content Include="XmlAuthorizationPluginSchema.xsd">
       <SubType>Designer</SubType>
     </Content>

@@ -205,7 +205,7 @@ namespace Sudowin.Plugins.Authorization.Xml
 							CultureInfo.CurrentCulture,
 							"WinNT://{0},computer",
 							Environment.MachineName ) );
-						DirectoryEntry group = localhost.Children.Find( grp_gn_part );
+						DirectoryEntry group = localhost.Children.Find( ug_name );
 
 						// used for asdi calls
 						object[] user_path = null;
@@ -299,6 +299,32 @@ namespace Sudowin.Plugins.Authorization.Xml
 			return ( m_xml_doc.GetElementsByTagName( "userGroup" ) );
 		}
 
+		private bool DoesUriExist( string uriString )
+		{
+			Uri ds_uri = new Uri( uriString );
+
+			if ( ds_uri.IsFile )
+			{
+				return ( File.Exists( uriString ) );
+			}
+			else
+			{
+				HttpWebRequest hwreq = HttpWebRequest.Create( ds_uri ) as HttpWebRequest;
+				hwreq.Timeout = 500;
+				HttpWebResponse hwres = null;
+
+				try
+				{
+					hwres = hwreq.GetResponse() as HttpWebResponse;
+				}
+				catch
+				{
+				}
+
+				return ( hwres == null ? false : hwres.StatusCode == HttpStatusCode.OK );
+			}
+		}
+
 		/// <summary>
 		///		Opens a connection to the xml file
 		///		and validate the data with the given
@@ -320,7 +346,7 @@ namespace Sudowin.Plugins.Authorization.Xml
 						DataSourceCacheUpdateFrequency )
 					{
 						// the sudoers file exists
-						if ( File.Exists( DataSourceConnectionString ) )
+						if ( DoesUriExist( DataSourceConnectionString ) )
 						{
 							LoadFromDataSource( DataSourceConnectionString, DataSourceSchemaUri );
 							m_xml_doc.Save( DataSourceCacheFilePath );
@@ -351,7 +377,7 @@ namespace Sudowin.Plugins.Authorization.Xml
 				else
 				{
 					// the sudoers file exists
-					if ( File.Exists( DataSourceConnectionString ) )
+					if ( DoesUriExist( DataSourceConnectionString ) )
 					{
 						LoadFromDataSource( DataSourceConnectionString, DataSourceSchemaUri );
 						m_xml_doc.Save( DataSourceCacheFilePath );
@@ -369,7 +395,7 @@ namespace Sudowin.Plugins.Authorization.Xml
 			else
 			{
 				// the sudoers file exists
-				if ( File.Exists( DataSourceConnectionString ) )
+				if ( DoesUriExist( DataSourceConnectionString ) )
 				{
 					// load the sudoers file
 					LoadFromDataSource( DataSourceConnectionString, DataSourceSchemaUri );

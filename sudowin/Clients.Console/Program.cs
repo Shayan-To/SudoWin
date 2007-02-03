@@ -109,11 +109,11 @@ namespace Sudowin.Clients.Console
 			string commandPath, 
 			string commandArguments )
 		{
-			System.ServiceProcess.ServiceController sc = new System.ServiceProcess.ServiceController( "Sudowin" );
+			System.ServiceProcess.ServiceController sc = new System.ServiceProcess.ServiceController( "SudowinFE" );
 			if ( sc.Status == System.ServiceProcess.ServiceControllerStatus.Stopped )
 			{
 				System.Console.WriteLine();
-				System.Console.WriteLine( "Sudowin service is stopped" );
+				System.Console.WriteLine( "Sudowin FrontEnd service is stopped" );
 				return;
 			}
 
@@ -136,11 +136,11 @@ namespace Sudowin.Clients.Console
 
 			// loop through the list of well known clients until
 			// the SudoServer object is found
-			ISudoServer iss = null;
+			ISudoServerFrontEnd iss = null;
 			for ( int x = 0; x < wkts.Length && iss == null; ++x )
 			{
-				iss = Activator.GetObject( typeof( ISudoServer ),
-					wkts[ x ].ObjectUrl ) as ISudoServer;
+				iss = Activator.GetObject( typeof( ISudoServerFrontEnd ),
+					wkts[ x ].ObjectUrl ) as ISudoServerFrontEnd;
 			}
 
 			#endregion
