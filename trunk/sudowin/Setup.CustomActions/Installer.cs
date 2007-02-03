@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2005, 2006, Schley Andrew Kutz <akutz@lostcreations.com>
+Copyright (c) 2005, 2006, 2007 Schley Andrew Kutz <akutz@lostcreations.com>
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -55,7 +55,7 @@ namespace Sudowin.Setup.CustomActions
 			base.Install( stateSaver );
 
 			string target_dir = this.Context.Parameters[ "TargetDir" ];
-			string server_config_path = string.Format( @"{0}Server\Sudowin.Server.exe.config",
+			string server_config_path = string.Format( @"{0}Servers\FrontEnd\Sudowin.Servers.FrontEnd.exe.config",
 				target_dir );
 
 			#region Create the sudoers group
@@ -89,7 +89,7 @@ namespace Sudowin.Setup.CustomActions
 
 			// TODO: ask what users should be sudoers and add them to the group and sudoers.xml file
 
-			#region Edit the Sudowin.Server.exe.config file
+			#region Edit the Sudowin.Servers.FrontEnd.exe.config file
 
 			const string XpathTranslateFormat =
 				"translate({0},'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')";
@@ -141,7 +141,7 @@ namespace Sudowin.Setup.CustomActions
 			XmlNode node = svr_cfg_xml_doc.SelectSingleNode( user_xpq, svr_cfg_xml_ns_mgr );
 			if ( node != null )
 			{
-				string plugin_config_path = string.Format( @"{0}Server\pluginConfiguration.xml", target_dir );
+				string plugin_config_path = string.Format( @"{0}Servers\FrontEnd\pluginConfiguration.xml", target_dir );
 				node.Attributes[ "value" ].Value = plugin_config_path;
 
 				//
@@ -193,15 +193,15 @@ namespace Sudowin.Setup.CustomActions
 				{
 					node.Attributes[ "dataSourceConnectionString" ].Value = string.Format(
 						CultureInfo.CurrentCulture, 
-						@"{0}Server\sudoers.xml",
+						@"{0}Servers\FrontEnd\sudoers.xml",
 						target_dir );
 					node.Attributes[ "dataSourceSchemaUri" ].Value = string.Format(
 						CultureInfo.CurrentCulture,
-						@"{0}Server\XmlAuthorizationPluginSchema.xsd",
+						@"{0}Servers\FrontEnd\XmlAuthorizationPluginSchema.xsd",
 						target_dir );
 					node.Attributes[ "dataSourceCacheFilePath" ].Value = string.Format(
 						CultureInfo.CurrentCulture,
-						@"{0}Server\sudoers.xml.cache",
+						@"{0}Servers\FrontEnd\sudoers.xml.cache",
 						target_dir );
 				}
 
@@ -219,7 +219,7 @@ namespace Sudowin.Setup.CustomActions
 					XpathTranslateFormat, "'pluginConfigurationSchemaUri'" ) );
 			node = svr_cfg_xml_doc.SelectSingleNode( user_xpq, svr_cfg_xml_ns_mgr );
 			if ( node != null )
-				node.Attributes[ "value" ].Value = string.Format( @"{0}Server\PluginConfigurationSchema.xsd",
+				node.Attributes[ "value" ].Value = string.Format( @"{0}Servers\FrontEnd\PluginConfigurationSchema.xsd",
 					target_dir );
 
 			// build the query, find the node, set the value
@@ -257,7 +257,7 @@ namespace Sudowin.Setup.CustomActions
 					XpathTranslateFormat, "'traceListener'" ) );
 			node = svr_cfg_xml_doc.SelectSingleNode( user_xpq, svr_cfg_xml_ns_mgr );
 			if ( node != null )
-				node.Attributes[ "initializeData" ].Value = string.Format( @"{0}Server\service.log",
+				node.Attributes[ "initializeData" ].Value = string.Format( @"{0}Servers\FrontEnd\service.log",
 					target_dir );
 
 			// save it back to the file
@@ -283,27 +283,18 @@ namespace Sudowin.Setup.CustomActions
 
 			#endregion
 
-			#region Copy the sudoers file into place
+			#region Copy sudoers.xml file into place if not already there
 
-			string sudoers_old_file_path = string.Format( CultureInfo.CurrentCulture,
-				@"{0}sudoers.xml", target_dir );
-			string sudoers_new_file_path = string.Format( CultureInfo.CurrentCulture,
-				@"{0}Server\sudoers.xml", target_dir );
+			string sudoers_file_path_new = string.Format( @"{0}sudoers.xml", target_dir );
+			string sudoers_file_path_old = string.Format( @"{0}Servers\FrontEnd\sudoers.xml", target_dir );
 
-			// if the sudoers file already exists then delete the stock one 
-			// that comes with the installer
-			if ( File.Exists( sudoers_new_file_path ) )
+			if ( File.Exists( sudoers_file_path_old ) )
 			{
-				m_sudoers_file_already_exists = true;
-				File.Delete( sudoers_old_file_path );
+				File.Delete( sudoers_file_path_new );
 			}
-
-			// if the sudoers file does not already exist then move the stock
-			// sudoers file that comes with the installer into the Server 
-			// directory
 			else
 			{
-				File.Move( sudoers_old_file_path, sudoers_new_file_path );
+				File.Move( sudoers_file_path_new, sudoers_file_path_old );
 			}
 
 			#endregion
@@ -364,7 +355,7 @@ namespace Sudowin.Setup.CustomActions
 			#region Delete the sudoers file
 			
 			string sudoers_file_path = string.Format( CultureInfo.CurrentCulture,
-					@"{0}Server\sudoers.xml", target_dir );
+					@"{0}Servers\FrontEnd\sudoers.xml", target_dir );
 			if ( File.Exists( sudoers_file_path ) )
 				File.Delete( sudoers_file_path );
 
@@ -420,7 +411,7 @@ namespace Sudowin.Setup.CustomActions
 			if ( dr == DialogResult.Yes )
 			{
 				string sudoers_file_path = string.Format( CultureInfo.CurrentCulture,
-					@"{0}Server\sudoers.xml", target_dir );
+					@"{0}Servers\FrontEnd\sudoers.xml", target_dir );
 				if ( File.Exists( sudoers_file_path ) )
 					File.Delete( sudoers_file_path );
 			}

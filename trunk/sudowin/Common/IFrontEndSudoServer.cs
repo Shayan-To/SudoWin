@@ -33,9 +33,9 @@ using System.Security.Permissions;
 namespace Sudowin.Common
 {
 	/// <summary>
-	///		An interface stub for Sudowin.Service.Server.
+	///		An interface stub for Sudowin.Servers.FrontEnd.SudoServer.
 	/// </summary>
-	public interface ISudoServer
+	public interface ISudoServerFrontEnd
 	{
 		/// <summary>
 		///		Invokes sudo on the given command path.

@@ -46,7 +46,7 @@ namespace Sudowin.Clients.Gui
 		/// <summary>
 		///		The secure channel used to communicate with the sudo server.
 		/// </summary>
-		private ISudoServer m_isudo_server;
+		private ISudoServerFrontEnd m_isudo_server;
 
 		/// <summary>
 		///		True if the user has cached credentials and the
@@ -79,8 +79,8 @@ namespace Sudowin.Clients.Gui
 			// the SudoServer object is found
 			for ( int x = 0; x < wkts.Length && m_isudo_server == null; ++x )
 			{
-				m_isudo_server = Activator.GetObject( typeof( ISudoServer ),
-					wkts[ x ].ObjectUrl ) as ISudoServer;
+				m_isudo_server = Activator.GetObject( typeof( ISudoServerFrontEnd ),
+					wkts[ x ].ObjectUrl ) as ISudoServerFrontEnd;
 			}
 
 			bool is_sudo_server_comm_link_open = false;
@@ -143,12 +143,12 @@ namespace Sudowin.Clients.Gui
 			}
 
 			// check to see if the Sudowin service is stopped
-			System.ServiceProcess.ServiceController sc = new System.ServiceProcess.ServiceController( "Sudowin" );
+			System.ServiceProcess.ServiceController sc = new System.ServiceProcess.ServiceController( "SudowinFE" );
 			if ( sc.Status == System.ServiceProcess.ServiceControllerStatus.Stopped )
 			{
 				m_txtbox_password.Enabled = false;
 				m_btn_ok.Enabled = false;
-				m_lbl_warning.Text = "Sudowin service is stopped";
+				m_lbl_warning.Text = "Sudowin FrontEnd service is stopped";
 			}
 			else if ( !is_sudo_server_comm_link_open )
 			{
