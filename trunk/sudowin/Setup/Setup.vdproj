@@ -58,6 +58,12 @@
         "Entry"
         {
         "MsmKey" = "8:_3F8F27917042CC99E794B60D750EABF8"
+        "OwnerKey" = "8:_7C5C5072EA2F4968B863F6C8F91BAE61"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3F8F27917042CC99E794B60D750EABF8"
         "OwnerKey" = "8:_FDA5EAD60852412C8A046951BDC5396F"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -111,6 +117,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_52BC7779344648059BCF2CED1249EF2D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_611CA151227F4EA1A5A42A6164D6BB4F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -118,6 +130,12 @@
         "Entry"
         {
         "MsmKey" = "8:_6400FA4A59D14C17BF864C43809D9985"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7C5C5072EA2F4968B863F6C8F91BAE61"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -245,6 +263,18 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_6400FA4A59D14C17BF864C43809D9985"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_52BC7779344648059BCF2CED1249EF2D"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_7C5C5072EA2F4968B863F6C8F91BAE61"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -409,7 +439,7 @@
     {
         "CustomAction"
         {
-            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_06B0CE705880490B90817B81E6EFBB10"
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_093242D04BC14B4D9A5AE452CAB10B5F"
             {
             "Name" = "8:Primary output from Servers.FrontEnd (Active)"
             "Condition" = "8:"
@@ -418,22 +448,22 @@
             "InstallAction" = "3:2"
             "Arguments" = "8:"
             "EntryPoint" = "8:"
-            "Sequence" = "3:1"
+            "Sequence" = "3:2"
             "Identifier" = "8:_81B7D9FE_EA06_4164_BE26_C3B76C05F489"
             "InstallerClass" = "11:TRUE"
             "CustomActionData" = "8:"
             }
-            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_0B79105BC9324B1FA8EAF7680F65C135"
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_10174FF4D7EF455DA37A7ACE33E0CB33"
             {
-            "Name" = "8:Primary output from Servers.FrontEnd (Active)"
+            "Name" = "8:Primary output from Servers.BackEnd (Active)"
             "Condition" = "8:"
-            "Object" = "8:_7C7BD44F00A04752BBB9DD4E311E85BD"
+            "Object" = "8:_7C5C5072EA2F4968B863F6C8F91BAE61"
             "FileType" = "3:2"
             "InstallAction" = "3:3"
             "Arguments" = "8:"
             "EntryPoint" = "8:"
             "Sequence" = "3:2"
-            "Identifier" = "8:_278229BD_B53C_4D06_8D37_C941EA08BFC3"
+            "Identifier" = "8:_DFA67B0A_DD85_4B7F_937F_B5326CB252D1"
             "InstallerClass" = "11:TRUE"
             "CustomActionData" = "8:"
             }
@@ -451,20 +481,6 @@
             "InstallerClass" = "11:TRUE"
             "CustomActionData" = "8:/TargetDir=\"[TARGETDIR]\\\""
             }
-            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_3F5D9A4268C041E2A5E5F4CA5F40236B"
-            {
-            "Name" = "8:Primary output from Servers.FrontEnd (Active)"
-            "Condition" = "8:"
-            "Object" = "8:_7C7BD44F00A04752BBB9DD4E311E85BD"
-            "FileType" = "3:2"
-            "InstallAction" = "3:1"
-            "Arguments" = "8:"
-            "EntryPoint" = "8:"
-            "Sequence" = "3:2"
-            "Identifier" = "8:_AE1F80F7_F3D1_4878_ABC6_B7CD4D886AB4"
-            "InstallerClass" = "11:TRUE"
-            "CustomActionData" = "8:"
-            }
             "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_4B0BBD879E7F4EA48B6B93E91A144E49"
             {
             "Name" = "8:Primary output from Setup.CustomActions (Active)"
@@ -479,7 +495,21 @@
             "InstallerClass" = "11:TRUE"
             "CustomActionData" = "8:/TargetDir=\"[TARGETDIR]\\\""
             }
-            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_BE769E76261F4BA89C07D788C20EA8F6"
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_70C98C1B78B5480B991B99669F2206AC"
+            {
+            "Name" = "8:Primary output from Servers.FrontEnd (Active)"
+            "Condition" = "8:"
+            "Object" = "8:_7C7BD44F00A04752BBB9DD4E311E85BD"
+            "FileType" = "3:2"
+            "InstallAction" = "3:3"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:3"
+            "Identifier" = "8:_278229BD_B53C_4D06_8D37_C941EA08BFC3"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
+            }
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_794D7B45567746AB9086EF020CF29256"
             {
             "Name" = "8:Primary output from Servers.FrontEnd (Active)"
             "Condition" = "8:"
@@ -488,8 +518,36 @@
             "InstallAction" = "3:4"
             "Arguments" = "8:"
             "EntryPoint" = "8:"
-            "Sequence" = "3:2"
+            "Sequence" = "3:3"
             "Identifier" = "8:_01ACCA12_714B_462A_A55C_13737D756A16"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
+            }
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_7B7F2D3A922A4DDAA9CC9958DA142E92"
+            {
+            "Name" = "8:Primary output from Servers.BackEnd (Active)"
+            "Condition" = "8:"
+            "Object" = "8:_7C5C5072EA2F4968B863F6C8F91BAE61"
+            "FileType" = "3:2"
+            "InstallAction" = "3:1"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:2"
+            "Identifier" = "8:_9C43C268_5900_4EEF_A58F_352FC7E03EAB"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
+            }
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_85E07C9F39514E989E9BBD5F3E96BBEE"
+            {
+            "Name" = "8:Primary output from Servers.BackEnd (Active)"
+            "Condition" = "8:"
+            "Object" = "8:_7C5C5072EA2F4968B863F6C8F91BAE61"
+            "FileType" = "3:2"
+            "InstallAction" = "3:4"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:2"
+            "Identifier" = "8:_2453E4C9_98F3_4DD3_B8B4_9CF17BAC66E6"
             "InstallerClass" = "11:TRUE"
             "CustomActionData" = "8:"
             }
@@ -506,6 +564,34 @@
             "Identifier" = "8:_0856A028_F5C6_47A9_9FBE_6FF2D4A510CD"
             "InstallerClass" = "11:TRUE"
             "CustomActionData" = "8:/TargetDir=\"[TARGETDIR]\\\""
+            }
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_E4F5F28D10384695B2D6271D9A1038AF"
+            {
+            "Name" = "8:Primary output from Servers.BackEnd (Active)"
+            "Condition" = "8:"
+            "Object" = "8:_7C5C5072EA2F4968B863F6C8F91BAE61"
+            "FileType" = "3:2"
+            "InstallAction" = "3:2"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_6DF8ED5E_52BA_49BA_A4F2_32D3F7A6C46E"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
+            }
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_F3BB010C48474E3895DE671826600B80"
+            {
+            "Name" = "8:Primary output from Servers.FrontEnd (Active)"
+            "Condition" = "8:"
+            "Object" = "8:_7C7BD44F00A04752BBB9DD4E311E85BD"
+            "FileType" = "3:2"
+            "InstallAction" = "3:1"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:3"
+            "Identifier" = "8:_AE1F80F7_F3D1_4878_ABC6_B7CD4D886AB4"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
             }
         }
         "DefaultFeature"
@@ -978,7 +1064,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Sudo for Windows"
         "ProductCode" = "8:{31D476EC-A1F0-47A1-BEB9-11768B0277F2}"
-        "PackageCode" = "8:{A5981E1C-170B-4D48-BC71-8F634B99B109}"
+        "PackageCode" = "8:{269640D0-43C0-413D-8EDB-F4A43320875F}"
         "UpgradeCode" = "8:{3B0AA51B-8E14-49F5-B299-22C35C55088B}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
@@ -2043,6 +2129,34 @@
                 {
                 }
             }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_52BC7779344648059BCF2CED1249EF2D"
+            {
+            "SourcePath" = "8:..\\Common\\obj\\Debug\\Sudowin.Common.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_128BB6DF65644730951A59CC709803FC"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{81E98C70-C681-4DD4-B6B1-154E12567B9C}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_611CA151227F4EA1A5A42A6164D6BB4F"
             {
             "SourcePath" = "8:..\\Common\\obj\\Debug\\Sudowin.Common.dll"
@@ -2094,6 +2208,34 @@
             "OutputConfiguration" = "8:"
             "OutputGroupCanonicalName" = "8:Built"
             "OutputProjectGuid" = "8:{5CA0F5B5-797A-4CA5-A644-31A7CEE42614}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_7C5C5072EA2F4968B863F6C8F91BAE61"
+            {
+            "SourcePath" = "8:..\\Servers.BackEnd\\obj\\Debug\\Sudowin.Servers.BackEnd.exe"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_128BB6DF65644730951A59CC709803FC"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{1592BB36-0ADA-4768-82C7-7E6F6A273D20}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {
