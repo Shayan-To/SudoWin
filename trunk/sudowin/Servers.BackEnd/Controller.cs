@@ -36,9 +36,9 @@ using System.Text;
 
 namespace Sudowin.Servers.BackEnd
 {
-	public partial class Service1 : ServiceBase
+	public partial class Controller : ServiceBase
 	{
-		public Service1()
+		public Controller()
 		{
 			InitializeComponent();
 		}
