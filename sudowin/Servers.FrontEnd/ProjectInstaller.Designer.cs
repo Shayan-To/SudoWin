@@ -26,7 +26,7 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-namespace Sudowin.Server
+namespace Sudowin.Servers.FrontEnd
 {
 	partial class ProjectInstaller
 	{
@@ -63,8 +63,10 @@ namespace Sudowin.Server
 			// 
 			this.serviceInstaller1.Description = "Hosts the server that sudo clients communicate with in order to facilitate privil" +
 				"ege escalation.";
-			this.serviceInstaller1.DisplayName = "Sudowin";
-			this.serviceInstaller1.ServiceName = "Sudowin";
+			this.serviceInstaller1.DisplayName = "Sudowin FrontEnd";
+			this.serviceInstaller1.ServiceName = "SudowinFE";
+			this.serviceInstaller1.ServicesDependedOn = new string[] {
+        "TermService"};
 			this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
 			// 
 			// serviceProcessInstaller1
@@ -72,6 +74,7 @@ namespace Sudowin.Server
 			this.serviceProcessInstaller1.Account = System.ServiceProcess.ServiceAccount.LocalSystem;
 			this.serviceProcessInstaller1.Password = null;
 			this.serviceProcessInstaller1.Username = null;
+			this.serviceProcessInstaller1.AfterInstall += new System.Configuration.Install.InstallEventHandler( this.serviceProcessInstaller1_AfterInstall );
 			// 
 			// ProjectInstaller
 			// 

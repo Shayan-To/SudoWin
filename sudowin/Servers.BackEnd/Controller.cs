@@ -27,12 +27,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Diagnostics;
-using System.ServiceProcess;
 using System.Text;
+using System.Diagnostics;
+using System.ComponentModel;
+using System.ServiceProcess;
+using System.Runtime.Remoting;
+using System.Collections.Generic;
 
 namespace Sudowin.Servers.BackEnd
 {
@@ -45,7 +46,14 @@ namespace Sudowin.Servers.BackEnd
 
 		protected override void OnStart( string[] args )
 		{
-			// TODO: Add code here to start your service.
+			// get the path to the actual service executable
+			Uri uri = new Uri(
+				System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase );
+
+			string remote_config_uri = uri.LocalPath + ".config";
+
+			// configure remoting channels and objects
+			RemotingConfiguration.Configure( remote_config_uri, true );
 		}
 
 		protected override void OnStop()

@@ -52,7 +52,7 @@ using System.Runtime.Remoting.Messaging;
 using Sudowin.Plugins;
 using System.Data;
 
-namespace Sudowin.Server
+namespace Sudowin.Servers.FrontEnd
 {
 	/// <summary>
 	///		This is the class that the Sudo Windows service hosts
@@ -256,7 +256,7 @@ namespace Sudowin.Server
 					// pluginType01.rem
 					//
 					Type t = Type.GetType( plugin_assem_str, true, true );
-					string uri = string.Format( "ipc://sudowin/{0}{1:d2}.rem", plugin_type, x );
+					string uri = string.Format( "ipc://SudowinFE/{0}{1:d2}.rem", plugin_type, x );
 
 					Plugin plugin = Activator.GetObject( typeof( Plugin ), uri ) as Plugin;
 					
@@ -334,85 +334,105 @@ namespace Sudowin.Server
 				"{0}, which={1}, privilegesGroup={2}",
 				userName, which, privilegesGroup );
 
-			// get the directory entries for the localhost and the privileges group
-			DirectoryEntry localhost = new DirectoryEntry(
-				string.Format(
-				CultureInfo.CurrentCulture,
-				"WinNT://{0},computer",
-				Environment.MachineName ) );
-			DirectoryEntry group = localhost.Children.Find( privilegesGroup );
+			bool isAlreadyMember = false;
 
-			// get the domain/host name and user name
-			string[] un_split = userName.Split( new char[] { '\\' } );
-			string dhn_part = un_split[ 0 ];
-			string un_part = un_split[ 1 ];
+			// get the domain name and group name
+			string[] grp_split = privilegesGroup.Split( new char[] { '\\' } );
+			string grp_dhn_part = grp_split[ 0 ];
+			string grp_gn_part = grp_split.Length == 2 ? grp_split[ 1 ] : "";
 
-			// used for asdi calls
-			object[] user_path = null;
-
-			// local user
-			if ( Regex.IsMatch( dhn_part, Environment.MachineName, RegexOptions.IgnoreCase ) )
+			// domain group
+			if ( grp_split.Length == 2 &&
+				string.Compare( Environment.MachineName, grp_dhn_part, true ) != 0 )
 			{
-				// find the user instead of building the path.  this is 
-				// in case this machine belongs to a workgroup or a domain.  
-				//  it is easier to search for the user and get their path that 
-				// way than it is to get the computer's workgroup
-				DirectoryEntry user = user = localhost.Children.Find( un_part, "user" );
+				string uri = "ipc://SudowinBE/Sudowin.Servers.BackEnd.SudoServer.rem";
+				ISudoServerBackEnd ss_be = Activator.GetObject( typeof( ISudoServerBackEnd ), uri ) as ISudoServerBackEnd;
+				isAlreadyMember = ss_be.AddRemoveUser( userName, which, privilegesGroup );
+			}
 
-				user_path = new object[] 
+			// local group
+			else
+			{
+				// get the domain name and user name
+				string[] usr_split = userName.Split( new char[] { '\\' } );
+				string usr_dhn_part = usr_split[ 0 ];
+				string usr_un_part = usr_split[ 1 ];
+
+				// get the directory entries for the localhost and the privileges group
+				DirectoryEntry localhost = new DirectoryEntry(
+					string.Format(
+					CultureInfo.CurrentCulture,
+					"WinNT://{0},computer",
+					Environment.MachineName ) );
+				DirectoryEntry group = localhost.Children.Find( privilegesGroup );
+
+				// used for asdi calls
+				object[] usr_path = null;
+
+				// local user
+				if ( Regex.IsMatch( usr_dhn_part, Environment.MachineName, RegexOptions.IgnoreCase ) )
+				{
+					// find the user instead of building the path.  this is 
+					// in case this machine belongs to a workgroup or a domain.  
+					//  it is easier to search for the user and get their path that 
+					// way than it is to get the computer's workgroup
+					DirectoryEntry user = user = localhost.Children.Find( usr_dhn_part, "user" );
+
+					usr_path = new object[] 
 					{
 						user.Path
 					};
 
-				user.Close();
-			}
+					user.Close();
+				}
 
-			// ad user
-			else
-			{
-				user_path = new object[] 
+				// ad user
+				else
+				{
+					usr_path = new object[] 
 				{
 					string.Format(
 						CultureInfo.CurrentCulture,
 						"WinNT://{0}/{1}",
-						dhn_part, un_part )
+						usr_dhn_part, usr_un_part )
 				};
-			}
+				}
 
-			bool isAlreadyMember = bool.Parse( Convert.ToString(
-				group.Invoke( "IsMember", user_path ),
-				CultureInfo.CurrentCulture ) );
-
-			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
-				"{0}, isAlreadyMember={1}",
-				userName, isAlreadyMember );
-
-			// add user to privileges group
-			if ( which == 1 && !isAlreadyMember )
-			{
-				group.Invoke( "Add", user_path );
+				isAlreadyMember = bool.Parse( Convert.ToString(
+					group.Invoke( "IsMember", usr_path ),
+					CultureInfo.CurrentCulture ) );
 
 				m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
-					"{0}, added user to privileges group",
-					userName );
+					"{0}, isAlreadyMember={1}",
+					userName, isAlreadyMember );
+
+				// add user to privileges group
+				if ( which == 1 && !isAlreadyMember )
+				{
+					group.Invoke( "Add", usr_path );
+
+					m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+						"{0}, added user to privileges group",
+						userName );
+				}
+
+				// remove user from privileges group
+				else if ( which == 0 && isAlreadyMember )
+				{
+					group.Invoke( "Remove", usr_path );
+
+					m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+						"{0}, removed user from privileges group",
+						userName );
+				}
+
+				// save changes
+				group.CommitChanges();
+
+				// cleanup
+				group.Dispose();
+				localhost.Dispose();
 			}
-
-			// remove user from privileges group
-			else if ( which == 0 && isAlreadyMember )
-			{
-				group.Invoke( "Remove", user_path );
-
-				m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
-					"{0}, removed user from privileges group",
-					userName );
-			}
-
-			// save changes
-			group.CommitChanges();
-
-			// cleanup
-			group.Dispose();
-			localhost.Dispose();
 
 			m_ts.TraceEvent( TraceEventType.Start, ( int ) EventIds.ExitMethod,
 				"exiting AddRemoveUser( string, int, string )" );

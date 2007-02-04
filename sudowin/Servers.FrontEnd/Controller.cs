@@ -42,7 +42,7 @@ using System.Text.RegularExpressions;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
 
-namespace Sudowin.Server
+namespace Sudowin.Servers.FrontEnd
 {
 	/// <summary>
 	///		Service controller for the Sudowin service.
@@ -175,7 +175,7 @@ namespace Sudowin.Server
 							Convert.ToString( plugin_server_type, CultureInfo.CurrentCulture ) ) );
 					
 					// get a reference to the remoting object we just created
-					uri = string.Format( "ipc://sudowin/{0}", uri );
+					uri = string.Format( "ipc://SudowinFE/{0}", uri );
 					Plugin plugin = Activator.GetObject( typeof( Plugin ), uri ) as Plugin;
 
 					// activate the remoting object first before any of the sudo clients

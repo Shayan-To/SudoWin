@@ -31,7 +31,7 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Configuration.Install;
 
-namespace Sudowin.Server
+namespace Sudowin.Servers.FrontEnd
 {
 	[RunInstaller( true )]
 	public partial class ProjectInstaller : Installer
@@ -45,10 +45,15 @@ namespace Sudowin.Server
 		{
 			// start the service immediately before committing so that an error will
 			// cause a rollback
-			System.ServiceProcess.ServiceController sc = new System.ServiceProcess.ServiceController( "Sudowin" );
+			System.ServiceProcess.ServiceController sc = new System.ServiceProcess.ServiceController( "SudowinFE" );
 			sc.Start();
 
 			base.Commit( savedState );
+		}
+
+		private void serviceProcessInstaller1_AfterInstall( object sender, InstallEventArgs e )
+		{
+
 		}
 	}
 }

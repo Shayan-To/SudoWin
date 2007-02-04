@@ -30,7 +30,7 @@ using System.Text;
 using System.ServiceProcess;
 using System.Collections.Generic;
 
-namespace Sudowin.Server
+namespace Sudowin.Servers.FrontEnd
 {
 	static class Service
 	{

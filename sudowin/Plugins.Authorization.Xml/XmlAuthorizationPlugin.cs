@@ -258,8 +258,7 @@ namespace Sudowin.Plugins.Authorization.Xml
 						}
 						DirectoryEntry group = sr.GetDirectoryEntry();
 
-						dsrchr = new DirectorySearcher(
-							domain, "samAccountName=" + usr_un_part, null, SearchScope.Subtree );
+						dsrchr.Filter = "samAccountName=" + usr_un_part;
 						sr = dsrchr.FindOne();
 						if ( sr == null )
 						{
