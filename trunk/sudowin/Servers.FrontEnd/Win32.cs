@@ -31,9 +31,202 @@ using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Security;
 
 namespace Win32
 {
+	/// <summary>
+	///		The WtsConnectionState enumeration type contains 
+	///		values that indicate the connection state of a Terminal 
+	///		Services session.
+	/// </summary>
+	/// <remarks>
+	///		WTS_CONNECTSTATE_CLASS,	http://msdn.microsoft.com/library/default.asp?url=/library/en-us/termserv/termserv/wts_connectstate_class_str.asp
+	/// </remarks>
+	public enum WtsConnectionState : int
+	{
+		/// <summary>
+		///		A user logged on to the WinStation
+		/// </summary>
+		WtsActive,
+
+		/// <summary>
+		///		The WinStation is connected to the client.
+		/// </summary>
+		WtsConnected,
+
+		/// <summary>
+		///		The WinStation is in the process of connecting 
+		///		to the client.
+		/// </summary>
+		WtsConnectQuery,
+
+		/// <summary>
+		///		The WinStation is shadowing another WinStation.
+		/// </summary>
+		WtsShadow,
+
+		/// <summary>
+		///		The WinStation is active but the client is disconnected.
+		/// </summary>
+		WtsDisconnected,
+
+		/// <summary>
+		///		The WinStation is waiting for a client to connect.
+		/// </summary>
+		WtsIdle,
+
+		/// <summary>
+		///		The WinStation is listening for a connection.  
+		///		A listener session waits for requests for new client 
+		///		connections. No user is logged on a listener session.  
+		///		A listener session cannot be reset, shadowed, or changed 
+		///		to a regular client session.
+		/// </summary>
+		WtsListen,
+
+		/// <summary>
+		///		The WinStation is being reset.
+		/// </summary>
+		WtsReset,
+
+		/// <summary>
+		///		The WinStation is down due to an error.
+		/// </summary>
+		WtsDown,
+
+		/// <summary>
+		///		The WinStation is initializing.
+		/// </summary>
+		WtsInit,
+	};
+
+	/// <summary>
+	///		The WtsQueryInfoTypes enumeration type contains values that 
+	///		indicate the type of session information to retrieve in a 
+	///		call to the WtsQuerySessionInformation function.
+	/// </summary>
+	/// <remarks>
+	///		WTS_INFO_CLASS, http://msdn.microsoft.com/library/default.asp?url=/library/en-us/termserv/termserv/wts_info_class_str.asp
+	/// </remarks>
+	public enum WtsQueryInfoTypes
+	{
+		/// <summary>
+		///		A string containing the name of the initial program 
+		///		that Terminal Services runs when the user logs on.
+		/// </summary>
+		WtsInitialProgram,
+
+		/// <summary>
+		///		A string containing the published name of
+		///		the application the session is running.
+		/// </summary>
+		WtsApplicationName,
+
+		/// <summary>
+		///		A string containing the default directory
+		///		used when launching the initial program.
+		/// </summary>
+		WtsWorkingDirectory,
+
+		/// <summary>
+		///		Not used.
+		/// </summary>
+		WtsOemId,
+
+		/// <summary>
+		///		An INT value containing the session identifier.
+		/// </summary>
+		WtsSessionId,
+
+		/// <summary>
+		///		A string containing the name of the user 
+		///		associated with the session.
+		/// </summary>
+		/// <remarks>
+		///		The user name will be returned in this format, 
+		///		DOMAIN|LOCALMACHINE\USERNAME.
+		/// </remarks>
+		/// <example>
+		///		User 'akutz' logs into the computer 'ALCHEMIST'
+		///		with his domain credentials.  The WtsUserName
+		///		will look like: AUSTIN\akutz.
+		/// 
+		///		User 'sakutz' logs into the computer 'ALCHEMIST'
+		///		with his local credentials.  Thee WtsUserName
+		///		will look like: ALCHEMIST\sakutz.	
+		/// </example>
+		WtsUserName,
+
+		/// <summary>
+		///		A string containing the name of the Terminal Services session.
+		/// </summary>
+		/// <remarks>
+		///		Despite its name, specifying this type does not return the 
+		///		window station name. Rather, it returns the name of the 
+		///		Terminal Services session. Each Terminal Services session is 
+		///		associated with an interactive window station. Currently, 
+		///		since the only supported window station name for an interactive 
+		///		window station is "WinSta0", each session is associated with its 
+		///		own "WinSta0" window station. For more information, see Windows
+		///		Stations, http://msdn.microsoft.com/library/en-us/dllproc/base/window_stations.asp.
+		/// </remarks>
+		WtsWinStationName,
+
+		/// <summary>
+		///		A string containing the name of the domain to 
+		///		which the logged-on user belongs.
+		/// </summary>
+		WtsDomainName,
+
+		/// <summary>
+		///		The session's current connection state.
+		/// </summary>
+		/// <seealso cref="WtsConnectionState"/>
+		WtsConnectState,
+
+		/// <summary>
+		///		An INT value containing the build number of the client.
+		/// </summary>
+		WtsClientBuildNumber,
+
+		/// <summary>
+		///		A string containing the name of the client.
+		/// </summary>
+		WtsClientName,
+
+		/// <summary>
+		///		A string containing the directory in which the client is installed.
+		/// </summary>
+		WtsClientDirectory,
+
+		/// <summary>
+		///		An INT client-specific product identifier.
+		/// </summary>
+		WtsClientProductId,
+
+		/// <summary>
+		///		An INT value containing a client-specific hardware identifier.
+		/// </summary>
+		WtsClientHardwareId,
+
+		/// <summary>
+		///		The network type and network address of the client.
+		/// </summary>
+		WtsClientAddress,
+
+		/// <summary>
+		///		Information about the display resolution of the client.
+		/// </summary>
+		WtsClientDisplay,
+
+		/// <summary>
+		///		An INT value specifying information about the 
+		///		protocol type for the session.
+		/// </summary>
+		WtsClientProtocolType,
+	};
+
 	/// <summary>
 	///		Priority type of a process.
 	/// </summary>
@@ -711,10 +904,366 @@ namespace Win32
 	}
 
 	/// <summary>
+	///		The WtsSessionInfo structure contains information 
+	///		about a client session on a terminal server.
+	/// </summary>
+	/// <remarks>
+	///		WTS_SESSION_INFO, http://msdn.microsoft.com/library/default.asp?url=/library/en-us/termserv/termserv/wts_session_info_str.asp
+	/// </remarks>
+	public struct WtsSessionInfo
+	{
+		/// <summary>
+		///		Session identifier of the session.
+		/// </summary>
+		public int SessionId;
+
+		/// <summary>
+		///		A string containing the name of the 
+		///		WinStation for this session.
+		/// </summary>
+		[MarshalAs( UnmanagedType.LPTStr )]
+		public string WinStationName;
+
+		/// <summary>
+		///		A value from the 
+		///		<see cref="Win32.WtsConnectionState">WtsConnectionState</see> 
+		///		enumeration type indicating the session's current connection state.
+		/// </summary>
+		public WtsConnectionState State;
+	}
+
+	/// <summary>
 	///		.NET method signatures for some Win32 functions.
 	/// </summary>
-	public class Native
+	internal class Native
 	{
+		static Native()
+		{
+		}
+
+		/// <summary>
+		///		Handle to the server that this code is running on.
+		/// </summary>
+		public const int WtsCurrentServerHandle = -1;
+
+		/// <summary>
+		///		The WtsOpenServer function opens a handle 
+		///		to the specified terminal server.
+		/// </summary>
+		/// <param name="serverName">
+		///		A string specifying the NetBIOS name of the terminal server.
+		/// </param>
+		/// <returns>
+		///		If the function succeeds, the return value is a 
+		///		handle to the specified server.
+		///
+		///		If the function fails, the return value is NULL.  
+		///		To get extended error information, call 
+		///		<see cref="System.Runtime.InteropServices.Marshal.GetLastWin32Error">GetLastWin32Error()</see>
+		/// </returns>
+		/// <remarks>
+		///		When you are finished with the handle returned by WtsOpenServer, 
+		///		call the WtsCloseServer function to close it.
+		///
+		///		You do not need to open a handle for operations performed on the 
+		///		terminal server on which your application is running. Use the constant 
+		///		<see cref="Native.WtsCurrentServerHandle">WtsCurrentServerHandle</see> instead.
+		/// </remarks>
+		[DllImport(
+			"wtsapi32.dll",
+			EntryPoint = "WTSOpenServer",
+			CharSet = CharSet.Auto,
+			SetLastError = true ),
+			SuppressUnmanagedCodeSecurityAttribute
+		]
+		public static extern IntPtr WtsOpenServer(
+			string serverName
+		);
+
+		/// <summary>
+		///		The WtsCloseServer function closes an open 
+		///		handle to a terminal server.
+		/// </summary>
+		/// <param name="serverHandle">
+		///		Handle to a terminal server opened by a call to the 
+		///		<see cref="Native.WtsOpenServer">WtsOpenServer</see> 
+		///		function.
+		///
+		///		Do not specify 
+		///		<see cref="Native.WtsCurrentServerHandle">WtsCurrentServerHandle</see> 
+		///		for this parameter.
+		/// </param>
+		/// <remarks>
+		///		Call the WtsCloseServer function as part of your program's 
+		///		clean-up routine to close all the server handles opened by 
+		///		calls to the WtsOpenServer function.
+		/// </remarks>
+		[DllImport(
+			"wtsapi32.dll",
+			EntryPoint = "WTSCloseServer",
+			CharSet = CharSet.Auto,
+			SetLastError = true ),
+			SuppressUnmanagedCodeSecurityAttribute
+		]
+		public static extern void WtsCloseServer(
+			IntPtr serverHandle
+		);
+
+		/// <summary>
+		///		The WtsEnumerateSessions function retrieves 
+		///		a list of sessions on a specified terminal server.
+		/// </summary>
+		/// <param name="serverHandle">
+		///		Handle to a terminal server. Specify a handle opened 
+		///		by the 
+		///		<see cref="Native.WtsOpenServer">WtsOpenServer</see> 
+		///		function, or specify 
+		///		<see cref="Native.WtsCurrentServerHandle">WtsCurrentServerHandle</see>
+		///		to indicate the terminal server on which your application is running.
+		/// </param>
+		/// <param name="reserved">
+		///		Reserved; must be zero.
+		/// </param>
+		/// <param name="version">
+		///		Specifies the version of the enumeration request.  Must be 1.
+		/// </param>
+		/// <param name="wtsSessionInfoStructures">
+		///		Pointer to a variable that receives a pointer to an array of 
+		///		<see cref="Win32.WtsSessionInfo">WtsSessionInfo</see> 
+		///		structures.  Each structure in the array contains 
+		///		information about a session on the specified terminal server.  To free 
+		///		the returned buffer, call the 
+		///		<see cref="Native.WtsFreeMemory">WtsFreeMemory</see> function.
+		///
+		///		To be able to enumerate a session, you need to have the 
+		///		Query Information permission. For more information, 
+		///		see Terminal Services Permissions, http://msdn.microsoft.com/library/en-us/termserv/termserv/terminal_services_permissions.asp.  
+		///		To modify permissions on a session, use the Terminal Services
+		///		Configuration administrative tool.
+		/// </param>
+		/// <param name="wtsSessionInfoStructuresLength">
+		///		Pointer to the variable that receives the number of WtsSessionInfo 
+		///		structures returned in the ppSessionInfo buffer.
+		/// </param>
+		/// <returns>
+		///		If the function succeeds, the return value is a nonzero value.
+		///
+		///		If the function fails, the return value is zero.  
+		///		To get extended error information, call 
+		///		<see cref="System.Runtime.InteropServices.Marshal.GetLastWin32Error">GetLastWin32Error()</see>
+		/// </returns>
+		/// <remarks>
+		///		This is the native version of 
+		///		<see cref="Managed.WtsEnumerateSessions">WtsEnumerateSessions</see>.
+		/// 
+		///		WTSEnumerateSessions, http://msdn.microsoft.com/library/default.asp?url=/library/en-us/termserv/termserv/wtsenumeratesessions.asp
+		/// </remarks>
+		[DllImport(
+			"wtsapi32.dll",
+			EntryPoint = "WTSEnumerateSessions",
+			CharSet = CharSet.Auto,
+			SetLastError = true ),
+			SuppressUnmanagedCodeSecurityAttribute
+		]
+		public static extern bool WtsEnumerateSessions(
+			IntPtr serverHandle,
+			int reserved,
+			uint version,
+			out IntPtr wtsSessionInfoStructures,
+			out int wtsSessionInfoStructuresLength
+		);
+
+		///	<summary>
+		///		The WtsQueryUserToken function obtains the primary access token 
+		///		of the logged-on user specified by the session id.  To call this 
+		///		function successfully, the calling application must be running 
+		///		within the context of the LocalSystem account, http://msdn.microsoft.com/library/en-us/dllproc/base/localsystem_account.asp,
+		///		and have the SE_TCB_NAME privilege.  It is not necessary that 
+		///		Terminal Services be running for the function to succeed, 
+		///		but if Terminal Services is not running, the only valid session 
+		///		identifier is zero (0).
+		///
+		///		Caution		WtsQueryUserToken is intended for highly trusted 
+		///		services.  Service providers must use caution that they do not 
+		///		leak user tokens when calling this function. Service providers 
+		///		must close token handles after they have finished with them. 
+		/// </summary>
+		/// <param name="sessionId">
+		///		A Terminal Services session identifier.  Any program running 
+		///		in the context of a service will have a session identifier of 
+		///		zero (0). You can use the 
+		///		<see cref="Native.WtsEnumerateSessions">WtsEnumerateSessions</see> 
+		///		function to retrieve the identifiers of all sessions on a 
+		///		specified terminal server.
+		///
+		///		To be able to query information for another user's session, 
+		///		you need to have the Query Information permission.  For more information, 
+		///		see Terminal Services Permissions, http://msdn.microsoft.com/library/en-us/termserv/termserv/terminal_services_permissions.asp.  
+		///		To modify permissions on a session, use the Terminal Services 
+		///		Configuration administrative tool. 
+		/// </param>
+		/// <param name="userToken">
+		///		If the function succeeds, receives a pointer to the token handle 
+		///		for the logged-on user. Note that you must call the 
+		///		<see cref="Native.CloseHandle">CloseHandle</see> 
+		///		function to close this handle.
+		/// </param>
+		/// <returns>
+		///		If the function succeeds, the return value is a nonzero value, 
+		///		and the userToke parameter points to the primary token of the user.
+		///
+		///		If the function fails, the return value is zero. To get extended error 
+		///		information, call <see cref="System.Runtime.InteropServices.Marshal.GetLastWin32Error">GetLastWin32Error</see>.  
+		///		Among other errors, GetLastWin32Error can return one of the following errors.
+		/// 
+		///		Return code 						Description
+		///		ERROR_PRIVILEGE_NOT_HELD 			The caller does not have the SE_TCB_NAME privilege.
+		///		ERROR_INVALID_PARAMETER 			One of the parameters to the function was incorrect; for example, the phToken parameter was passed a NULL parameter.
+		///		ERROR_ACCESS_DENIED 				The caller does not have the appropriate permissions to call this function. The caller must be running within the context of the LocalSystem account and have the SE_TCB_NAME privilege.
+		///		ERROR_CTX_WINSTATION_NOT_FOUND 		The token query is for a session that does not exist.
+		///		ERROR_NO_TOKEN 						The token query is for a session in which no user is logged-on. This occurs, for example, when the session is in the idle state.
+		/// </returns>
+		/// <remarks>
+		///		For information about primary tokens, see Access Tokens, http://msdn.microsoft.com/library/en-us/secauthz/security/access_tokens.asp.  
+		///		For more information about account privileges, see Privileges (http://msdn.microsoft.com/library/en-us/secauthz/security/privileges.asp) 
+		///		and Authorization Constants (http://msdn.microsoft.com/library/en-us/secauthz/security/authorization_constants.asp.
+		///
+		///		See LocalSystem account (http://msdn.microsoft.com/library/en-us/dllproc/base/localsystem_account.asp) 
+		///		for information about the privileges associated with that account.
+		/// 
+		///		WTSQueryUserToken, http://msdn.microsoft.com/library/default.asp?url=/library/en-us/termserv/termserv/wtsqueryusertoken.asp
+		/// </remarks>
+		[DllImport(
+			"wtsapi32.dll",
+			EntryPoint = "WTSQueryUserToken",
+			CharSet = CharSet.Auto,
+			SetLastError = true ),
+			SuppressUnmanagedCodeSecurityAttribute
+		]
+		public static extern bool WtsQueryUserToken(
+			int sessionId,
+			ref IntPtr userToken
+		);
+
+
+		/// <summary>
+		///		The WtsQuerySessionInformation function retrieves session 
+		///		information for the specified session on the specified terminal server.  
+		///		It can be used to query session information on local and 
+		///		remote terminal servers.
+		/// </summary>
+		/// <param name="serverHandle">
+		///		Handle to a terminal server.  Specify a handle opened by the 
+		///		<see cref="Native.WtsOpenServer">WtsOpenServer</see> 
+		///		function, or specify WtsCurrentServerHandle to indicate 
+		///		the terminal server on which your application is running.
+		/// </param>
+		/// <param name="sessionId">
+		///		A Terminal Services session identifier.  Any program running 
+		///		in the context of a service will have a session identifier of 
+		///		zero (0). You can use the 
+		///		<see cref="Native.WtsEnumerateSessions">WtsEnumerateSessions</see> 
+		///		function to retrieve the identifiers of all sessions on a 
+		///		specified terminal server.
+		///
+		///		To be able to query information for another user's session, 
+		///		you need to have the Query Information permission.  For more information, 
+		///		see Terminal Services Permissions, http://msdn.microsoft.com/library/en-us/termserv/termserv/terminal_services_permissions.asp.  
+		///		To modify permissions on a session, use the Terminal Services 
+		///		Configuration administrative tool. 
+		/// </param>
+		/// <param name="wtsQueryInfoKey">
+		///		Specifies the type of information to retrieve.  This parameter can 
+		///		be one of the values from the 
+		///		<see cref="Win32.WtsQueryInfoTypes">WtsQueryInfoTypes</see> 
+		///		enumeration type.
+		/// </param>
+		/// <param name="wtsQueryInfoValue">
+		///		Value of the requested information.  The format and contents 
+		///		of the data depend on the information class specified in the 
+		///		WtsInfoClass parameter. To free the returned buffer, 
+		///		call the WtsFreeMemory function.
+		/// </param>
+		/// <param name="wtsQueryInfoValueSize">
+		///		The size, in bytes, of the data in wtsQueryInfoValue.
+		/// </param>
+		/// <returns>
+		///		If the function succeeds, the return value is a nonzero value.
+		///
+		///		If the function fails, the return value is zero.  
+		///		To get extended error information, call 
+		///		<see cref="System.Runtime.InteropServices.Marshal.GetLastWin32Error">GetLastWin32Error()</see>
+		/// </returns>
+		/// <remarks>
+		///		Use WtsApi32.Managed.QuerySessionInformation instead.
+		/// 
+		///		To retrieve the session id for the current session when Terminal 
+		///		Services is running, call WtsQuerySessionInformation and specify 
+		///		WtsCurrentSessionId for the SessionId parameter and WtsSessionId for 
+		///		the WtsQueryInfoTypes parameter. The session id will be returned in 
+		///		the wtsQueryInfoValue parameter. If Terminal Services is not running, 
+		///		calls to WtsQuerySessionInformation fail. In this situation, you can 
+		///		retrieve the current session id by calling the ProcessIdToSessionId function.
+		///		
+		///		To determine whether your application is running on the physical console, 
+		///		you can do the following:
+		///
+		///		As described previously, call WtsQuerySessionInformation and specify 
+		///		WtsCurrentSessionId for the SessionId parameter and WtsSessionId for 
+		///		the WtsQueryInfoTypes parameter. The session id returned in wtsQueryInfoValue 
+		///		is zero for the Terminal Services console session.
+		///
+		///		Session 0 might not be attached to the physical console. This is 
+		///		because session 0 can be attached to a remote session. Additionally, 
+		///		fast user switching is implemented using Terminal Services sessions.  
+		///		The first user to log on uses session 0, the next user to log on uses 
+		///		session 1, and so on.  To determine if your application is running 
+		///		on the physical console, call the WtsGetActiveConsoleSessionId function as follows:
+		/// 
+		///		<code>
+		///			(CurrentSessionId == WtsGetActiveConsoleSessionId ())
+		///		</code>
+		/// 
+		///		It is not necessary that Terminal Services be running for 
+		///		WtsGetActiveConsoleSessionId to succeed.
+		/// 
+		///		WTSQuerySessionInformation, http://msdn.microsoft.com/library/default.asp?url=/library/en-us/termserv/termserv/wtsquerysessioninformation.asp
+		/// </remarks>
+		[DllImport(
+			"wtsapi32.dll",
+			EntryPoint = "WTSQuerySessionInformation",
+			CharSet = CharSet.Auto,
+			SetLastError = true ),
+			SuppressUnmanagedCodeSecurityAttribute
+		]
+		public static extern bool WtsQuerySessionInformation(
+			IntPtr serverHandle,
+			int sessionId,
+			WtsQueryInfoTypes wtsQueryInfoKey,
+			out IntPtr wtsQueryInfoValue,
+			out int wtsQueryInfoValueSize
+		);
+
+		/// <summary>
+		///		The WtsFreeMemory function frees memory allocated 
+		///		by a Terminal Services function.
+		/// </summary>
+		/// <param name="memory">
+		///		The memory to free.
+		/// </param>
+		/// <remarks>
+		///		Several Terminal Services functions allocate buffers to 
+		///		return information. Use the WtsFreeMemory function to 
+		///		free these buffers.
+		/// </remarks>
+		[DllImport(
+			"wtsapi32.dll",
+			EntryPoint = "WTSFreeMemory",
+			SetLastError = true ),
+			SuppressUnmanagedCodeSecurityAttribute
+		]
+		public static extern void WtsFreeMemory( IntPtr memory );
+
 		/// <summary>
 		///		The CloseHandle function closes an open object handle.
 		/// </summary>
@@ -1146,5 +1695,156 @@ namespace Win32
 			string currentDirectory,
 			ref StartupInfo startupInfo,
 			out ProcessInformation processInformation );
+	}
+
+	internal class Managed
+	{
+		static Managed()
+		{
+		}
+
+		/// <summary>
+		///		The WtsQuerySessionInformation method retrieves session 
+		///		information for the specified session on the specified terminal server.  
+		///		It can be used to query session information on local and 
+		///		remote terminal servers.
+		/// </summary>
+		/// <param name="serverHandle">
+		///		Handle to a terminal server.  Specify a handle opened by the 
+		///		<see cref="Native.WtsOpenServer">WtsOpenServer</see> 
+		///		function, or specify WtsCurrentServerHandle to indicate 
+		///		the terminal server on which your application is running.
+		/// </param>
+		/// <param name="sessionId">
+		///		A Terminal Services session identifier.  Any program running 
+		///		in the context of a service will have a session identifier of 
+		///		zero (0). You can use the 
+		///		<see cref="Native.WtsEnumerateSessions">WtsEnumerateSessions</see> 
+		///		function to retrieve the identifiers of all sessions on a 
+		///		specified terminal server.
+		///
+		///		To be able to query information for another user's session, 
+		///		you need to have the Query Information permission.  For more information, 
+		///		see Terminal Services Permissions, http://msdn.microsoft.com/library/en-us/termserv/termserv/terminal_services_permissions.asp.  
+		///		To modify permissions on a session, use the Terminal Services 
+		///		Configuration administrative tool. 
+		/// </param>
+		/// <param name="wtsQueryInfoKey">
+		///		Specifies the type of information to retrieve.  This parameter can 
+		///		be one of the string values from the 
+		///		<see cref="Win32.WtsQueryInfoTypes">WtsQueryInfoTypes</see> 
+		///		enumeration type.
+		/// </param>
+		/// <param name="wtsQueryInfoValue">
+		///		The returned string.
+		/// </param>
+		/// <returns>True if the method suceeded, false if otherwise.</returns>
+		/// <remarks>
+		///		This method invokes the native 
+		///		<see cref="Native.WtsQuerySessionInformation">WtsQuerySessionInformation</see>, 
+		///		copies its results into managed memory, and frees the unmanaged
+		///		memory for you.
+		/// </remarks>
+		public static bool WtsQuerySessionInformation(
+			IntPtr serverHandle,
+			int sessionId,
+			WtsQueryInfoTypes wtsQueryInfoKey,
+			out string wtsQueryInfoValue )
+		{
+			IntPtr ppbuff;
+			int ppct;
+
+			// call the native method to fetch the value
+			bool result =
+				Native.WtsQuerySessionInformation( serverHandle, sessionId, wtsQueryInfoKey, out ppbuff, out ppct );
+
+			// if the function failed then throw a win32 exception
+			if ( !result )
+			{
+				throw ( new System.ComponentModel.Win32Exception( Marshal.GetLastWin32Error() ) );
+			}
+			// if the function succeeded copy the string from unmanaged
+			// memory into a managed string and free the unmanaged memory
+			else
+			{
+				wtsQueryInfoValue = Marshal.PtrToStringAuto( ppbuff );
+				Native.WtsFreeMemory( ppbuff );
+				return ( result );
+			}
+		}
+
+		/// <summary>
+		///		The WtsEnumerateSessions method retrieves 
+		///		a list of sessions on a specified terminal server.
+		/// </summary>
+		/// <param name="serverHandle">
+		///		Handle to a terminal server.
+		/// </param>
+		/// <returns>
+		///		An array of WtsSessionInfo structures containing
+		///		information about the sessions on the terminal server.
+		/// </returns>
+		/// <remarks>
+		///		This is the managed version of 
+		///		<see cref="Managed.WtsEnumerateSessions">WtsApi32.NativeMethods.WtsEnumerateSessions</see>
+		/// </remarks>
+		/// <exception cref="System.ComponentModel.Win32Exception" />
+		public static WtsSessionInfo[] WtsEnumerateSessions( IntPtr serverHandle )
+		{
+			// pointer to pointer of where the SessionInfo
+			// structures are
+			IntPtr ppWsi = IntPtr.Zero;
+
+			// number of structures that ppWsi
+			// is pointing to
+			int wsi_ct = 0;
+
+			// array of session info structures that
+			// this method will return if all goes
+			// according to plan
+			WtsSessionInfo[] wsi = null;
+
+			// try to enumerate the sessions on the server.  if
+			// the enumeration fails throw an exception with the
+			// win32 error code.
+			if ( !Native.WtsEnumerateSessions(
+				serverHandle, 0, 1, out ppWsi, out wsi_ct ) )
+			{
+				throw ( new System.ComponentModel.Win32Exception(
+					Marshal.GetLastWin32Error() ) );
+			}
+			// marshal the return structures to a managed array
+			// and return that array from ths method
+			else
+			{
+				wsi = new WtsSessionInfo[ wsi_ct ];
+
+				int ppWsi_index = 0;
+
+				// save the pointer to the original structure
+				IntPtr ppWsi_original = ppWsi;
+
+				try
+				{
+					for ( int x = 0; x < wsi.Length; ++x )
+					{
+						wsi[ x ] = ( WtsSessionInfo ) Marshal.PtrToStructure( ppWsi, typeof( WtsSessionInfo ) );
+
+						// Whoo Hoo!  Pointer arithemetic!  I almost forgot how to do this.
+						ppWsi_index = ( int ) ( ppWsi ) + Marshal.SizeOf( typeof( WtsSessionInfo ) );
+
+						// Get the location of the next structure.
+						ppWsi = ( IntPtr ) ( ppWsi_index );
+					}
+				}
+				finally
+				{
+					// Free the memory.
+					Native.WtsFreeMemory( ppWsi_original );
+				}
+
+				return ( wsi );
+			}
+		}
 	}
 }
