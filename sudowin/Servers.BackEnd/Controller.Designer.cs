@@ -1,6 +1,6 @@
 namespace Sudowin.Servers.BackEnd
 {
-	partial class Service1
+	partial class Controller
 	{
 		/// <summary> 
 		/// Required designer variable.
