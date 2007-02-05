@@ -40,6 +40,7 @@ namespace Sudowin.Servers.BackEnd
 			// 
 			// serviceInstaller1
 			// 
+			this.serviceInstaller1.Description = "Hosts the server that allows privilege escalation into domain level groups.";
 			this.serviceInstaller1.DisplayName = "Sudowin BackEnd";
 			this.serviceInstaller1.ServiceName = "SudowinBE";
 			this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
