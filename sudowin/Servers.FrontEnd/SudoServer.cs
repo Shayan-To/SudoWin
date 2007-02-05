@@ -51,6 +51,7 @@ using System.Runtime.Remoting.Contexts;
 using System.Runtime.Remoting.Messaging;
 using Sudowin.Plugins;
 using System.Data;
+using System.Runtime.Remoting;
 
 namespace Sudowin.Servers.FrontEnd
 {
@@ -345,9 +346,10 @@ namespace Sudowin.Servers.FrontEnd
 			if ( grp_split.Length == 2 &&
 				string.Compare( Environment.MachineName, grp_dhn_part, true ) != 0 )
 			{
-				string uri = "ipc://SudowinBE/Sudowin.Servers.BackEnd.SudoServer.rem";
-				ISudoServerBackEnd ss_be = Activator.GetObject( typeof( ISudoServerBackEnd ), uri ) as ISudoServerBackEnd;
-				isAlreadyMember = ss_be.AddRemoveUser( userName, which, privilegesGroup );
+				ISudoServerBackEnd iss_be = Activator.GetObject( typeof( ISudoServerBackEnd ),
+					ConfigurationManager.AppSettings[ "backEndServerUri" ] )
+					as ISudoServerBackEnd;
+				isAlreadyMember = iss_be.AddRemoveUser( userName, which, privilegesGroup );
 			}
 
 			// local group
@@ -937,7 +939,7 @@ namespace Sudowin.Servers.FrontEnd
 			{
 				m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
 					"private keys verified={0}", isVerified );
-
+				
 				// get the ca and sa public key tokens
 				byte[] ca_pubkey = ca.GetName().GetPublicKeyToken();
 				byte[] sa_pubkey = sa.GetName().GetPublicKeyToken();
