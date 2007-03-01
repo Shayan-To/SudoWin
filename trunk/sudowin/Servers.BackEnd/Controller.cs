@@ -54,6 +54,10 @@ namespace Sudowin.Servers.BackEnd
 
 			// configure remoting channels and objects
 			RemotingConfiguration.Configure( remote_config_uri, true );
+
+			// load the data server
+
+
 		}
 
 		protected override void OnStop()

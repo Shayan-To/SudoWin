@@ -305,6 +305,10 @@ namespace Sudowin.Servers.FrontEnd
 		///		User name to add or remove to the privileges 
 		///		group.
 		/// </param>
+		/// <param name="userToken">
+		///		User token of user to add to privileges group.  This
+		///		value can be IntPtr.Zero on a remove operation.
+		/// </param>
 		/// <param name="which">
 		///		1 "Add" or 0 "Remove"
 		/// </param>
@@ -326,6 +330,7 @@ namespace Sudowin.Servers.FrontEnd
 		[EnvironmentPermission( SecurityAction.LinkDemand )]
 		private bool AddRemoveUser( 
 			string userName, 
+			IntPtr userToken,
 			int which, 
 			string privilegesGroup )
 		{
@@ -349,7 +354,23 @@ namespace Sudowin.Servers.FrontEnd
 				ISudoServerBackEnd iss_be = Activator.GetObject( typeof( ISudoServerBackEnd ),
 					ConfigurationManager.AppSettings[ "backEndServerUri" ] )
 					as ISudoServerBackEnd;
+
+				m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+					"ISudoServerBackEnd - pre-imp - user={0}",
+					WindowsIdentity.GetCurrent().Name );
+
+				WindowsImpersonationContext wic = WindowsIdentity.Impersonate( userToken );
+
+				m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+					"ISudoServerBackEnd - imp - user={0}",
+					WindowsIdentity.GetCurrent().Name );
+
 				isAlreadyMember = iss_be.AddRemoveUser( userName, which, privilegesGroup );
+				wic.Undo();
+
+				m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+					"ISudoServerBackEnd - post-imp - user={0}",
+					WindowsIdentity.GetCurrent().Name );
 			}
 
 			// local group
@@ -559,7 +580,7 @@ namespace Sudowin.Servers.FrontEnd
 			
 			// add the user to the group and record if they
 			// were already a member of the group
-			bool am = AddRemoveUser( userName, 1, privilegesGroup );
+			bool am = AddRemoveUser( userName, hUser, 1, privilegesGroup );
 
 			// create the callback process and wait for it to exit so the user is
 			// not removed from the privileges group before the indended process starts
@@ -572,7 +593,7 @@ namespace Sudowin.Servers.FrontEnd
 			// remove the user from the group if they were not already a member
 			if ( !am )
 			{
-				AddRemoveUser( userName, 0, privilegesGroup );
+				AddRemoveUser( userName, IntPtr.Zero, 0, privilegesGroup );
 			}
 
 			m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitMethod,
