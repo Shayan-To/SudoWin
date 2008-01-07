@@ -97,46 +97,65 @@ namespace Sudowin.CallbackApplication
 			string commandArguments )
 		{
 			ProcessStartInfo psi = new ProcessStartInfo();
-			psi.FileName = commandPath;
-			psi.Arguments = commandArguments;
-			
-			// MUST be false when specifying credentials
-			psi.UseShellExecute = false;
+            bool waitForExit = false;
+
+            if (password == "/runas")
+            {
+                psi.FileName = commandPath;
+                psi.Arguments = commandArguments;
+                psi.UseShellExecute = true;
+                psi.Verb = "runas";
+            }
+            else
+            {
+                // Rerun callback with /runas option
+                psi.FileName = Process.GetCurrentProcess().MainModule.FileName;
+                psi.Arguments = string.Format("/runas \"{0}\" {1}", commandPath, commandArguments);
+                // MUST be false when specifying credentials
+                psi.UseShellExecute = false;
+                
+                // wait until second callback is done
+                waitForExit = true;
+
+                // get the domain and user name parts of the current
+                // windows identity
+                Match identity_match = Regex.Match(
+                    WindowsIdentity.GetCurrent().Name,
+                    @"^([^\\]+)\\(.+)$");
+                // domain name
+                string dn = identity_match.Groups[1].Value;
+                // user name
+                string un = identity_match.Groups[2].Value;
+
+                // only set the domain if it is an actual domain and
+                // not the name of the local machine, i.e. a local account
+                // invoking sudo
+                if (!Regex.IsMatch(dn,
+                    Environment.MachineName, RegexOptions.IgnoreCase))
+                {
+                    psi.Domain = dn;
+                }
+
+                psi.UserName = un;
+
+                // transform the plain-text password into a
+                // SecureString so that the ProcessStartInfo class
+                // can use it
+                psi.Password = new System.Security.SecureString();
+                for (int x = 0; x < password.Length; ++x)
+                    psi.Password.AppendChar(password[x]);
+            }
 
 			// MUST be true so that the user's profile will
 			// be loaded and any new group memberships will
 			// be respected
 			psi.LoadUserProfile = true;
 
-			// get the domain and user name parts of the current
-			// windows identity
-			Match identity_match = Regex.Match(
-				WindowsIdentity.GetCurrent().Name,
-				@"^([^\\]+)\\(.+)$" );
-			// domain name
-			string dn = identity_match.Groups[ 1 ].Value;
-			// user name
-			string un = identity_match.Groups[ 2 ].Value;
-
-			// only set the domain if it is an actual domain and
-			// not the name of the local machine, i.e. a local account
-			// invoking sudo
-			if ( !Regex.IsMatch( dn,
-				Environment.MachineName, RegexOptions.IgnoreCase ) )
-			{
-				psi.Domain = dn;
-			}
-
-			psi.UserName = un;
-
-			// transform the plain-text password into a
-			// SecureString so that the ProcessStartInfo class
-			// can use it
-			psi.Password = new System.Security.SecureString();
-			for ( int x = 0; x < password.Length; ++x )
-				psi.Password.AppendChar( password[ x ] );
-
-			Process.Start( psi );
+			Process p = Process.Start( psi );
+            if (waitForExit)
+            {
+                p.WaitForExit();
+            }
 		}
 	}
 }
