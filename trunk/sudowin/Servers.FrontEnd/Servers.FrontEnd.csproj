@@ -13,7 +13,7 @@
     <TargetZone>LocalIntranet</TargetZone>
     <GenerateManifests>false</GenerateManifests>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>sudowin.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\sudowin.snk</AssemblyOriginatorKeyFile>
     <PublishUrl>http://localhost/WinSudo.Service/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -108,7 +108,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="sudowin.snk" />
+    <None Include="..\sudowin.snk">
+      <Link>sudowin.snk</Link>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Controller.resx">
