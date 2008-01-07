@@ -399,7 +399,7 @@ namespace Sudowin.Servers.FrontEnd
 					// in case this machine belongs to a workgroup or a domain.  
 					//  it is easier to search for the user and get their path that 
 					// way than it is to get the computer's workgroup
-					DirectoryEntry user = user = localhost.Children.Find( usr_dhn_part, "user" );
+					DirectoryEntry user = localhost.Children.Find( usr_un_part, "user" );
 
 					usr_path = new object[] 
 					{
