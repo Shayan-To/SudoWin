@@ -77,6 +77,7 @@ namespace Sudowin.Clients.Console
 				{
 					if ( Regex.IsMatch( args[ 0 ], @"^--?(p|(password))$" ) )
 					{
+                        System.Console.WriteLine("Password={0}", args[1]);
 						InvokeSudo( args[ 1 ], args[ 2 ], string.Empty );
 					}
 					else
@@ -172,12 +173,13 @@ namespace Sudowin.Clients.Console
 				}
 				else
 				{
-					// if the password was passed into this program as
-					// a command line argument or if the user's credentials
-					// are cached then do not bother asking the user for
-					// their password
-					password = password.Length > 0 || iss.AreCredentialsCached ?
-						string.Empty : GetPassword();
+					// if the password was not passed into this program as
+					// a command line argument and the user's credentials
+					// are not cached then ask the user for their password
+                    if (password.Length == 0 && !iss.AreCredentialsCached)
+                    {
+                        password = GetPassword();
+                    }
 
 					// invoke sudo
                     try
