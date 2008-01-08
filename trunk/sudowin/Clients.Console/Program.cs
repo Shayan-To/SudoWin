@@ -180,7 +180,15 @@ namespace Sudowin.Clients.Console
 						string.Empty : GetPassword();
 
 					// invoke sudo
-					srt = iss.Sudo( password, commandPath, commandArguments );
+                    try
+                    {
+                        srt = iss.Sudo(password, commandPath, commandArguments);
+                    }
+                    catch (SudoException ex)
+                    {
+                        System.Console.WriteLine(ex.Message);
+                        srt = ex.SudoResultType;
+                    }
 
 					// set the password to an empty string.  this is not for
 					// security as one might think but rather so if the result
@@ -188,30 +196,6 @@ namespace Sudowin.Clients.Console
 					// loop will prompt the user for their password instead
 					// of using this password known to be invalid
 					password = string.Empty;
-
-					switch ( srt )
-					{
-						case SudoResultTypes.InvalidLogon:
-						{
-							System.Console.WriteLine( "Invalid logon attempt" );
-							break;
-						}
-						case SudoResultTypes.TooManyInvalidLogons:
-						{
-							System.Console.WriteLine( "Invalid logon limit exceeded" );
-							break;
-						}
-						case SudoResultTypes.CommandNotAllowed:
-						{
-							System.Console.WriteLine( "Command not allowed" );
-							break;
-						}
-						case SudoResultTypes.LockedOut:
-						{
-							System.Console.WriteLine( "Locked out" );
-							break;
-						}
-					}
 				}
 			} while ( srt == SudoResultTypes.InvalidLogon );
 		}
