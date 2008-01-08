@@ -387,9 +387,15 @@ namespace Sudowin.Servers.FrontEnd
 					CultureInfo.CurrentCulture,
 					"WinNT://{0},computer",
 					Environment.MachineName ) );
-				DirectoryEntry group = localhost.Children.Find( privilegesGroup );
+				DirectoryEntry group = DirectoryFinder.Find( localhost.Children, privilegesGroup );
 
-				// used for asdi calls
+                // group not found so throw exception
+                if (group == null)
+                {
+                    throw SudoException.GetException(SudoResultTypes.GroupNotFound, privilegesGroup);
+                }
+
+                // used for asdi calls
 				object[] usr_path = null;
 
 				// local user
@@ -399,7 +405,13 @@ namespace Sudowin.Servers.FrontEnd
 					// in case this machine belongs to a workgroup or a domain.  
 					//  it is easier to search for the user and get their path that 
 					// way than it is to get the computer's workgroup
-					DirectoryEntry user = localhost.Children.Find( usr_un_part, "user" );
+					DirectoryEntry user = DirectoryFinder.Find( localhost.Children, usr_un_part, "user" );
+
+                    // user not found so throw exception
+                    if (user == null)
+                    {
+                        throw SudoException.GetException(SudoResultTypes.UsernameNotFound, usr_dhn_part, usr_un_part);
+                    }
 
 					usr_path = new object[] 
 					{
@@ -500,8 +512,10 @@ namespace Sudowin.Servers.FrontEnd
 				m_ts.TraceEvent( TraceEventType.Information, ( int ) EventIds.Information,
 					"{0}, user not in sudoers data store", un );
 				
-				return ( LogResult( un, commandPath, commandArguments, ui.LoggingLevel,
-					SudoResultTypes.CommandNotAllowed ) );
+				LogResult( un, commandPath, commandArguments, ui.LoggingLevel,
+					SudoResultTypes.CommandNotAllowed );
+                
+                throw SudoException.GetException(SudoResultTypes.CommandNotAllowed);
 			}
 
 			// make sure the user has not exceeded any invalid logon limits
@@ -509,8 +523,9 @@ namespace Sudowin.Servers.FrontEnd
 			if ( m_plgn_cred_cache.GetCache( un, ref cc ) && 
 				cc.InvalidLogonCount >= ui.InvalidLogons - 1 )
 			{
-                return ( LogResult( un, commandPath, commandArguments, ui.LoggingLevel,
-					GetLimitDetails( un, ref ui, ref cc ) ) );
+                SudoResultTypes srt = GetLimitDetails(un, ref ui, ref cc);
+                LogResult( un, commandPath, commandArguments, ui.LoggingLevel, srt );
+                throw SudoException.GetException(srt);
 			}
 
 			// check to see if the user has a cached passphrase
@@ -519,8 +534,10 @@ namespace Sudowin.Servers.FrontEnd
 				// validate the users logon credentials
 				if ( !LogonUser( un, passphrase, ref ui, ref cc ) )
 				{
-                    return ( LogResult( un, commandPath, commandArguments, ui.LoggingLevel,
-						SudoResultTypes.InvalidLogon ) );
+
+                    LogResult( un, commandPath, commandArguments, ui.LoggingLevel,
+						SudoResultTypes.InvalidLogon );
+                    throw SudoException.GetException(SudoResultTypes.InvalidLogon);
 				}
 			}
 
@@ -538,8 +555,9 @@ namespace Sudowin.Servers.FrontEnd
 			// verify the command being sudoed
 			if ( !m_plgn_authz.VerifyCommand( un, ref commandPath, commandArguments ) )
 			{
-                return ( LogResult( un, commandPath, commandArguments, ui.LoggingLevel,
-					SudoResultTypes.CommandNotAllowed ) );
+                LogResult( un, commandPath, commandArguments, ui.LoggingLevel,
+					SudoResultTypes.CommandNotAllowed );
+                throw SudoException.GetException(SudoResultTypes.CommandNotAllowed);
 			}
 
 			// verify that this service and the sudo console app
@@ -547,9 +565,10 @@ namespace Sudowin.Servers.FrontEnd
 			if ( !VerifySameSignature( un,
 				ConfigurationManager.AppSettings[ "callbackApplicationPath" ] ) )
 			{
-                return ( LogResult( un, commandPath, commandArguments, ui.LoggingLevel,
-					SudoResultTypes.CommandNotAllowed ) );
-			}
+                LogResult(un, commandPath, commandArguments, ui.LoggingLevel,
+                    SudoResultTypes.CommandNotAllowed);
+                throw SudoException.GetException(SudoResultTypes.CommandNotAllowed);
+            }
 
 			// sudo the command for the user
 			Sudo( un, passphrase, ui.PrivilegesGroup, commandPath, commandArguments );
