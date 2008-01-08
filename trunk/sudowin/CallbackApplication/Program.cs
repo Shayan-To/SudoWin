@@ -99,23 +99,25 @@ namespace Sudowin.CallbackApplication
 			ProcessStartInfo psi = new ProcessStartInfo();
             bool waitForExit = false;
 
-            if (password == "/runas")
+            if (password != "/runas")
             {
-                psi.FileName = commandPath;
-                psi.Arguments = commandArguments;
-                psi.UseShellExecute = true;
-                psi.Verb = "runas";
-            }
-            else
-            {
-                // Rerun callback with /runas option
-                psi.FileName = Process.GetCurrentProcess().MainModule.FileName;
-                psi.Arguments = string.Format("/runas \"{0}\" {1}", commandPath, commandArguments);
+                // Vista UAC, so exec callback with /runas
+                if (Environment.OSVersion.Version.Major >= 6)
+                {
+                    // Rerun callback with /runas option
+                    psi.FileName = Process.GetCurrentProcess().MainModule.FileName;
+                    psi.Arguments = string.Format("/runas \"{0}\" {1}", commandPath, commandArguments);
+
+                    // wait until second callback is done
+                    waitForExit = true;
+                }
+                else
+                {
+                    psi.FileName = commandPath;
+                    psi.Arguments = commandArguments;
+                }
                 // MUST be false when specifying credentials
                 psi.UseShellExecute = false;
-                
-                // wait until second callback is done
-                waitForExit = true;
 
                 // get the domain and user name parts of the current
                 // windows identity
@@ -144,7 +146,17 @@ namespace Sudowin.CallbackApplication
                 psi.Password = new System.Security.SecureString();
                 for (int x = 0; x < password.Length; ++x)
                     psi.Password.AppendChar(password[x]);
+
             }
+            else
+            {
+                // 2nd callback so now run actual command with runas verb to get UAC prompt
+                psi.FileName = commandPath;
+                psi.Arguments = commandArguments;
+                psi.UseShellExecute = true;
+                psi.Verb = "runas";
+            }
+            
 
 			// MUST be true so that the user's profile will
 			// be loaded and any new group memberships will
