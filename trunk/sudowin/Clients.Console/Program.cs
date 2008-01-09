@@ -259,10 +259,17 @@ assigned privileges group
 			do
 			{
 				cki = System.Console.ReadKey( true );
-				if ( cki.Key != ConsoleKey.Enter )
-				{
-					pwd.Append( cki.KeyChar );
-				}
+                if (cki.Key == ConsoleKey.Backspace)
+                {
+                    if (pwd.Length > 0)
+                    {
+                        pwd.Length--;   // chop character off end
+                    }
+                }
+                else if (cki.Key != ConsoleKey.Enter)
+                {
+                    pwd.Append(cki.KeyChar);
+                }
 			} while ( cki.Key != ConsoleKey.Enter );
 			password = pwd.ToString();
 					
