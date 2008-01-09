@@ -6,7 +6,7 @@ namespace Sudowin.Common
     [Serializable]
     public class SudoException : Exception
     {
-        private SudoResultTypes _sudoResultType;
+        private SudoResultTypes _sudoResultType = SudoResultTypes.SudoError;    // default to generic error
         public SudoResultTypes SudoResultType
         {
             get { return _sudoResultType; }
@@ -97,6 +97,28 @@ namespace Sudowin.Common
                         message = string.Format("Group {0} not found", args[0]);
                         break;
                     }
+                default:
+                    {
+                        if (args.Length == 0)
+                        {
+                            message = sudoResultType.ToString();
+                        }
+                        else if (args.Length == 1)
+                        {
+                            message = args[0].ToString();
+                        }
+                        else
+                        {
+                            // args[0] is format string
+                            // args[1..n] are args (so need to shift left)
+
+                            object[] argsNew = new object[args.Length - 1];
+                            Array.Copy(args, 1, argsNew, 0, argsNew.Length);
+                            message = string.Format(args[0].ToString(), argsNew);
+                        }
+                        break;
+                    }
+
             }
             return message;
 

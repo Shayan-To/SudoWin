@@ -36,6 +36,11 @@ namespace Sudowin.Common
 	[Serializable]
 	public enum SudoResultTypes : int
 	{
+        /// <summary>
+        /// Generic Sudo error.
+        /// </summary>
+        SudoError = -1,
+
 		/// <summary>
 		///		Ok
 		/// </summary>
