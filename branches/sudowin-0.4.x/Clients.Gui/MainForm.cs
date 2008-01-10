@@ -204,10 +204,20 @@ namespace Sudowin.Clients.Gui
 				string cmd_args = string.Join( " ", args, 2, args.Length - 2 );
 
 				// invoke sudo
-				srt = m_isudo_server.Sudo( password, cmd_path, cmd_args );
-			}
+                try
+                {
+                    srt = m_isudo_server.Sudo(password, cmd_path, cmd_args);
+                }
+                catch (SudoException ex)
+                {
+                    m_lbl_warning.Text = ex.Message;
+                    srt = ex.SudoResultType;
+                }
 
-			switch ( srt )
+			}
+            // clear password
+            m_txtbox_password.Text = string.Empty;
+            switch (srt)
 			{
 				case SudoResultTypes.SudoK :
 				{
@@ -217,27 +227,12 @@ namespace Sudowin.Clients.Gui
 				}
 				case SudoResultTypes.InvalidLogon:
 				{
-					m_lbl_warning.Text = "Invalid logon";
-					m_txtbox_password.Text = string.Empty;
 					break;
 				}
-				case SudoResultTypes.TooManyInvalidLogons:
-				{
-					m_lbl_warning.Text = "Invalid logon limit exceeded";
-					m_txtbox_password.Enabled = false;
-					m_btn_ok.Enabled = false;
-					break;
-				}
-				case SudoResultTypes.CommandNotAllowed:
-				{
-					m_lbl_warning.Text = "Command not allowed";
-					break;
-				}
-				case SudoResultTypes.LockedOut:
+				default:
 				{
 					m_txtbox_password.Enabled = false;
 					m_btn_ok.Enabled = false;
-					m_lbl_warning.Text = "Locked out";
 					break;
 				}
 			}

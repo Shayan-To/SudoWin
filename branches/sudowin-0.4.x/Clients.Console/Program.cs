@@ -77,6 +77,7 @@ namespace Sudowin.Clients.Console
 				{
 					if ( Regex.IsMatch( args[ 0 ], @"^--?(p|(password))$" ) )
 					{
+                        System.Console.WriteLine("Password={0}", args[1]);
 						InvokeSudo( args[ 1 ], args[ 2 ], string.Empty );
 					}
 					else
@@ -172,15 +173,24 @@ namespace Sudowin.Clients.Console
 				}
 				else
 				{
-					// if the password was passed into this program as
-					// a command line argument or if the user's credentials
-					// are cached then do not bother asking the user for
-					// their password
-					password = password.Length > 0 || iss.AreCredentialsCached ?
-						string.Empty : GetPassword();
+					// if the password was not passed into this program as
+					// a command line argument and the user's credentials
+					// are not cached then ask the user for their password
+                    if (password.Length == 0 && !iss.AreCredentialsCached)
+                    {
+                        password = GetPassword();
+                    }
 
 					// invoke sudo
-					srt = iss.Sudo( password, commandPath, commandArguments );
+                    try
+                    {
+                        srt = iss.Sudo(password, commandPath, commandArguments);
+                    }
+                    catch (SudoException ex)
+                    {
+                        System.Console.WriteLine(ex.Message);
+                        srt = ex.SudoResultType;
+                    }
 
 					// set the password to an empty string.  this is not for
 					// security as one might think but rather so if the result
@@ -188,30 +198,6 @@ namespace Sudowin.Clients.Console
 					// loop will prompt the user for their password instead
 					// of using this password known to be invalid
 					password = string.Empty;
-
-					switch ( srt )
-					{
-						case SudoResultTypes.InvalidLogon:
-						{
-							System.Console.WriteLine( "Invalid logon attempt" );
-							break;
-						}
-						case SudoResultTypes.TooManyInvalidLogons:
-						{
-							System.Console.WriteLine( "Invalid logon limit exceeded" );
-							break;
-						}
-						case SudoResultTypes.CommandNotAllowed:
-						{
-							System.Console.WriteLine( "Command not allowed" );
-							break;
-						}
-						case SudoResultTypes.LockedOut:
-						{
-							System.Console.WriteLine( "Locked out" );
-							break;
-						}
-					}
 				}
 			} while ( srt == SudoResultTypes.InvalidLogon );
 		}
@@ -273,10 +259,17 @@ assigned privileges group
 			do
 			{
 				cki = System.Console.ReadKey( true );
-				if ( cki.Key != ConsoleKey.Enter )
-				{
-					pwd.Append( cki.KeyChar );
-				}
+                if (cki.Key == ConsoleKey.Backspace)
+                {
+                    if (pwd.Length > 0)
+                    {
+                        pwd.Length--;   // chop character off end
+                    }
+                }
+                else if (cki.Key != ConsoleKey.Enter)
+                {
+                    pwd.Append(cki.KeyChar);
+                }
 			} while ( cki.Key != ConsoleKey.Enter );
 			password = pwd.ToString();
 					

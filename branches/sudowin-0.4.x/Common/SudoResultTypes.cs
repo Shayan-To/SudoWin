@@ -36,6 +36,11 @@ namespace Sudowin.Common
 	[Serializable]
 	public enum SudoResultTypes : int
 	{
+        /// <summary>
+        /// Generic Sudo error.
+        /// </summary>
+        SudoError = -1,
+
 		/// <summary>
 		///		Ok
 		/// </summary>
@@ -66,5 +71,15 @@ namespace Sudowin.Common
 		///		of time.
 		/// </summary>
 		LockedOut = 4,
+
+        /// <summary>
+        /// Username not found in directory services.
+        /// </summary>
+        UsernameNotFound = 5,
+
+        /// <summary>
+        /// Group name note found in directory services.
+        /// </summary>
+        GroupNotFound = 6
 	}
 }

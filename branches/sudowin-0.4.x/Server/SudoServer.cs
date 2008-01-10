@@ -340,7 +340,13 @@ namespace Sudowin.Server
 				CultureInfo.CurrentCulture,
 				"WinNT://{0},computer",
 				Environment.MachineName ) );
-			DirectoryEntry group = localhost.Children.Find( privilegesGroup );
+			DirectoryEntry group = DirectoryFinder.Find( localhost.Children, privilegesGroup );
+
+            // group not found so throw exception
+            if (group == null)
+            {
+                throw SudoException.GetException(SudoResultTypes.GroupNotFound, privilegesGroup);
+            }
 
 			// get the domain/host name and user name
 			string[] un_split = userName.Split( new char[] { '\\' } );
@@ -357,7 +363,13 @@ namespace Sudowin.Server
 				// in case this machine belongs to a workgroup or a domain.  
 				//  it is easier to search for the user and get their path that 
 				// way than it is to get the computer's workgroup
-				DirectoryEntry user = user = localhost.Children.Find( un_part, "user" );
+				DirectoryEntry user = DirectoryFinder.Find( localhost.Children, un_part, "user" );
+
+                // user not found so throw exception
+                if (user == null)
+                {
+                    throw SudoException.GetException(SudoResultTypes.UsernameNotFound, dhn_part, un_part);
+                }
 
 				user_path = new object[] 
 					{
@@ -457,8 +469,10 @@ namespace Sudowin.Server
 				m_ts.TraceEvent( TraceEventType.Information, ( int ) EventIds.Information,
 					"{0}, user not in sudoers data store", un );
 				
-				return ( LogResult( un, ui.LoggingLevel,
-					SudoResultTypes.CommandNotAllowed ) );
+				LogResult( un, commandPath, commandArguments, ui.LoggingLevel,
+					SudoResultTypes.CommandNotAllowed );
+                
+                throw SudoException.GetException(SudoResultTypes.CommandNotAllowed);
 			}
 
 			// make sure the user has not exceeded any invalid logon limits
@@ -466,8 +480,9 @@ namespace Sudowin.Server
 			if ( m_plgn_cred_cache.GetCache( un, ref cc ) && 
 				cc.InvalidLogonCount >= ui.InvalidLogons - 1 )
 			{
-				return ( LogResult( un, ui.LoggingLevel,
-					GetLimitDetails( un, ref ui, ref cc ) ) );
+                SudoResultTypes srt = GetLimitDetails(un, ref ui, ref cc);
+                LogResult( un, commandPath, commandArguments, ui.LoggingLevel, srt );
+                throw SudoException.GetException(srt);
 			}
 
 			// check to see if the user has a cached passphrase
@@ -476,8 +491,9 @@ namespace Sudowin.Server
 				// validate the users logon credentials
 				if ( !LogonUser( un, passphrase, ref ui, ref cc ) )
 				{
-					return ( LogResult( un, ui.LoggingLevel,
-						SudoResultTypes.InvalidLogon ) );
+                    LogResult( un, commandPath, commandArguments, ui.LoggingLevel,
+						SudoResultTypes.InvalidLogon );
+                    throw SudoException.GetException(SudoResultTypes.InvalidLogon);
 				}
 			}
 
@@ -495,8 +511,9 @@ namespace Sudowin.Server
 			// verify the command being sudoed
 			if ( !m_plgn_authz.VerifyCommand( un, ref commandPath, commandArguments ) )
 			{
-				return ( LogResult( un, ui.LoggingLevel,
-					SudoResultTypes.CommandNotAllowed ) );
+                LogResult( un, commandPath, commandArguments, ui.LoggingLevel,
+					SudoResultTypes.CommandNotAllowed );
+                throw SudoException.GetException(SudoResultTypes.CommandNotAllowed);
 			}
 
 			// verify that this service and the sudo console app
@@ -504,8 +521,9 @@ namespace Sudowin.Server
 			if ( !VerifySameSignature( un,
 				ConfigurationManager.AppSettings[ "callbackApplicationPath" ] ) )
 			{
-				return ( LogResult( un, ui.LoggingLevel,
-					SudoResultTypes.CommandNotAllowed ) );
+                LogResult(un, commandPath, commandArguments, ui.LoggingLevel,
+                    SudoResultTypes.CommandNotAllowed);
+                throw SudoException.GetException(SudoResultTypes.CommandNotAllowed);
 			}
 
 			// sudo the command for the user
@@ -514,7 +532,7 @@ namespace Sudowin.Server
 			m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitMethod,
 				"exiting Sudo( string, string, string )" );
 
-			return ( LogResult( un, ui.LoggingLevel, 
+            return ( LogResult( un, commandPath, commandArguments, ui.LoggingLevel, 
 				SudoResultTypes.SudoK ) );
 		}
 
@@ -559,6 +577,8 @@ namespace Sudowin.Server
 
 		private SudoResultTypes LogResult(
 			string userName,
+            string commandPath,
+            string commandArguments,
 			LoggingLevelTypes loggingLevel,
 			SudoResultTypes sudoResultType )
 		{
@@ -607,8 +627,8 @@ namespace Sudowin.Server
 
 				EventLog.WriteEntry( "Sudowin",
 					string.Format( CultureInfo.CurrentCulture,
-						"{0} - {1}", userName, sudoResultType ),
-					elet,
+                        "{0} - {1}\n{2} {3}", userName, sudoResultType, commandPath, commandArguments),
+                    elet,
 					( int ) sudoResultType );
 			}
 
