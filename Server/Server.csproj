@@ -13,7 +13,7 @@
     <TargetZone>LocalIntranet</TargetZone>
     <GenerateManifests>false</GenerateManifests>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>sudowin.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\sudowin.snk</AssemblyOriginatorKeyFile>
     <PublishUrl>http://localhost/WinSudo.Service/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -57,10 +57,6 @@
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml" />
-    <Reference Include="WtsApi32.NET, Version=0.0.2028.16795, Culture=neutral, PublicKeyToken=ed40a5c41345d3c5, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\WtsApi32\WtsApi32\bin\Debug\WtsApi32.NET.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ModuleSuppressions.cs" />
@@ -79,6 +75,7 @@
     </Compile>
     <Compile Include="Service.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Win32.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Plugins.Authentication\Plugins.Authentication.csproj">
@@ -110,8 +107,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\sudowin.snk">
+      <Link>sudowin.snk</Link>
+    </None>
     <None Include="App.config" />
-    <None Include="sudowin.snk" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Controller.resx">

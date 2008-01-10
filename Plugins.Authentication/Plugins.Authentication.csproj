@@ -10,7 +10,7 @@
     <RootNamespace>Sudowin.Plugins.Authentication</RootNamespace>
     <AssemblyName>Sudowin.Plugins.Authentication</AssemblyName>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>sudowin.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\sudowin.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,7 +40,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="sudowin.snk" />
+    <None Include="..\sudowin.snk">
+      <Link>sudowin.snk</Link>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Plugins\Plugins.csproj">
