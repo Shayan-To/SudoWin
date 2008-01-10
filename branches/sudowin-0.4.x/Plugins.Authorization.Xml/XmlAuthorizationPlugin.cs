@@ -205,12 +205,12 @@ namespace Sudowin.Plugins.Authorization.Xml
 							CultureInfo.CurrentCulture,
 							"WinNT://{0},computer",
 							Environment.MachineName ) );
-                        DirectoryEntry group = DirectoryFinder.Find(localhost.Children, grp_gn_part);
+                        DirectoryEntry group = DirectoryFinder.Find(localhost.Children, ug_name);
 
                         // group not found so throw exception
                         if (group == null)
                         {
-                            throw SudoException.GetException(SudoResultTypes.GroupNotFound, grp_gn_part);
+                            throw SudoException.GetException(SudoResultTypes.GroupNotFound, ug_name);
                         }
 
 						// used for asdi calls
