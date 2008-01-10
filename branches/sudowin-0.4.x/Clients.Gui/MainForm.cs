@@ -94,29 +94,36 @@ namespace Sudowin.Clients.Gui
 
 			#endregion
 
-			// get the current user's account icon if they have one
-			string user_icon_path = string.Format( "{0}\\{1}\\{2}.bmp",
-				Environment.GetEnvironmentVariable( "AllUsersProfile" ),
-				@"Application Data\Microsoft\User Account Pictures",
-				WindowsIdentity.GetCurrent().Name.Split( new char[] { '\\' } )[ 1 ] );
-			
-			// load the user's account icon if they have one, otherwise
-			// just load a random icon from the standard location.
-			if ( File.Exists( user_icon_path ) )
+			string icon_root_path = null;
+			if (Environment.OSVersion.Version.Major >= 6)
 			{
-				m_picbox_user_icon.Load( user_icon_path );
+				icon_root_path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Temp");
 			}
 			else
 			{
-				string icon_directory_path = string.Format( "{0}\\{1}",
-					Environment.GetEnvironmentVariable( "AllUsersProfile" ),
-					@"Application Data\Microsoft\User Account Pictures\Default Pictures" );
-				if ( Directory.Exists( icon_directory_path ) )
+				icon_root_path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), 
+					@"Microsoft\User Account Pictures");
+			}
+
+			// get the current user's account icon if they have one
+			string user_icon_path = Path.Combine(icon_root_path, WindowsIdentity.GetCurrent().Name.Split('\\')[1] + ".bmp");
+
+			// load the user's account icon if they have one, otherwise
+			// just load a random icon from the standard location.
+			if (File.Exists(user_icon_path))
+			{
+				m_picbox_user_icon.Load(user_icon_path);
+			}
+			else
+			{
+				string icon_directory_path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+					@"Microsoft\User Account Pictures\Default Pictures");
+				if (Directory.Exists(icon_directory_path))
 				{
-					string[] icon_file_paths = Directory.GetFiles( icon_directory_path );
+					string[] icon_file_paths = Directory.GetFiles(icon_directory_path);
 					Random r = new Random();
-					int icon_file_paths_index = r.Next( 0, icon_file_paths.Length - 1 );
-					m_picbox_user_icon.Load( icon_file_paths[ icon_file_paths_index ] );
+					int icon_file_paths_index = r.Next(0, icon_file_paths.Length - 1);
+					m_picbox_user_icon.Load(icon_file_paths[icon_file_paths_index]);
 				}
 			}
 

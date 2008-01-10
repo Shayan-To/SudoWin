@@ -26,7 +26,7 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using Native;
+using Win32;
 using System;
 using System.IO;
 using System.Text;
@@ -766,7 +766,7 @@ namespace Sudowin.Server
 				Regex.Replace( fcp, @"  ""([^""]*)""", "" ) );
 
 			ProcessInformation pi;
-			bool newProcessCreated = Native.Native.CreateProcessAsUser(
+			bool newProcessCreated = Win32.Native.CreateProcessAsUser(
 				userToken,
 				null,
 				fcp,
@@ -785,8 +785,8 @@ namespace Sudowin.Server
 				// get a managed reference to the process
 				newProcess = Process.GetProcessById( pi.ProcessId );
 				// free the unmanaged handles
-				WtsApi32.Native.CloseHandle( pi.Thread );
-				WtsApi32.Native.CloseHandle( pi.Process );
+				Win32.Native.CloseHandle( pi.Thread );
+				Win32.Native.CloseHandle( pi.Process );
 			}
 
 			m_ts.TraceEvent( TraceEventType.Stop, ( int ) EventIds.ExitMethod,
@@ -817,13 +817,13 @@ namespace Sudowin.Server
 				"userName={0},userToken=", userName );
 
 			// open a handle to the localhost
-			IntPtr hSvr = WtsApi32.Native.WtsOpenServer( null );
+			IntPtr hSvr = Win32.Native.WtsOpenServer( null );
 
 			// get a list of the sessions on the localhost
-			WtsApi32.WtsSessionInfo[] wsis;
+			Win32.WtsSessionInfo[] wsis;
 			try
 			{
-				wsis = WtsApi32.Managed.WtsEnumerateSessions( hSvr );
+				wsis = Win32.Managed.WtsEnumerateSessions( hSvr );
 			}
 			catch ( Win32Exception e )
 			{
@@ -844,29 +844,29 @@ namespace Sudowin.Server
 
 				// compare the session's user name with the userName
 				// parameter and get the logon token if they are equal
-				if ( WtsApi32.Managed.WtsQuerySessionInformation(
+				if ( Win32.Managed.WtsQuerySessionInformation(
 						hSvr, wsis[ x ].SessionId,
-						WtsApi32.WtsQueryInfoTypes.WtsUserName,
+						Win32.WtsQueryInfoTypes.WtsUserName,
 						out un )
 
 					&&
 
-					WtsApi32.Managed.WtsQuerySessionInformation(
+					Win32.Managed.WtsQuerySessionInformation(
 						hSvr, wsis[ x ].SessionId,
-						WtsApi32.WtsQueryInfoTypes.WtsDomainName,
+						Win32.WtsQueryInfoTypes.WtsDomainName,
 						out dn )
 
 					&&
 
 					( ( dn + "\\" + un ) == userName ) )
 				{
-					WtsApi32.Native.WtsQueryUserToken(
+					Win32.Native.WtsQueryUserToken(
 						wsis[ x ].SessionId, ref userToken );
 				}
 			}
 
 			if ( hSvr != IntPtr.Zero )
-				WtsApi32.Native.WtsCloseServer( hSvr );
+				Win32.Native.WtsCloseServer( hSvr );
 
 			m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
 				"{0}, tokenRetrieved={1}", userName, userToken != IntPtr.Zero );
