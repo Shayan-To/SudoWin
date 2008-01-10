@@ -37,12 +37,6 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTitle( "Sudowin.Common" )]
 [assembly: AssemblyDescription( "Contains shared methods and interfaces that " +
 	"all of this solution's assemblies may need to access." )]
-[assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "l o s t c r e a t i o n s" )]
-[assembly: AssemblyProduct( "Sudowin" )]
-[assembly: AssemblyCopyright( "Copyright © l o s t c r e a t i o n s 2006" )]
-[assembly: AssemblyTrademark( "" )]
-[assembly: AssemblyCulture( "" )]
 
 [assembly: CLSCompliant( true )]
 
@@ -54,13 +48,3 @@ using System.Runtime.CompilerServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid( "ddaeb38d-eeb7-4c90-80cf-aeb3b4f66208" )]
 
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-[assembly: AssemblyVersion( "0.3.2.0" )]

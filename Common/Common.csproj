@@ -40,6 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\AssemblyInfoCommon.cs">
+      <Link>AssemblyInfoCommon.cs</Link>
+    </Compile>
     <Compile Include="CommandInfo.cs" />
     <Compile Include="DirectoryFinder.cs" />
     <Compile Include="EventIds.cs" />
