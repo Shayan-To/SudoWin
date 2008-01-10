@@ -205,7 +205,13 @@ namespace Sudowin.Plugins.Authorization.Xml
 							CultureInfo.CurrentCulture,
 							"WinNT://{0},computer",
 							Environment.MachineName ) );
-						DirectoryEntry group = localhost.Children.Find( grp_gn_part );
+                        DirectoryEntry group = DirectoryFinder.Find(localhost.Children, grp_gn_part);
+
+                        // group not found so throw exception
+                        if (group == null)
+                        {
+                            throw SudoException.GetException(SudoResultTypes.GroupNotFound, grp_gn_part);
+                        }
 
 						// used for asdi calls
 						object[] user_path = null;
@@ -217,12 +223,18 @@ namespace Sudowin.Plugins.Authorization.Xml
 							// in case this machine belongs to a workgroup or a domain.  
 							//  it is easier to search for the user and get their path that 
 							// way than it is to get the computer's workgroup
-							DirectoryEntry user = localhost.Children.Find( usr_un_part, "user" );
+							DirectoryEntry user = DirectoryFinder.Find( localhost.Children, usr_un_part, "user" );
 
-							user_path = new object[] 
-						{
-							user.Path
-						};
+                            // user not found so throw exception
+                            if (user == null)
+                            {
+                                throw SudoException.GetException(SudoResultTypes.UsernameNotFound, usr_dhn_part, usr_un_part);
+                            }
+
+                            user_path = new object[] 
+						    {
+							    user.Path
+						    };
 
 							user.Close();
 						}
