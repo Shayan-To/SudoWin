@@ -26,6 +26,27 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 CHANGELOG
 
+2008/01/10
+----------
+- Released Sudo for Windows version 0.4.1
+
+- Update Sudo to support Vista UAC
+
+- Update GUI client to get correct user account picture on Vista
+
+- Bugfix: trap exceptions when looking up users and groups and give meaning 
+  error message
+  
+- Add commandPath and commandArgument to Event Log entries [request #1534654]
+
+- Bugfix: logic for using password passed in on the command line was wrong. 
+  It was always getting reset to "" even when not cached. [bug #1707157] 
+  
+- Update console client to support backspace key so users can correct their 
+  password as they type
+
+- Bugfix: fix setup to work on Vista with UAC
+
 2006/01/30
 ----------
 - Released Sudo for Windows version 0.4.0-r153
