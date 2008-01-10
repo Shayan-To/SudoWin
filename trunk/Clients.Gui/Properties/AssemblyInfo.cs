@@ -34,13 +34,7 @@ using System.Runtime.CompilerServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle( "Sudowin.Clients.Gui" )]
-[assembly: AssemblyDescription( "" )]
-[assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "l o s t c r e a t i o n s" )]
-[assembly: AssemblyProduct( "Sudowin" )]
-[assembly: AssemblyCopyright( "Copyright © l o s t c r e a t i o n s 2006" )]
-[assembly: AssemblyTrademark( "" )]
-[assembly: AssemblyCulture( "" )]
+[assembly: AssemblyDescription( "A windows interface to the sudo server." )]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -49,12 +43,3 @@ using System.Runtime.CompilerServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid( "fa57e3a7-fac0-440b-b9e6-8db799d01616" )]
-
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-[assembly: AssemblyVersion( "0.4.1.0" )]

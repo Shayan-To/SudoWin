@@ -37,12 +37,6 @@ using System.Runtime.CompilerServices;
 // associated with an assembly.
 [assembly: AssemblyTitle( "Sudowin.Servers.Standalone" )]
 [assembly: AssemblyDescription( "Hosts the server that sudo clients communicate with in order to facilitate privilege escalation." )]
-[assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "l o s t c r e a t i o n s" )]
-[assembly: AssemblyProduct( "Sudowin" )]
-[assembly: AssemblyCopyright( "Copyright © l o s t c r e a t i o n s 2005" )]
-[assembly: AssemblyTrademark( "" )]
-[assembly: AssemblyCulture( "" )]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM componenets.  If you need to access a type in this assembly from 
@@ -53,12 +47,3 @@ using System.Runtime.CompilerServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid( "d7a57c83-17df-48fe-8e54-3fbb65c4c539" )]
-
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-[assembly: AssemblyVersion( "0.3.2.0" )]
