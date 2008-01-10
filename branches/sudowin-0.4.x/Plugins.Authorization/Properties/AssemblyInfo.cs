@@ -35,12 +35,6 @@ using System.Runtime.CompilerServices;
 // associated with an assembly.
 [assembly: AssemblyTitle( "Sudowin.Plugins.Authorization" )]
 [assembly: AssemblyDescription( "For accessing and managing the different data stores that can contain sudoer information." )]
-[assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "Lost Creations" )]
-[assembly: AssemblyProduct( "Sudowin" )]
-[assembly: AssemblyCopyright( "Copyright © Lost Creations 2005" )]
-[assembly: AssemblyTrademark( "" )]
-[assembly: AssemblyCulture( "" )]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM componenets.  If you need to access a type in this assembly from 
@@ -51,14 +45,3 @@ using System.Runtime.CompilerServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid( "32c5087e-328b-4100-b2f9-a9013acaf537" )]
-
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-[assembly: AssemblyVersion( "0.3.2.0" )]

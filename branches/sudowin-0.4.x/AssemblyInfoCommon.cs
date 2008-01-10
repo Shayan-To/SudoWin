@@ -1,4 +1,4 @@
-ï»¿/*
+/*
 Copyright (c) 2005-2008, Schley Andrew Kutz <akutz@lostcreations.com>
 All rights reserved.
 
@@ -27,19 +27,30 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle( "Sudowin.Plugins.Authentication" )]
-[assembly: AssemblyDescription( "Provides the IAuthenticationPlugin and base class." )]
+[assembly: AssemblyCompany("l o s t c r e a t i o n s")]
+[assembly: AssemblyProduct("Sudowin")]
+[assembly: AssemblyCopyright("Copyright © 2005-2008 l o s t c r e a t i o n s. All rights reserved.")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
 
-// Setting ComVisible to false makes the types in this assembly not visible 
-// to COM components.  If you need to access a type in this assembly from 
-// COM, set the ComVisible attribute to true on that type.
-[assembly: ComVisible( false )]
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+[assembly: AssemblyVersion("0.4.1.0")]
+[assembly: AssemblyFileVersion("0.4.1.0")]
 
-// The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid( "22f2f6ae-182a-4576-b268-a4d272fa6c61" )]
+
+#if DEBUG
+[assembly : AssemblyConfiguration("Debug")]
+#else
+[assembly: AssemblyConfiguration("Release")]
+#endif
