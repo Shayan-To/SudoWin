@@ -35,12 +35,6 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle( "Sudowin.Servers.BackEnd" )]
 [assembly: AssemblyDescription( "" )]
-[assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "l o s t c r e a t i o n s" )]
-[assembly: AssemblyProduct( "Sudowin" )]
-[assembly: AssemblyCopyright( "Copyright © l o s t c r e a t i o n s 2007" )]
-[assembly: AssemblyTrademark( "" )]
-[assembly: AssemblyCulture( "" )]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -49,13 +43,3 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid( "8812c08b-8549-4297-bd1c-9a4969d65387" )]
-
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-[assembly: AssemblyVersion( "0.5.0.0" )]
-[assembly: AssemblyFileVersion( "0.5.0.0" )]
