@@ -155,6 +155,7 @@ namespace Sudowin.CallbackApplication
                 psi.Arguments = commandArguments;
                 psi.UseShellExecute = true;
                 psi.Verb = "runas";
+				psi.ErrorDialog = true;
             }
             
 
