@@ -469,13 +469,11 @@ namespace Sudowin.Plugins.Authorization.Xml
 			xrs.ValidationType = ValidationType.Schema;
 
 			// read in the file
-			XmlReader xr = XmlReader.Create( connectionString, xrs );
-
-			// load the xml reader into the xml document.
-			m_xml_doc.Load( xr );
-
-			// close the xmlreader
-			xr.Close();
+            using (XmlReader xr = XmlReader.Create(connectionString, xrs))
+            {
+                // load the xml reader into the xml document.
+                m_xml_doc.Load(xr);
+            }
 
 			// create the namespace manager using the xml file name table
 			m_namespace_mgr = new XmlNamespaceManager( m_xml_doc.NameTable );
