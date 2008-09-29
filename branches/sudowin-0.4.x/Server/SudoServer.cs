@@ -875,13 +875,17 @@ namespace Sudowin.Server
 						hSvr, wsis[ x ].SessionId,
 						Win32.WtsQueryInfoTypes.WtsDomainName,
 						out dn )
+                    )
 
-					&&
-
-					( ( dn + "\\" + un ) == userName ) )
 				{
-					Win32.Native.WtsQueryUserToken(
-						wsis[ x ].SessionId, ref userToken );
+			        m_ts.TraceEvent( TraceEventType.Verbose, ( int ) EventIds.Verbose,
+				        "compare userName {0}\\{1} to {2}", dn, un, userName );
+                    
+					if ( string.Compare( dn + "\\" + un , userName, true ) == 0 )
+                    {
+					    Win32.Native.WtsQueryUserToken(
+						    wsis[ x ].SessionId, ref userToken );
+                    }
 				}
 			}
 
