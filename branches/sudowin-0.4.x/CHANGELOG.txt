@@ -25,7 +25,27 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 CHANGELOG
+2008/09/30
+----------
+- Released Sudo for Windows version 0.4.2
 
+- New: sudowin can now launch applications based on their file types (e.g., 
+  sudo compmgmt.msc) [request: #1546870]
+
+- Change: no longer require user to be in Sudoers group to access Sudowin 
+  service [bug #1946742]
+  
+- Bugfix: configuration file is locked because xml reader is not closed for 
+  invalid xml. [bug #1946747]
+
+- Bugfix: add support for quiet uninstall [bug #1995331]
+
+- Bugfix: catch exception when writing to event log [bug #2120197]
+
+- Bugfix: when enumerating user sessions, username comparison was case-
+  sensitive, so failed to find user if case was different. updated to case-
+  insensitive search  [bug #1882018]
+  
 2008/01/10
 ----------
 - Released Sudo for Windows version 0.4.1
