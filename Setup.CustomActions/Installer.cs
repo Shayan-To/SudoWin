@@ -377,46 +377,61 @@ namespace Sudowin.Setup.CustomActions
 		{
 			string target_dir = this.Context.Parameters[ "TargetDir" ];
 
+            // [bug #1995331] add support for quiet uninstall
+            bool isQuiet = this.Context.Parameters["ClientUILevel"] == "3";
+
 			base.Uninstall( savedState );
-			
+
 			#region Remove the Sudoers group
 
-			DialogResult dr = MessageBox.Show(
-				"Delete the Sudoers group?",
-				"Click \"Yes\" to delete the Sudoers group (not recommended if you are upgrading).",
-				MessageBoxButtons.YesNo, MessageBoxIcon.Information );
+            DialogResult dr;
 
-			if ( dr == DialogResult.Yes )
-			{
-				// delete the Sudoers group on the local machine if it exists
-				DirectoryEntry de = new DirectoryEntry( string.Format( "WinNT://{0},computer",
-					Environment.MachineName ) );
-				DirectoryEntry grp = null;
-				try
-				{
-					grp = de.Children.Find( "Sudoers", "group" );
-				}
-				catch
-				{
-				}
+            // default to Not deleteing Sudoers group
+            dr = DialogResult.No;
+            if (!isQuiet)
+            {
+                dr = MessageBox.Show(
+                    "Delete the Sudoers group?",
+                    "Click \"Yes\" to delete the Sudoers group (not recommended if you are upgrading).",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+            }
+            
+            if (dr == DialogResult.Yes)
+            {
+                // delete the Sudoers group on the local machine if it exists
+                DirectoryEntry de = new DirectoryEntry(string.Format("WinNT://{0},computer",
+                    Environment.MachineName));
+                DirectoryEntry grp = null;
+                try
+                {
+                    grp = de.Children.Find("Sudoers", "group");
+                }
+                catch
+                {
+                }
 
-				if ( grp != null )
-				{
-					de.Children.Remove( grp );
-					grp.Close();
-				}
-				de.Close();
-			}
+                if (grp != null)
+                {
+                    de.Children.Remove(grp);
+                    grp.Close();
+                }
+                de.Close();
+            }
 
 			#endregion
 
 			#region Remove the Sudoers file
 
-			dr = MessageBox.Show(
-				"Delete the Sudoers file?",
-				"Click \"Yes\" to delete the Sudoers file (not recommended if you are upgrading).",
-				MessageBoxButtons.YesNo, MessageBoxIcon.Information );
+            // default to Not deleteing Sudoers file
+            dr = DialogResult.No;
 
+            if (!isQuiet)
+            {
+                dr = MessageBox.Show(
+                    "Delete the Sudoers file?",
+                    "Click \"Yes\" to delete the Sudoers file (not recommended if you are upgrading).",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+            }
 			if ( dr == DialogResult.Yes )
 			{
 				string sudoers_file_path = string.Format( CultureInfo.CurrentCulture,

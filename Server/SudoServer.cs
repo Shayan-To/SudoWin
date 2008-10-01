@@ -625,11 +625,20 @@ namespace Sudowin.Server
 					}
 				}
 
-				EventLog.WriteEntry( "Sudowin",
-					string.Format( CultureInfo.CurrentCulture,
-                        "{0} - {1}\n{2} {3}", userName, sudoResultType, commandPath, commandArguments),
-                    elet,
-					( int ) sudoResultType );
+                try
+                {
+                    EventLog.WriteEntry("Sudowin",
+                        string.Format(CultureInfo.CurrentCulture,
+                            "{0} - {1}\n{2} {3}", userName, sudoResultType, commandPath, commandArguments),
+                        elet,
+                        (int)sudoResultType);
+                }
+                catch
+                {
+                    // [bug #2120197] swallow exception here, since there's nothing we can do if the event log
+                    // can't be written to
+                }
+
 			}
 
 			return ( sudoResultType );
